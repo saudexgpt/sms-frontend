@@ -253,7 +253,7 @@ export default {
     },
     login() {
       if (this.isLoggedIn()) {
-        this.$router.push('/dashboard/ecommerce').catch(() => {}) // window.location = '/dashboard/ecommerce'
+        this.$router.push('/').catch(() => {}) // window.location = '/dashboard/ecommerce'
         this.$toast({
           component: ToastificationContent,
           position: 'top-right',
@@ -291,7 +291,7 @@ export default {
             },
           })
           // we load the browser this once
-          this.$router.push({ path: '/dashboard/ecommerce' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
+          this.$router.push({ path: '/' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
           this.loader = false
         })
         .catch(error => {

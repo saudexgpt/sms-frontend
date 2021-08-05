@@ -30,13 +30,16 @@ import Router from 'vue-router'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-import apps from './routes/apps'
-import dashboard from './routes/dashboard'
-import uiElements from './routes/ui-elements/index'
-import pages from './routes/pages'
-import chartsMaps from './routes/charts-maps'
-import formsTable from './routes/forms-tables'
-import others from './routes/others'
+import apps from './modules/apps'
+import dashboard from './modules/dashboard'
+import uiElements from './modules/ui-elements/index'
+import pages from './modules/pages'
+import chartsMaps from './modules/charts-maps'
+import formsTable from './modules/forms-tables'
+import others from './modules/others'
+
+import adminSettings from './modules/admin-settings'
+import appSetup from './modules/app-setup'
 
 Vue.use(Router)
 export const constantRoutes = [
@@ -111,13 +114,16 @@ export const asyncRoutes = [
   // =============================================================================
   // MAIN LAYOUT ROUTES
   // =============================================================================
+  { path: '/', redirect: { name: 'dashboard-ecommerce' } },
   ...apps,
   ...dashboard,
+  ...adminSettings,
   ...pages,
   ...chartsMaps,
   ...formsTable,
   ...uiElements,
   ...others,
+  ...appSetup,
   {
     path: '*',
     redirect: '/error-404',

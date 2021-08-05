@@ -3,6 +3,7 @@ import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 
 import i18n from '@/libs/i18n'
+import { ServerTable, ClientTable, Event } from 'vue-tables-2'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -23,6 +24,9 @@ import '@/libs/tour'
 // Axios Mock Adapter
 import '@/@fake-db/db'
 
+Vue.use(ClientTable)
+Vue.use(ServerTable)
+Vue.use(Event)
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
