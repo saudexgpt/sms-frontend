@@ -21,7 +21,6 @@
       </slot>
     </b-navbar>
     <!--/ Navbar -->
-
     <!-- Vertical Nav Menu -->
     <vertical-nav-menu
       v-if="!isNavMenuHidden"

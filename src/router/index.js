@@ -32,13 +32,14 @@ import Router from 'vue-router'
  */
 import apps from './modules/apps'
 import dashboard from './modules/dashboard'
-import uiElements from './modules/ui-elements/index'
-import pages from './modules/pages'
-import chartsMaps from './modules/charts-maps'
-import formsTable from './modules/forms-tables'
-import others from './modules/others'
-
-import adminSettings from './modules/admin-settings'
+// import uiElements from './modules/ui-elements/index'
+// import pages from './modules/pages'
+// import chartsMaps from './modules/charts-maps'
+// import formsTable from './modules/forms-tables'
+// import others from './modules/others'
+import result from './modules/result'
+import userSetup from './modules/user-management'
+import schoolSetup from './modules/school-setup'
 import appSetup from './modules/app-setup'
 
 Vue.use(Router)
@@ -117,12 +118,14 @@ export const asyncRoutes = [
   { path: '/', redirect: { name: 'dashboard-ecommerce' } },
   ...apps,
   ...dashboard,
-  ...adminSettings,
-  ...pages,
-  ...chartsMaps,
-  ...formsTable,
-  ...uiElements,
-  ...others,
+  ...result,
+  ...userSetup,
+  ...schoolSetup,
+  // ...pages,
+  // ...chartsMaps,
+  // ...formsTable,
+  // ...uiElements,
+  // ...others,
   ...appSetup,
   {
     path: '*',

@@ -5,6 +5,7 @@ export default {
   state: {
     windowWidth: 0,
     shallShowOverlay: false,
+    baseServerUrl: process.env.VUE_APP_MIX_BASE_SERVER_URL,
   },
   getters: {
     currentBreakPoint: state => {

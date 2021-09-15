@@ -15,7 +15,8 @@
       {'vs-sidebar-item-active' : activeLink},
       {'disabled-item pointer-events-none' : isDisabled}
     ]"
-    class="vs-sidebar--item" >
+    class="vs-sidebar--item"
+  >
 
     <router-link
       v-if="to"
@@ -23,15 +24,37 @@
       :to="to"
       :target="target"
       tabindex="-1"
-      exact >
-      <vs-icon v-if="!featherIcon" :icon-pack="iconPack" :icon="icon" />
-      <feather-icon v-else :class="{'w-3 h-3': iconSmall}" :icon="icon" />
+      exact
+    >
+      <vs-icon
+        v-if="!featherIcon"
+        :icon-pack="iconPack"
+        :icon="icon"
+      />
+      <feather-icon
+        v-else
+        :class="{'w-3 h-3': iconSmall}"
+        :icon="icon"
+      />
       <slot />
     </router-link>
 
-    <a v-else :target="target" :href="href" tabindex="-1">
-      <vs-icon v-if="!featherIcon" :icon-pack="iconPack" :icon="icon" />
-      <feather-icon v-else :class="{'w-3 h-3': iconSmall}" :icon="icon" />
+    <a
+      v-else
+      :target="target"
+      :href="href"
+      tabindex="-1"
+    >
+      <vs-icon
+        v-if="!featherIcon"
+        :icon-pack="iconPack"
+        :icon="icon"
+      />
+      <feather-icon
+        v-else
+        :class="{'w-3 h-3': iconSmall}"
+        :icon="icon"
+      />
       <slot />
     </a>
   </div>
@@ -56,13 +79,12 @@ export default {
     canSee() {
       // this.$acl.check(this.$store.state.AppActiveUser.rights)
       // return this.to ? this.$acl.check(this.$router.match(this.to).meta.rule) : true
-      return true;
+      return true
     },
     activeLink() {
-      return !!((this.to === this.$route.path || this.$route.meta.parent === this.slug) && this.to);
+      return !!((this.to === this.$route.path || this.$route.meta.parent === this.slug) && this.to)
     },
   },
-};
+}
 
 </script>
-

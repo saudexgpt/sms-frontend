@@ -1,9 +1,17 @@
 import Vue from 'vue'
+import '@/styles/element-variables.scss'
+import '@/styles/index.scss' // global css
+
+// Import the styles too, globally
+import 'vue-swatches/dist/vue-swatches.css'
+// Import stylesheet
+import ElementUI from 'element-ui'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 
-import i18n from '@/libs/i18n'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2'
+import i18n from '@/libs/i18n'
+import lang from '@/lang'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -24,7 +32,22 @@ import '@/libs/tour'
 // Axios Mock Adapter
 import '@/@fake-db/db'
 
-Vue.use(ClientTable)
+Vue.use(ElementUI, {
+  i18n: (key, value) => lang.t(key, value),
+})
+// Vue.use(ClientTable)
+Vue.use(ClientTable, {
+  perPage: 10,
+  texts: {
+    filter: 'Search:',
+  },
+  sortIcon: {
+    base: 'el-icon',
+    is: 'el-icon-d-caret',
+    up: 'el-icon-caret-top',
+    down: 'el-icon-caret-bottom',
+  },
+}, false, 'bootstrap4')
 Vue.use(ServerTable)
 Vue.use(Event)
 // BSV Plugin Registration

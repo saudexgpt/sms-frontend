@@ -23,6 +23,7 @@ const getters = {
   userData: state => state.user.userData,
   permissionRoutes: state => state.permission.routes,
   addRoutes: state => state.permission.addRoutes,
+  baseServerUrl: state => state.app.baseServerUrl,
 //   sidebar: state => state.app.sidebar,
 //   language: state => state.app.language,
 //   size: state => state.app.size,

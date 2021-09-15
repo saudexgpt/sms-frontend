@@ -9,11 +9,17 @@
 ========================================================================================== -->
 
 <template functional>
-  <footer :class="classes" class="the-footer flex-wrap justify-between">
+  <footer
+    :class="classes"
+    class="the-footer flex-wrap justify-between"
+  >
     <p>
       <span>COPYRIGHT &copy;</span>
       <span>{{ new Date().getFullYear() }} </span>
-      <a href="#" rel="nofollow"><span>GPL-SALES</span></a>
+      <a
+        href="#"
+        rel="nofollow"
+      ><span>GPL-SALES</span></a>
     </p>
     <span class="md:flex hidden items-center">
       <span>All rights Reserved</span>
@@ -37,5 +43,5 @@ export default {
       default: () => ('AKIRS'),
     },
   },
-};
+}
 </script>

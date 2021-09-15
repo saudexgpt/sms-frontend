@@ -1,28 +1,39 @@
 <template>
   <div class="flex">
-    <div class="search-full-container w-full h-full absolute left-0 top-0" :class="{'flex': showFullSearch}" v-show="showFullSearch">
+    <div
+      v-show="showFullSearch"
+      class="search-full-container w-full h-full absolute left-0 top-0"
+      :class="{'flex': showFullSearch}"
+    >
       <vx-auto-suggest
         ref="navbarSearch"
-        :autoFocus="showFullSearch"
+        :auto-focus="showFullSearch"
         :data="navbarSearchAndPinList"
         search_key="title"
         background-overlay
         class="w-full"
-        inputClassses="w-full vs-input-no-border vs-input-no-shdow-focus"
+        input-classses="w-full vs-input-no-border vs-input-no-shdow-focus"
         icon="SearchIcon"
         placeholder="Type a word..."
         @input="hnd_search_query_update"
         @selected="selected"
-        @closeSearchbar="showFullSearch = false">
+        @closeSearchbar="showFullSearch = false"
+      >
 
         <template v-slot:group="{ group_name }">
-          <p class="font-semibold text-primary">{{ group_name | title }}</p>
+          <p class="font-semibold text-primary">
+            {{ group_name | title }}
+          </p>
         </template>
 
         <!-- Pages Suggestion -->
         <template v-slot:pages="{ suggestion }">
           <div class="flex items-end leading-none py-1">
-            <feather-icon :icon="suggestion.icon" svgClasses="h-5 w-5" class="mr-4" />
+            <feather-icon
+              :icon="suggestion.icon"
+              svg-classes="h-5 w-5"
+              class="mr-4"
+            />
             <span class="mt-1">{{ suggestion.title }}</span>
           </div>
         </template>
@@ -40,10 +51,16 @@
                   If you uncomment dynamic image rendering, computed property 'get_ext_img' is not required. So you can remove that.
                 -->
                 <!-- <img :src="require(`@assets/images/file-icons/${suggestion.file_ext}.png`)" :alt="suggestion.file_name" class="responsive"> -->
-                <img :src="get_ext_img(suggestion.file_ext)" :alt="suggestion.file_name" class="responsive">
+                <img
+                  :src="get_ext_img(suggestion.file_ext)"
+                  :alt="suggestion.file_name"
+                  class="responsive"
+                >
               </div>
               <div class="leading-none mt-1">
-                <p class="mb-1">{{ suggestion.file_name }}</p>
+                <p class="mb-1">
+                  {{ suggestion.file_name }}
+                </p>
                 <small>by {{ suggestion.from }}</small>
               </div>
             </div>
@@ -55,7 +72,11 @@
         <template v-slot:contacts="{ suggestion }">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <img :src="suggestion.img" :alt="suggestion.name" class="w-8 h-8 mr-3 rounded-full">
+              <img
+                :src="suggestion.img"
+                :alt="suggestion.name"
+                class="w-8 h-8 mr-3 rounded-full"
+              >
               <div class="leading-none mt-1">
                 <p>{{ suggestion.name }}</p>
                 <small>{{ suggestion.email }}</small>
@@ -68,7 +89,11 @@
         <!-- No Items Slot -->
         <template v-slot:noResult="{ group_name }">
           <div class="flex items-center">
-            <feather-icon icon="InfoIcon" svgClasses="h-5 w-5" class="mr-4" />
+            <feather-icon
+              icon="InfoIcon"
+              svg-classes="h-5 w-5"
+              class="mr-4"
+            />
             <span>No results found.</span>
           </div>
         </template>
@@ -79,10 +104,15 @@
         <feather-icon
           icon="XIcon"
           class="px-4 cursor-pointer h-full close-search-icon"
-          @click="showFullSearch = false" />
+          @click="showFullSearch = false"
+        />
       </div>
     </div>
-    <feather-icon icon="SearchIcon" @click="showFullSearch = true" class="cursor-pointer navbar-fuzzy-search ml-4" />
+    <feather-icon
+      icon="SearchIcon"
+      class="cursor-pointer navbar-fuzzy-search ml-4"
+      @click="showFullSearch = true"
+    />
   </div>
 </template>
 
@@ -91,36 +121,36 @@ import VxAutoSuggest from '@/components/vx-auto-suggest/VxAutoSuggest.vue'
 
 export default {
   components: {
-    VxAutoSuggest
+    VxAutoSuggest,
   },
-  data () {
+  data() {
     return {
       navbarSearchAndPinList: this.$store.state.navbarSearchAndPinList,
-      showFullSearch: false
+      showFullSearch: false,
     }
   },
   computed: {
     // below computed property 'get_ext_img' is not required if you are using dynamic image rendering instead of if-else for laravel issue
-    get_ext_img () {
-      return (ext) => {
-        if (ext === 'doc')      return require('@assets/images/file-icons/doc.png')
-        else if (ext === 'jpg') return require('@assets/images/file-icons/jpg.png')
-        else if (ext === 'xls') return require('@assets/images/file-icons/xls.png')
-        else if (ext === 'pdf') return require('@assets/images/file-icons/pdf.png')
-        else return require('@assets/images/file-icons/doc.png')
+    get_ext_img() {
+      return ext => {
+        if (ext === 'doc') return require('@assets/images/file-icons/doc.png')
+        if (ext === 'jpg') return require('@assets/images/file-icons/jpg.png')
+        if (ext === 'xls') return require('@assets/images/file-icons/xls.png')
+        if (ext === 'pdf') return require('@assets/images/file-icons/pdf.png')
+        return require('@assets/images/file-icons/doc.png')
       }
-    }
+    },
   },
   methods: {
-    selected (item) {
+    selected(item) {
       if (item.pages) this.$router.push(item.pages.url).catch(() => {})
       this.showFullSearch = false
     },
-    hnd_search_query_update (query) {
+    hnd_search_query_update(query) {
       // Show overlay if any character is entered
       this.$store.commit('TOGGLE_CONTENT_OVERLAY', !!query)
-    }
-  }
+    },
+  },
 }
 
 </script>

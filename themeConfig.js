@@ -16,7 +16,7 @@ export const $themeConfig = {
   layout: {
     isRTL: false,
     skin: 'semi-dark', // light, dark, bordered, semi-dark
-    routerTransition: 'zoom-out', // zoom-fade, slide-fade, fade-bottom, fade, zoom-out, none
+    routerTransition: 'slide-fade', // zoom-fade, slide-fade, fade-bottom, fade, zoom-out, none
     type: 'vertical', // vertical, horizontal
     contentWidth: 'full', // full, boxed
     menu: {
@@ -29,7 +29,7 @@ export const $themeConfig = {
       backgroundColor: 'primary', // BS color options [primary, success, etc]
     },
     footer: {
-      type: 'sticky', // static, sticky, hidden
+      type: 'static', // static, sticky, hidden
     },
     customizer: true,
     enableScrollToTop: true,

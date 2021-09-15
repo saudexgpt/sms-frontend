@@ -12,24 +12,35 @@
   <div class="parentx">
 
     <vs-sidebar
-      v-hammer:swipe="onMenuSwipe"
       ref="verticalNavMenu"
       v-model="isVerticalNavMenuActive"
+      v-hammer:swipe="onMenuSwipe"
       :click-not-close="clickNotClose"
       :reduce-not-rebound="reduceNotRebound"
       :parent="parent"
       :hidden-background="clickNotClose"
       :reduce="reduce"
       class="v-nav-menu items-no-padding"
-      default-index="-1">
+      default-index="-1"
+    >
 
-      <div @mouseenter="mouseEnter" @mouseleave="mouseLeave">
+      <div
+        @mouseenter="mouseEnter"
+        @mouseleave="mouseLeave"
+      >
 
         <!-- Header -->
-        <div slot="header" class="header-sidebar flex items-end justify-between">
+        <div
+          slot="header"
+          class="header-sidebar flex items-end justify-between"
+        >
 
           <!-- Logo -->
-          <router-link tag="div" class="vx-logo cursor-pointer flex items-center" to="/">
+          <router-link
+            tag="div"
+            class="vx-logo cursor-pointer flex items-center"
+            to="/"
+          >
             <logo class="fill-current text-primary" />
             <!-- <span v-show="isMouseEnter || !reduce" v-if="title" class="vx-logo-text text-primary v-nav-text-border">{{ title }}</span> -->
           </router-link>
@@ -39,7 +50,11 @@
           <div>
             <!-- Close Button -->
             <template v-if="showCloseButton">
-              <feather-icon icon="XIcon" class="m-0 cursor-pointer" @click="$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)" />
+              <feather-icon
+                icon="XIcon"
+                class="m-0 cursor-pointer"
+                @click="$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)"
+              />
             </template>
 
             <!-- Toggle Buttons -->
@@ -49,7 +64,8 @@
                 :icon="reduce ? 'CircleIcon' : 'DiscIcon'"
                 class="mr-0 cursor-pointer"
                 svg-classes="stroke-current text-primary"
-                @click="toggleReduce(!reduce)" />
+                @click="toggleReduce(!reduce)"
+              />
             </template>
           </div>
           <!-- /Menu Toggle Buttons -->
@@ -57,13 +73,28 @@
         <!-- /Header -->
 
         <!-- Header Shadow -->
-        <div v-show="showShadowBottom" class="shadow-bottom" />
+        <div
+          v-show="showShadowBottom"
+          class="shadow-bottom"
+        />
 
         <!-- Menu Items -->
-        <component ref="verticalNavMenuPs" :is="scrollbarTag" :key="$vs.rtl" :settings="settings" class="scroll-area-v-nav-menu pt-2" @ps-scroll-y="psSectionScroll" @scroll="psSectionScroll">
+        <component
+          :is="scrollbarTag"
+          ref="verticalNavMenuPs"
+          :key="$vs.rtl"
+          :settings="settings"
+          class="scroll-area-v-nav-menu pt-2"
+          @ps-scroll-y="psSectionScroll"
+          @scroll="psSectionScroll"
+        >
           <template v-for="(item, index) in menuItemsUpdated">
             <!-- Group Header -->
-            <span v-if="item.header && !verticalNavMenuItemsMin" :key="`header-${index}`" class="navigation-header truncate">
+            <span
+              v-if="item.header && !verticalNavMenuItemsMin"
+              :key="`header-${index}`"
+              class="navigation-header truncate"
+            >
               {{ $t(item.i18n) || item.header }}
             </span>
             <!-- /Group Header -->
@@ -76,7 +107,8 @@
                     :open-hover="openGroupHover"
                     :group="item"
                     :group-index="index"
-                    :open="isGroupActive(item)" />
+                    :open="isGroupActive(item)"
+                  />
                 </template>
                 <template v-else>
                   <v-nav-menu-item
@@ -87,9 +119,19 @@
                     :icon="item.icon"
                     :target="item.target"
                     :is-disabled="item.isDisabled"
-                    :slug="item.slug">
-                    <span v-show="!verticalNavMenuItemsMin" class="truncate">{{ $t(item.i18n) || item.name }}</span>
-                    <vs-chip v-if="item.tag && (isMouseEnter || !reduce)" :color="item.tagColor" class="ml-auto">{{ item.tag }}</vs-chip>
+                    :slug="item.slug"
+                  >
+                    <span
+                      v-show="!verticalNavMenuItemsMin"
+                      class="truncate"
+                    >{{ $t(item.i18n) || item.name }}</span>
+                    <vs-chip
+                      v-if="item.tag && (isMouseEnter || !reduce)"
+                      :color="item.tagColor"
+                      class="ml-auto"
+                    >
+                      {{ item.tag }}
+                    </vs-chip>
                   </v-nav-menu-item>
                 </template>
               </template>
@@ -106,9 +148,19 @@
                     :icon="item_children.icon"
                     :target="item_children.target"
                     :is-disabled="item_children.isDisabled"
-                    :slug="item_children.slug">
-                    <span v-show="!verticalNavMenuItemsMin" class="truncate">{{ $t(item_children.i18n) || item_children.name }}</span>
-                    <vs-chip v-if="item_children.tag && (isMouseEnter || !reduce)" :color="item_children.tagColor" class="ml-auto">{{ item_children.tag }}</vs-chip>
+                    :slug="item_children.slug"
+                  >
+                    <span
+                      v-show="!verticalNavMenuItemsMin"
+                      class="truncate"
+                    >{{ $t(item_children.i18n) || item_children.name }}</span>
+                    <vs-chip
+                      v-if="item_children.tag && (isMouseEnter || !reduce)"
+                      :color="item_children.tagColor"
+                      class="ml-auto"
+                    >
+                      {{ item_children.tag }}
+                    </vs-chip>
                   </v-nav-menu-item>
 
                   <!-- Nav-Group -->
@@ -118,7 +170,8 @@
                       :open-hover="openGroupHover"
                       :group="item_children"
                       :group-index="index_children"
-                      :open="isGroupActive(item_children)" />
+                      :open="isGroupActive(item_children)"
+                    />
                   </template>
                 <!-- /Nav-Group -->
                 </template>
@@ -133,19 +186,20 @@
 
     <!-- Swipe Gesture -->
     <div
-      v-hammer:swipe="onSwipeAreaSwipe"
       v-if="!isVerticalNavMenuActive"
-      class="v-nav-menu-swipe-area" />
-      <!-- /Swipe Gesture -->
+      v-hammer:swipe="onSwipeAreaSwipe"
+      class="v-nav-menu-swipe-area"
+    />
+    <!-- /Swipe Gesture -->
   </div>
 </template>
 
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
-import VNavMenuGroup from './VerticalNavMenuGroup.vue';
-import VNavMenuItem from './VerticalNavMenuItem.vue';
+import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import VNavMenuGroup from './VerticalNavMenuGroup.vue'
+import VNavMenuItem from './VerticalNavMenuItem.vue'
 
-import Logo from '../Logo.vue';
+import Logo from '../Logo.vue'
 
 export default {
   name: 'VNavMenu',
@@ -177,118 +231,118 @@ export default {
   }),
   computed: {
     isGroupActive() {
-      return (item) => {
-        const path = this.$route.fullPath;
-        const routeParent = this.$route.meta ? this.$route.meta.parent : undefined;
-        let open = false;
+      return item => {
+        const path = this.$route.fullPath
+        const routeParent = this.$route.meta ? this.$route.meta.parent : undefined
+        let open = false
 
-        const func = (item) => {
+        const func = item => {
           if (item.children) {
-            item.children.forEach((item) => {
+            item.children.forEach(item => {
               if (item.path && (path === item.path || routeParent === item.slug)) {
-                open = true;
+                open = true
               } else if (item.children) {
-                func(item);
+                func(item)
               }
-            });
+            })
           }
-        };
-        func(item);
-        return open;
-      };
+        }
+        func(item)
+        return open
+      }
     },
     menuItemsUpdated() {
-      const clone = this.navMenuItems.slice();
+      const clone = this.navMenuItems.slice()
       for (const [index, item] of this.navMenuItems.entries()) {
         if (item.header && item.items.length && (index || 1)) {
-          const i = clone.findIndex(ix => ix.header === item.header);
+          const i = clone.findIndex(ix => ix.header === item.header)
           for (const [subIndex, subItem] of item.items.entries()) {
-            clone.splice(i + 1 + subIndex, 0, subItem);
+            clone.splice(i + 1 + subIndex, 0, subItem)
           }
         }
       }
 
-      return clone;
+      return clone
     },
     isVerticalNavMenuActive: {
       get() {
-        return this.$store.state.isVerticalNavMenuActive;
+        return this.$store.state.isVerticalNavMenuActive
       },
       set(val) {
-        this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', val);
+        this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', val)
       },
     },
     layoutType() {
-      return this.$store.state.mainLayoutType;
+      return this.$store.state.mainLayoutType
     },
     reduceButton: {
       get() {
-        return this.$store.state.reduceButton;
+        return this.$store.state.reduceButton
       },
       set(val) {
-        this.$store.commit('TOGGLE_REDUCE_BUTTON', val);
+        this.$store.commit('TOGGLE_REDUCE_BUTTON', val)
       },
     },
     isVerticalNavMenuReduced() {
-      return Boolean(this.reduce && this.reduceButton);
+      return Boolean(this.reduce && this.reduceButton)
     },
     verticalNavMenuItemsMin() {
-      return this.$store.state.verticalNavMenuItemsMin;
+      return this.$store.state.verticalNavMenuItemsMin
     },
     scrollbarTag() {
-      return this.$store.getters.scrollbarTag;
+      return this.$store.getters.scrollbarTag
     },
     windowWidth() {
-      return this.$store.state.windowWidth;
+      return this.$store.state.windowWidth
     },
   },
   watch: {
-    '$route'() {
+    $route() {
       if (this.isVerticalNavMenuActive && this.showCloseButton) {
-        this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false);
+        this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)
       }
     },
     reduce(val) {
-      const verticalNavMenuWidth = val ? 'reduced' : this.$store.state.windowWidth < 1200 ? 'no-nav-menu' : 'default';
-      this.$store.dispatch('updateVerticalNavMenuWidth', verticalNavMenuWidth);
+      const verticalNavMenuWidth = val ? 'reduced' : this.$store.state.windowWidth < 1200 ? 'no-nav-menu' : 'default'
+      this.$store.dispatch('updateVerticalNavMenuWidth', verticalNavMenuWidth)
 
-      setTimeout(function() {
-        window.dispatchEvent(new Event('resize'));
-      }, 100);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'))
+      }, 100)
     },
     layoutType() {
-      this.setVerticalNavMenuWidth();
+      this.setVerticalNavMenuWidth()
     },
     reduceButton() {
-      this.setVerticalNavMenuWidth();
+      this.setVerticalNavMenuWidth()
     },
     windowWidth() {
-      this.setVerticalNavMenuWidth();
+      this.setVerticalNavMenuWidth()
     },
   },
   mounted() {
-    this.setVerticalNavMenuWidth();
+    this.setVerticalNavMenuWidth()
   },
   methods: {
-    checkUnhiddenLink(children){
-      var output = false;
+    checkUnhiddenLink(children) {
+      let output = false
       children.filter(child => {
         if (child.hidden === false) {
-          output = true;
+          output = true
         }
-      });
-      return output;
+      })
+      return output
     },
     onMenuSwipe(event) {
       if (event.direction === 4 && this.$vs.rtl) {
         // Swipe Right
         if (this.isVerticalNavMenuActive && this.showCloseButton) {
-          this.isVerticalNavMenuActive = false;
+          this.isVerticalNavMenuActive = false
         }
       } else if (event.direction === 2 && !this.$vs.rtl) {
         // Swipe Left
         if (this.isVerticalNavMenuActive && this.showCloseButton) {
-          this.isVerticalNavMenuActive = false;
+          this.isVerticalNavMenuActive = false
         }
       }
     },
@@ -296,72 +350,72 @@ export default {
       if (event.direction === 4 && !this.$vs.rtl) {
         // Swipe Right
         if (!this.isVerticalNavMenuActive && this.showCloseButton) {
-          this.isVerticalNavMenuActive = true;
+          this.isVerticalNavMenuActive = true
         }
       } else if (event.direction === 2 && this.$vs.rtl) {
         // Swipe Left
         if (!this.isVerticalNavMenuActive && this.showCloseButton) {
-          this.isVerticalNavMenuActive = true;
+          this.isVerticalNavMenuActive = true
         }
       }
     },
     psSectionScroll() {
-      const scroll_el = this.$refs.verticalNavMenuPs.$el || this.$refs.verticalNavMenuPs;
-      this.showShadowBottom = scroll_el.scrollTop > 0;
+      const scroll_el = this.$refs.verticalNavMenuPs.$el || this.$refs.verticalNavMenuPs
+      this.showShadowBottom = scroll_el.scrollTop > 0
     },
     mouseEnter() {
       if (this.reduce) {
-        this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false);
+        this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false)
       }
-      this.isMouseEnter = true;
+      this.isMouseEnter = true
     },
     mouseLeave() {
       if (this.reduce) {
-        this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', true);
+        this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', true)
       }
-      this.isMouseEnter = false;
+      this.isMouseEnter = false
     },
     setVerticalNavMenuWidth() {
       if (this.windowWidth > 1200) {
         if (this.layoutType === 'vertical') {
           // Set reduce
-          this.reduce = !!this.reduceButton;
+          this.reduce = !!this.reduceButton
 
           // Open NavMenu
-          this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', true);
+          this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', true)
 
           // Set Menu Items Only Icon Mode
-          const verticalNavMenuItemsMin = !!(this.reduceButton && !this.isMouseEnter);
-          this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', verticalNavMenuItemsMin);
+          const verticalNavMenuItemsMin = !!(this.reduceButton && !this.isMouseEnter)
+          this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', verticalNavMenuItemsMin)
 
           // Menu Action buttons
-          this.clickNotClose = true;
-          this.showCloseButton = false;
+          this.clickNotClose = true
+          this.showCloseButton = false
 
-          const verticalNavMenuWidth = this.isVerticalNavMenuReduced ? 'reduced' : 'default';
-          this.$store.dispatch('updateVerticalNavMenuWidth', verticalNavMenuWidth);
+          const verticalNavMenuWidth = this.isVerticalNavMenuReduced ? 'reduced' : 'default'
+          this.$store.dispatch('updateVerticalNavMenuWidth', verticalNavMenuWidth)
 
-          return;
+          return
         }
       }
 
       // Close NavMenu
-      this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false);
+      this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)
 
       // Reduce button
       if (this.reduceButton) {
-        this.reduce = false;
+        this.reduce = false
       }
 
       // Menu Action buttons
-      this.showCloseButton = true;
-      this.clickNotClose = false;
+      this.showCloseButton = true
+      this.clickNotClose = false
 
       // Update NavMenu Width
-      this.$store.dispatch('updateVerticalNavMenuWidth', 'no-nav-menu');
+      this.$store.dispatch('updateVerticalNavMenuWidth', 'no-nav-menu')
 
       // Remove Only Icon in Menu
-      this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false);
+      this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false)
 
       // if(this.layoutType === 'vertical' || (this.layoutType === 'horizontal' && this.windowWidth < 1200))
       // if (this.windowWidth < 1200) {
@@ -403,11 +457,11 @@ export default {
       // }
     },
     toggleReduce(val) {
-      this.reduceButton = val;
-      this.setVerticalNavMenuWidth();
+      this.reduceButton = val
+      this.setVerticalNavMenuWidth()
     },
   },
-};
+}
 
 </script>
 

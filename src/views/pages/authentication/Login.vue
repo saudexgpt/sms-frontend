@@ -41,79 +41,49 @@
               class="mx-auto"
             >
           </b-card-title>
-
-          <!-- form -->
-          <validation-observer
-            ref="loginForm"
-            #default="{invalid}"
+          <b-form
+            v-loading="loading"
+            class="auth-login-form mt-2"
+            @submit.prevent="login"
           >
-            <b-form
-              class="auth-login-form mt-2"
-              @submit.prevent="login"
+            <!-- email -->
+            <b-form-group
+              label="Username"
+              label-for="login-email"
             >
-              <!-- email -->
-              <b-form-group
-                label="Username"
-                label-for="login-email"
+              <b-form-input
+                id="login-email"
+                v-model="userEmail"
+                name="login-email"
+                placeholder="Enter username"
+              />
+            </b-form-group>
+
+            <!-- forgot password -->
+            <b-form-group>
+              <b-input-group
+                class="input-group-merge"
               >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Email"
-                  vid="email"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="login-email"
-                    v-model="userEmail"
-                    :state="errors.length > 0 ? false:null"
-                    name="login-email"
-                    placeholder="john@example.com"
+                <b-form-input
+                  id="login-password"
+                  v-model="password"
+                  class="form-control-merge"
+                  :type="passwordFieldType"
+                  name="login-password"
+                  placeholder="Password"
+                />
+                <b-input-group-append is-text>
+                  <feather-icon
+                    class="cursor-pointer"
+                    :icon="passwordToggleIcon"
+                    @click="togglePasswordVisibility"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
 
-              <!-- forgot password -->
-              <b-form-group>
-                <!-- <div class="d-flex justify-content-between">
-                  <label for="login-password">Password</label>
-                  <b-link :to="{name:'auth-forgot-password'}">
-                    <small>Forgot Password?</small>
-                  </b-link>
-                </div> -->
-                <validation-provider
-                  #default="{ errors }"
-                  name="Password"
-                  vid="password"
-                  rules="required"
-                >
-                  <b-input-group
-                    class="input-group-merge"
-                    :class="errors.length > 0 ? 'is-invalid':null"
-                  >
-                    <b-form-input
-                      id="login-password"
-                      v-model="password"
-                      :state="errors.length > 0 ? false:null"
-                      class="form-control-merge"
-                      :type="passwordFieldType"
-                      name="login-password"
-                      placeholder="Password"
-                    />
-                    <b-input-group-append is-text>
-                      <feather-icon
-                        class="cursor-pointer"
-                        :icon="passwordToggleIcon"
-                        @click="togglePasswordVisibility"
-                      />
-                    </b-input-group-append>
-                  </b-input-group>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- checkbox -->
-              <!-- <b-form-group>
+            <!-- checkbox -->
+            <!-- <b-form-group>
                 <b-form-checkbox
                   id="remember-me"
                   v-model="status"
@@ -123,17 +93,15 @@
                 </b-form-checkbox>
               </b-form-group> -->
 
-              <!-- submit buttons -->
-              <b-button
-                variant="primary"
-                block
-                :disabled="invalid"
-                @click="login"
-              >
-                Sign in
-              </b-button>
-            </b-form>
-          </validation-observer>
+            <!-- submit buttons -->
+            <b-button
+              variant="primary"
+              block
+              @click="login"
+            >
+              Sign in
+            </b-button>
+          </b-form>
 
         </b-col>
       </b-col>
@@ -144,17 +112,17 @@
 
 <script>
 /* eslint-disable global-require */
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
+// import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   BRow, BCol, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BCardTitle, BImg, BForm, BButton, VBTooltip,
 } from 'bootstrap-vue'
 // import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import store from '@/store'
 // import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-import { getToken } from '@/utils/auth' // get token from cookie
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { isUserLoggedIn } from '@/utils/auth' // get token from cookie
 
 export default {
   directives: {
@@ -173,8 +141,8 @@ export default {
     BImg,
     BForm,
     BButton,
-    ValidationProvider,
-    ValidationObserver,
+    // ValidationProvider,
+    // ValidationObserver,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -187,7 +155,7 @@ export default {
       // validation rules
       required,
       email,
-      loader: false,
+      loading: false,
     }
   },
   computed: {
@@ -245,34 +213,33 @@ export default {
     // },
     isLoggedIn() {
       // If user is already logged in notify
-      const hasToken = getToken()
-      if (hasToken) {
+      if (isUserLoggedIn) {
         return true
       }
       return false
     },
     login() {
-      if (this.isLoggedIn()) {
-        this.$router.push('/').catch(() => {}) // window.location = '/dashboard/ecommerce'
-        this.$toast({
-          component: ToastificationContent,
-          position: 'top-right',
-          props: {
-            title: 'Already Logged In',
-            icon: 'CoffeeIcon',
-            variant: 'warning',
-            text: 'You are already logged in!',
-          },
-        })
-        return
-      }
+      // if (this.isLoggedIn()) {
+      //   window.location = '/dashboard-ecommerce' // this.$router.push('/').catch(() => {}) // window.location = '/dashboard/ecommerce'
+      //   this.$toast({
+      //     component: ToastificationContent,
+      //     position: 'top-right',
+      //     props: {
+      //       title: 'Already Logged In',
+      //       icon: 'BellIcon',
+      //       variant: 'warning',
+      //       text: 'You are already logged in!',
+      //     },
+      //   })
+      //   return
+      // }
 
       // Loading
-      this.loader = true
+      this.loading = true
 
       const payload = {
         userDetails: {
-          email: this.userEmail,
+          username: this.userEmail,
           password: this.password,
           // remember_me: this.checkbox_remember_me,
         },
@@ -285,17 +252,17 @@ export default {
             position: 'top-right',
             props: {
               title: 'Login Success',
-              icon: 'CoffeeIcon',
+              icon: 'BellIcon',
               variant: 'success',
               text: 'Welcome',
             },
           })
           // we load the browser this once
-          this.$router.push({ path: '/' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
-          this.loader = false
+          window.location = '/' // this.$router.push({ path: '/' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
+          this.loading = false
         })
         .catch(error => {
-          this.loader = false
+          this.loading = false
           this.$toast({
             component: ToastificationContent,
             position: 'top-right',

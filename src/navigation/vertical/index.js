@@ -32,15 +32,17 @@ tagVariant
 */
 import dashboard from './nav-modules/dashboard'
 // import appsAndPages from './apps-and-pages'
-import adminSettings from './nav-modules/admin-settings'
+import results from './nav-modules/result'
+import adminSettings from './nav-modules/school-setup'
 import appSetup from './nav-modules/app-setup'
+import userManagement from './nav-modules/user-management'
 // import others from './others'
 // import chartsAndMaps from './charts-and-maps'
 // import uiElements from './ui-elements'
 // import formAndTable from './forms-and-table'
 
 // Array of sections
-export default [...dashboard, ...adminSettings, ...appSetup]
+export default [...dashboard, ...results, ...userManagement, ...adminSettings, ...appSetup]
 
 // import store from '@/store'
 

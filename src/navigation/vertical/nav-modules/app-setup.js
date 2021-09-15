@@ -1,12 +1,12 @@
 export default [
   {
-    header: 'App Setup',
+    header: 'App Settings',
     acl: {
       roles: ['super'],
     },
   },
   {
-    title: 'Setup',
+    title: 'Settings',
     icon: 'ToolIcon',
     // tag: '2',
     // tagVariant: 'light-warning',
@@ -14,6 +14,10 @@ export default [
       roles: ['super'],
     },
     children: [
+      {
+        title: 'Currlm. Level Group',
+        route: 'curriculum-level-group',
+      },
       {
         title: 'Curriculum Level',
         route: 'curriculum-level-setup',

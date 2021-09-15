@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import getters from './getters'
 import camelCase from 'camelcase'
+import getters from './getters'
 import mutations from './mutations'
 import state from './state'
 import actions from './actions'
+
 Vue.use(Vuex)
 
 // https://webpack.js.org/guides/dependency-management/#requirecontext
@@ -26,7 +27,7 @@ const store = new Vuex.Store({
   state,
   mutations,
   getters,
-  strict: process.env.NODE_ENV !== 'production'
+  strict: process.env.NODE_ENV !== 'production',
 })
 
 export default store

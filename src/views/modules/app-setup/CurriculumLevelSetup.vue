@@ -1,120 +1,52 @@
 <template>
-  <b-row>
-    <b-col cols="12">
+  <el-card>
+    <div slot="header">
       <b-row>
-        <b-col cols="6">
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="gradient-primary"
-            pill
-            @click="isCreateLevelSidebarActive = true"
-          >
-            <feather-icon
-              icon="FilePlusIcon"
-              class="mr-50"
-            />
-            <span class="align-middle">Create</span>
-          </b-button>
-        </b-col>
-        <b-col cols="6">
-          <!-- search input -->
-          <div class="custom-search d-flex justify-content-end">
-            <b-form-group>
-              <div class="d-flex align-items-center">
-                <label class="mr-1">Search</label>
-                <b-form-input
-                  v-model="searchTerm"
-                  placeholder="Search"
-                  type="text"
-                  class="d-inline-block"
-                />
-              </div>
-            </b-form-group>
-          </div>
-        </b-col>
-      </b-row>
-      <!-- table -->
-      <vue-good-table
-        :columns="columns"
-        :rows="curriculumLevels"
-        :search-options="{
-          enabled: true,
-          externalQuery: searchTerm }"
-        :pagination-options="{
-          enabled: true,
-          perPage:pageLength
-        }"
-      >
-        <template
-          slot="table-row"
-          slot-scope="props"
+        <b-col
+          cols="6"
         >
-
-          <!-- Column: Action -->
-          <span v-if="props.column.field === 'curriculum_setup'">
-            {{ props.row.curriculum_setup.name }}
-          </span>
-          <!-- Column: Action -->
-          <span v-else-if="props.column.field === 'action'">
+          <h4>Curriculum Level</h4>
+        </b-col>
+        <b-col
+          cols="6"
+        >
+          <span class="pull-right">
             <b-button
-              variant="gradient-warning"
-              class="btn-icon rounded-circle"
-              @click="editThisRow(props)"
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="gradient-primary"
+              @click="isCreateLevelSidebarActive = true"
             >
-              <feather-icon icon="EditIcon" />
+              <feather-icon
+                icon="FilePlusIcon"
+                class="mr-50"
+              />
+              <span class="align-middle">Create</span>
             </b-button>
           </span>
-        </template>
+        </b-col>
+      </b-row>
+    </div>
+    <!-- table -->
 
-        <!-- pagination -->
-        <template
-          slot="pagination-bottom"
-          slot-scope="props"
+    <v-client-table
+      v-model="curriculumLevels"
+      v-loading="loading"
+      :columns="columns"
+      :options="options"
+    >
+      <div
+        slot="action"
+        slot-scope="props"
+      >
+        <b-button
+          variant="gradient-warning"
+          class="btn-icon rounded-circle"
+          @click="editThisRow(props.row)"
         >
-          <div class="d-flex justify-content-between flex-wrap">
-            <div class="d-flex align-items-center mb-0 mt-1">
-              <span class="text-nowrap ">
-                Showing 1 to
-              </span>
-              <b-form-select
-                v-model="pageLength"
-                :options="['10', '25', '50', '100']"
-                class="mx-1"
-                @input="(value)=>props.perPageChanged({currentPerPage:value})"
-              />
-              <span class="text-nowrap"> of {{ props.total }} entries </span>
-            </div>
-            <div>
-              <b-pagination
-                :value="1"
-                :total-rows="props.total"
-                :per-page="pageLength"
-                first-number
-                last-number
-                align="right"
-                prev-class="prev-item"
-                next-class="next-item"
-                class="mt-1 mb-0"
-                @input="(value)=>props.pageChanged({currentPage:value})"
-              >
-                <template #prev-text>
-                  <feather-icon
-                    icon="ChevronLeftIcon"
-                    size="18"
-                  />
-                </template>
-                <template #next-text>
-                  <feather-icon
-                    icon="ChevronRightIcon"
-                    size="18"
-                  />
-                </template>
-              </b-pagination>
-            </div>
-          </div>
-        </template>
-      </vue-good-table>
-    </b-col>
+          <feather-icon icon="EditIcon" />
+        </b-button>
+      </div>
+    </v-client-table>
     <create-curriculum-level
       v-if="isCreateLevelSidebarActive"
       v-model="isCreateLevelSidebarActive"
@@ -126,29 +58,29 @@
       :selected-curriculum-level="editable_row"
       @update="updateEditedTableRow"
     />
-  </b-row>
+  </el-card>
 </template>
 
 <script>
 import {
-  BButton, BPagination, BFormGroup, BFormInput, BFormSelect, BRow, BCol,
+  BButton, BRow, BCol,
 } from 'bootstrap-vue'
-import { VueGoodTable } from 'vue-good-table'
-import Resource from '@/api/resource'
+// import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
-import CreateCurriculumLevel from './CreateCurriculumLevel.vue'
-import EditCurriculumLevel from './EditCurriculumLevel.vue'
+import Resource from '@/api/resource'
+import CreateCurriculumLevel from './partials/CreateCurriculumLevel.vue'
+import EditCurriculumLevel from './partials/EditCurriculumLevel.vue'
 
 export default {
   components: {
-    VueGoodTable,
+    // VueGoodTable,
     CreateCurriculumLevel,
     EditCurriculumLevel,
     BButton,
-    BPagination,
-    BFormGroup,
-    BFormInput,
-    BFormSelect,
+    // BPagination,
+    // BFormGroup,
+    // BFormInput,
+    // BFormSelect,
     BRow,
     BCol,
   },
@@ -157,36 +89,68 @@ export default {
   },
   data() {
     return {
+      loading: false,
       isCreateLevelSidebarActive: false,
       isEditLevelSidebarActive: false,
       pageLength: 10,
       dir: false,
+      // columns: [
+      //   {
+      //     label: '#',
+      //     field: 'id',
+      //   },
+      //   {
+      //     label: 'Name',
+      //     field: 'name',
+      //   },
+      //   {
+      //     label: 'Curriculum',
+      //     field: 'curriculum_category',
+      //   },
+      //   {
+      //     label: 'Action',
+      //     field: 'action',
+      //   },
+      // ],
       columns: [
-        {
-          label: '#',
-          field: 'id',
-        },
-        {
-          label: 'Name',
-          field: 'level_name',
-        },
-        {
-          label: 'Abbrev',
-          field: 'abbrev',
-        },
-        {
-          label: 'Group',
-          field: 'level_group',
-        },
-        {
-          label: 'Curriculum',
-          field: 'curriculum_setup',
-        },
-        {
-          label: 'Action',
-          field: 'action',
-        },
+        'level_name',
+        'abbrev',
+        'curriculum_level_group.name',
+        'curriculum_category.name',
+        'action',
       ],
+
+      options: {
+        headings: {
+          abbrev: 'Abbreviation',
+          'curriculum_level_group.name': 'Level Group',
+          'curriculum_category.name': 'Curriculum',
+
+          // id: 'S/N',
+        },
+        // pagination: {
+        //   dropdown: true,
+        //   chunk: 10,
+        // },
+        perPage: 10,
+        filterByColumn: true,
+        texts: {
+          filter: 'Search:',
+        },
+        sortable: [
+          'level_name',
+          'abbrev',
+          'curriculum_level_group.name',
+          'curriculum_category.name',
+        ],
+        // filterable: false,
+        filterable: [
+          'level_name',
+          'abbrev',
+          'curriculum_level_group.name',
+          'curriculum_category.name',
+        ],
+      },
       curriculumLevels: [],
       searchTerm: '',
       editable_row: '',
@@ -194,32 +158,33 @@ export default {
     }
   },
   created() {
-    this.fetchCurriculumLevels()
+    this.fetchcurriculumLevels()
   },
   methods: {
-    fetchCurriculumLevels() {
+    fetchcurriculumLevels() {
       const app = this
+      app.loading = true
       const fetchCurriculumSetupResource = new Resource('curriculum/level/all')
       fetchCurriculumSetupResource.list()
         .then(response => {
           app.curriculumLevels = response.curriculum_levels
+          app.loading = false
         })
     },
     updateTable(curriculum) {
       const app = this
       app.curriculumLevels.unshift(curriculum)
     },
-    editThisRow(props) {
+    editThisRow(selectedRow) {
       // console.log(props)
       const app = this
-      const editableRow = props.formattedRow
-      app.selected_row_index = props
-      app.editable_row = editableRow
+      // const editableRow = selected_row;
+      app.editable_row = selectedRow
       app.isEditLevelSidebarActive = true
     },
     updateEditedTableRow() {
       const app = this
-      app.fetchCurriculumLevels()
+      app.fetchcurriculumLevels()
     },
   },
 }

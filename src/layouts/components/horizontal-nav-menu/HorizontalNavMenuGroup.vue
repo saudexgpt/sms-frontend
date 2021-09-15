@@ -1,98 +1,115 @@
 <template>
   <div
-    class  = "h-nav-group relative"
-    :class = "[
-      {'h-nav-group-open'            : openItems        },
-      {'h-nav-group-active'          : open             },
+    class="h-nav-group relative"
+    :class="[
+      {'h-nav-group-open' : openItems },
+      {'h-nav-group-active' : open },
       {'disabled-item pointer-events-none': group.isDisabled }
     ]"
-    @mouseover = "mouseover"
-    @mouseleave  = "mouseout">
+    @mouseover="mouseover"
+    @mouseleave="mouseout"
+  >
 
-      <!-- Group Label -->
-      <div class="group-header w-full flex items-center">
-        <span class="flex items-center w-full">
+    <!-- Group Label -->
+    <div class="group-header w-full flex items-center">
+      <span class="flex items-center w-full">
 
-          <!-- Group Icon -->
-          <feather-icon
-            v-if        = "group.icon  || (this.groupIndex > Math.floor(this.groupIndex))"
-            :icon       = "group.icon  || 'CircleIcon'"
-            :svgClasses = "iconClasses" />
-
-          <!-- Group Name -->
-          <span class="truncate mr-3 select-none">{{ $t(group.i18n) || group.name }}</span>
-        </span>
-
-        <!-- Group Collapse Icon -->
+        <!-- Group Icon -->
         <feather-icon
-          :class     = "[{'rotate90' : openItems}, 'feather-grp-header-arrow']"
-          :icon       = "bottom ? 'ChevronDownIcon' : $vs.rtl ? 'ChevronLeftIcon' : 'ChevronRightIcon'"
-          svg-classes= "w-4 h-4" />
-      </div>
-      <!-- /Group Label -->
+          v-if="group.icon || (this.groupIndex > Math.floor(this.groupIndex))"
+          :icon="group.icon || 'CircleIcon'"
+          :svg-classes="iconClasses"
+        />
 
-      <!-- Group Items -->
-      <transition name="fade-bottom-2x">
-      <ul :style="styleItems" class="h-nav-group-items h-nav-menu-dd absolute shadow-drop py-2" v-show="openItems" ref="childDropdown">
-        <li v-for="(groupItem, index) in group.submenu" :key="index">
+        <!-- Group Name -->
+        <span class="truncate mr-3 select-none">{{ $t(group.i18n) || group.name }}</span>
+      </span>
+
+      <!-- Group Collapse Icon -->
+      <feather-icon
+        :class="[{'rotate90' : openItems}, 'feather-grp-header-arrow']"
+        :icon="bottom ? 'ChevronDownIcon' : $vs.rtl ? 'ChevronLeftIcon' : 'ChevronRightIcon'"
+        svg-classes="w-4 h-4"
+      />
+    </div>
+    <!-- /Group Label -->
+
+    <!-- Group Items -->
+    <transition name="fade-bottom-2x">
+      <ul
+        v-show="openItems"
+        ref="childDropdown"
+        :style="styleItems"
+        class="h-nav-group-items h-nav-menu-dd absolute shadow-drop py-2"
+      >
+        <li
+          v-for="(groupItem, index) in group.submenu"
+          :key="index"
+        >
 
           <h-nav-menu-group
-            v-if        = "groupItem.submenu"
-            :group      = "groupItem"
-            :groupIndex = "Number(`${groupIndex}.${index+1}`)"
-            :open       = "isGroupActive(groupItem)"
-            :openHover  = "openHover" />
-
+            v-if="groupItem.submenu"
+            :group="groupItem"
+            :group-index="Number(`${groupIndex}.${index+1}`)"
+            :open="isGroupActive(groupItem)"
+            :open-hover="openHover"
+          />
 
           <h-nav-menu-item
             v-else
             icon-small
-            :index  = "groupIndex + '.' + index"
-            :to     = "groupItem.slug !== 'external' ? groupItem.url : null"
-            :href   = "groupItem.slug === 'external' ? groupItem.url : null"
-            :icon   = "itemIcon"
-            :slug   = "groupItem.slug"
-            :target = "groupItem.target">
-              <span class="truncate">{{ $t(groupItem.i18n) || groupItem.name }}</span>
-              <vs-chip class="ml-auto" :color="groupItem.tagColor" v-if="groupItem.tag">{{ groupItem.tag }}</vs-chip>
+            :index="groupIndex + '.' + index"
+            :to="groupItem.slug !== 'external' ? groupItem.url : null"
+            :href="groupItem.slug === 'external' ? groupItem.url : null"
+            :icon="itemIcon"
+            :slug="groupItem.slug"
+            :target="groupItem.target"
+          >
+            <span class="truncate">{{ $t(groupItem.i18n) || groupItem.name }}</span>
+            <vs-chip
+              v-if="groupItem.tag"
+              class="ml-auto"
+              :color="groupItem.tagColor"
+            >
+              {{ groupItem.tag }}
+            </vs-chip>
           </h-nav-menu-item>
 
         </li>
       </ul>
-      </transition>
-      <!-- /Group Items -->
+    </transition>
+    <!-- /Group Items -->
   </div>
 </template>
-
 
 <script>
 // import VNavMenuItem from './VerticalNavMenuItem.vue'
 import HNavMenuItem from './HorizontalNavMenuItem.vue'
 
 export default {
-  name  : 'h-nav-menu-group',
-  props : {
-    openHover  : { type: Boolean, default: true },
-    open       : { type: Boolean, default: false },
-    group      : { type: Object },
-    groupIndex : { type: Number },
-    bottom     : { type: Boolean, default: false }
-  },
+  name: 'HNavMenuGroup',
   components: {
-    HNavMenuItem
+    HNavMenuItem,
+  },
+  props: {
+    openHover: { type: Boolean, default: true },
+    open: { type: Boolean, default: false },
+    group: { type: Object },
+    groupIndex: { type: Number },
+    bottom: { type: Boolean, default: false },
   },
   data: () => ({
-    openItems : false,
+    openItems: false,
     hovered: false,
-    dropLeft: false
+    dropLeft: false,
   }),
   computed: {
-    iconClasses () {
+    iconClasses() {
       let classes = 'mr-3 '
       classes += this.groupIndex % 1 !== 0 ? 'w-3 h-3' : 'w-5 h-5'
       return classes
     },
-    styleItems () {
+    styleItems() {
       const style = {}
       if (this.bottom) {
         style.top = '100%'
@@ -115,21 +132,21 @@ export default {
 
       return style
     },
-    itemIcon () {
+    itemIcon() {
       // return (index) => {
       //   // if (!((index.match(/\./g) || []).length > 1)) return "CircleIcon"
       // }
       return 'CircleIcon'
     },
-    isGroupActive () {
-      return (item) => {
-        const path        = this.$route.fullPath
-        let open          = false
+    isGroupActive() {
+      return item => {
+        const path = this.$route.fullPath
+        let open = false
         const routeParent = this.$route.meta ? this.$route.meta.parent : undefined
 
-        const func = (item) => {
+        const func = item => {
           if (item.submenu) {
-            item.submenu.forEach((item) => {
+            item.submenu.forEach(item => {
               if ((path === item.url || routeParent === item.slug) && item.url) { open = true } else if (item.submenu) { func(item) }
             })
           }
@@ -138,10 +155,10 @@ export default {
         func(item)
         return open
       }
-    }
+    },
   },
   watch: {
-    hovered (val) {
+    hovered(val) {
       this.$nextTick(() => {
         if (val) {
           const dd = this.$refs.childDropdown
@@ -166,25 +183,25 @@ export default {
           this.dropLeft = false
         }
       })
-    }
+    },
   },
   methods: {
-    mouseover () {
+    mouseover() {
       this.hovered = true
       if (this.openHover) {
         this.showChildren()
       }
     },
-    mouseout () {
+    mouseout() {
       this.hovered = false
       if (this.openHover) {
         this.showChildren(false)
       }
     },
-    showChildren (val = true) {
+    showChildren(val = true) {
       this.openItems = val
-    }
-  }
+    },
+  },
 }
 
 </script>

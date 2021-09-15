@@ -6,7 +6,7 @@
     </div>
 
     <!-- Swiper -->
-    <swiper
+    <!-- <swiper
       class="swiper-responsive-breakpoints px-4 py-2"
       :options="swiperOptions"
     >
@@ -48,8 +48,6 @@
           </div>
         </b-link>
       </swiper-slide>
-
-      <!-- Add Arrows -->
       <div
         slot="button-next"
         class="swiper-button-next"
@@ -58,26 +56,26 @@
         slot="button-prev"
         class="swiper-button-prev"
       />
-    </swiper>
+    </swiper> -->
   </b-card-body>
 </template>
 
 <script>
 import {
-  BCardBody, BCardText, BImg, BLink,
+  BCardBody, BCardText,
 } from 'bootstrap-vue'
-import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+// import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 
 export default {
   components: {
     BCardBody,
     BCardText,
-    BImg,
-    BLink,
+    // BImg,
+    // BLink,
 
     // 3rd Party
-    Swiper,
-    SwiperSlide,
+    // Swiper,
+    // SwiperSlide,
   },
   setup() {
     const swiperOptions = {
@@ -156,6 +154,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@core/scss/vue/libs/swiper.scss';
-@import '~swiper/css/swiper.css';
+// @import '@core/scss/vue/libs/swiper.scss';
+// @import '~swiper/css/swiper.css';
 </style>

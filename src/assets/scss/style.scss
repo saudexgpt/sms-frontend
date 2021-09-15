@@ -4,3 +4,9 @@ NOTE:
 ------
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+.main-menu.menu-dark .navigation > li.open:not(.menu-item-closing) > a, [dir] .main-menu.menu-dark .navigation > li.sidebar-group-active > a {
+  background: #0c102a;
+  border-radius: 0 !important;
+  margin: 0;
+}
