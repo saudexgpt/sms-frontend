@@ -1,168 +1,196 @@
 <template>
-  <div class="app-container">
-    <div class="box">
-      <div class="box-header">
-        <h4 class="box-title">
-          Make selections to view result
-        </h4>
-
-        <div class="pull-right">
-          <span v-if="!show_selection"><a
-            class="btn btn-default"
-            @click="show_selection=true"
-          >Show Selection</a></span>
-          <span v-if="show_selection"><a
-            class="btn btn-danger"
-            @click="show_selection=false"
-          >Hide Selection</a></span>
-        </div>
-      </div>
+  <div>
+    <el-card>
       <div
-        v-if="show_selection"
-        class="box-body"
+        slot="header"
+        class="no-print"
       >
-        <el-form
-          ref="form"
-          :model="form"
-          label-width="60px"
-        >
-          <el-row
-            :gutter="5"
-            class="padded"
+        <b-row>
+          <b-col
+            cols="6"
           >
-
-            <el-col
-              :xs="24"
-              :sm="20"
-              :md="12"
-              class="el-col-sm-offset-2 el-col-md-offset-6"
-            >
-              <el-form-item label="Class">
-                <el-select
-                  v-model="form.class_teacher_id"
-                  placeholder="Select Class"
-                  class="span"
-                >
-                  <el-option
-                    v-for="(my_class, index) in my_classes"
-                    :key="index"
-                    :value="my_class.class_teacher_id"
-                    :label="my_class.class_teacher.c_class.name"
-                  />
-
-                </el-select>
-              </el-form-item>
-
-            </el-col>
-            <el-col
-              :xs="24"
-              :sm="20"
-              :md="12"
-              class="el-col-sm-offset-2 el-col-md-offset-6"
-            >
-              <el-form-item label="Session">
-                <el-select
-                  v-model="form.sess_id"
-                  placeholder="Select Session"
-                  class="span"
-                >
-                  <el-option
-                    v-for="(session, index) in sessions"
-                    :key="index"
-                    :value="session.id"
-                    :label="session.name"
-                  />
-
-                </el-select>
-              </el-form-item>
-
-            </el-col>
-
-            <el-col
-              :xs="24"
-              :sm="20"
-              :md="12"
-              class="el-col-sm-offset-2 el-col-md-offset-6"
-            >
-              <el-form-item label="Term">
-                <el-select
-                  v-model="form.term_id"
-                  placeholder="Select Term"
-                  class="span"
-                >
-                  <el-option
-                    v-for="(term, index) in terms"
-                    :key="index"
-                    :value="term.id"
-                    :label="term.name"
-                  />
-
-                </el-select>
-              </el-form-item>
-
-            </el-col>
-            <el-col
-              :xs="24"
-              :sm="20"
-              :md="12"
-              class="el-col-sm-offset-2 el-col-md-offset-6"
-            >
-              <el-form-item label="Mode">
-                <el-select
-                  v-model="form.sub_term"
-                  placeholder="Select Sub-term"
-                  class="span"
-                >
-                  <el-option
-                    value="half"
-                    label="Mid Term"
-                  />
-                  <el-option
-                    value="full"
-                    label="Full Term"
-                  />
-                </el-select>
-              </el-form-item>
-
-            </el-col>
-
-            <el-col
-              :xs="24"
-              :sm="20"
-              :md="12"
-              class="el-col-sm-offset-2 el-col-md-offset-6"
-            >
-              <el-form-item label="">
-                <el-button
-                  type="primary"
-                  @click="fetchRecordedResult"
-                >
-                  Fetch Results
-                </el-button>
-              </el-form-item>
-
-            </el-col>
-          </el-row>
-        </el-form>
+            <h4>
+              My Result
+            </h4>
+          </b-col>
+          <b-col
+            cols="6"
+          >
+            <span class="pull-right">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="gradient-primary"
+                @click="modalShow = true; show_table = false"
+              >
+                <feather-icon
+                  icon="FilePlusIcon"
+                  class="mr-50"
+                />
+                <span class="align-middle">Set Preferences</span>
+              </b-button>
+            </span>
+          </b-col>
+        </b-row>
       </div>
-    </div>
-    <!--<div v-if="show_table">
 
-      <view-recorded-result :recordedResultData="recordedResultData"/>
-    </div>-->
+    </el-card>
+    <!--SIDEBAR MODAL-->
+    <b-sidebar
+      v-model="modalShow"
+      sidebar-subject="sidebar-lg"
+      :visible="modalShow"
+      bg-variant="white"
+      shadow
+      backdrop
+      no-header
+      right
+      class="no-print"
+    >
+      <template
+        #default="{ hide }"
+      >
+        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
+          <h5 class="mb-0">
+            Set Preferences for Result
+          </h5>
+          <div>
+            <b-button
+              variant="gradient-danger"
+              class="btn-icon"
+              @click="hide"
+            >
+              <feather-icon
+                icon="XIcon"
+              />
+            </b-button>
+          </div>
+        </div>
+        <div
+          v-loading="load"
+          class="justify-content-between align-items-center px-2 py-1"
+        >
+          <b-form-group>
+            <label>Select Class</label>
+            <el-select
+              v-model="form.class_teacher_id"
+              placeholder="Select Class"
+              class="span"
+            >
+              <el-option
+                v-for="(my_class, index) in my_classes"
+                :key="index"
+                :value="my_class.class_teacher_id"
+                :label="my_class.class_teacher.c_class.name"
+              />
+
+            </el-select>
+          </b-form-group>
+          <b-form-group>
+            <label>Session</label>
+            <el-select
+              v-model="form.sess_id"
+              placeholder="Select Session"
+              class="span"
+            >
+              <el-option
+                v-for="(session, index) in sessions"
+                :key="index"
+                :value="session.id"
+                :label="session.name"
+              />
+
+            </el-select>
+          </b-form-group>
+          <b-form-group>
+            <label>Term</label>
+            <el-select
+              v-model="form.term_id"
+              placeholder="Select Term"
+              class="span"
+            >
+              <el-option
+                v-for="(term, index) in terms"
+                :key="index"
+                :value="term.id"
+                :label="term.name"
+              />
+
+            </el-select>
+          </b-form-group>
+          <b-form-group>
+            <label>Sub Term</label>
+            <el-select
+              v-model="form.sub_term"
+              placeholder="Select Sub-term"
+              class="span"
+            >
+              <el-option
+                value="half"
+                label="Mid Term"
+              />
+              <el-option
+                value="full"
+                label="Full Term"
+              />
+            </el-select>
+          </b-form-group>
+          <b-form-group>
+            <hr>
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="primary"
+              class="mr-1"
+              @click="show_table = true; modalShow = false;"
+            >
+              Fetch Result
+            </b-button>
+          </b-form-group>
+        </div>
+      </template>
+    </b-sidebar>
+    <!--SIDEBAR MODAL-->
+    <div v-if="show_table">
+      <student-result-details
+        :param="form"
+        :is-sub-page="true"
+      />
+    </div>
+    <div
+      v-else
+      class="no-print"
+    >
+      <b-alert
+        variant="danger"
+        show
+      >
+        <div class="alert-body">
+          <span><strong>Please set your preferences to view result</strong></span>
+        </div>
+      </b-alert>
+    </div>
   </div>
 </template>
 <script>
+import {
+  BSidebar, BButton, BFormGroup, BAlert, BRow, BCol,
+} from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
+import StudentResultDetails from './StudentResultDetails.vue'
 import Resource from '@/api/resource'
-// import ViewRecordedResult from './partials/approval/ViewRecordedResult.vue'
 
 const selectionOptions = new Resource('result/student-selection-options')
-// const recordedResult = new Resource('result/get-recorded-result')
 
 export default {
-  // components: { ViewRecordedResult },
+  components: {
+    BSidebar, BButton, BFormGroup, BAlert, BRow, BCol, StudentResultDetails,
+  },
+  directives: {
+    Ripple,
+  },
   data() {
     return {
+      modalShow: true,
+      studentData: {},
       recordedResultData: {},
 
       form: {
@@ -178,7 +206,7 @@ export default {
       terms: [],
       level_key: '',
       my_classes: [],
-
+      load: false,
       show_table: false,
       show_selection: true,
       display_label: '',
@@ -204,32 +232,37 @@ export default {
         })
     },
 
-    fetchRecordedResult() {
-      const app = this
+    // fetchRecordedResult() {
+    //   const app = this
 
-      // let param = app.form;
-      // console.log(param);
-      app.$router.push(
-        {
-          name: 'StudentResultDetails',
-          params: {
-            student_id: app.form.student_id,
-            class_teacher_id: app.form.class_teacher_id,
-            sess_id: app.form.sess_id,
-            term_id: app.form.term_id,
-            sub_term: app.form.sub_term, // 'full',
-          },
-        },
-      )
-    },
-    fetchClassTeachers() {
-      const app = this
-      const index = app.level_key
-      app.class_teachers = app.levels[index].class_teachers
-      app.form.class_teacher_id = ''// app.class_teachers[0].id;
-      // app.fetchSubjectTeachers();
-    },
+    //   // let param = app.form;
+    //   // console.log(param);
+    //   app.$router.push(
+    //     {
+    //       name: 'StudentResultDetails',
+    //       params: {
+    //         student_id: app.form.student_id,
+    //         class_teacher_id: app.form.class_teacher_id,
+    //         sess_id: app.form.sess_id,
+    //         term_id: app.form.term_id,
+    //         sub_term: app.form.sub_term, // 'full',
+    //       },
+    //     },
+    //   )
+    // },
+    // fetchClassTeachers() {
+    //   const app = this
+    //   const index = app.level_key
+    //   app.class_teachers = app.levels[index].class_teachers
+    //   app.form.class_teacher_id = ''// app.class_teachers[0].id;
+    //   // app.fetchSubjectTeachers();
+    // },
 
   },
 }
 </script>
+<style scoped>
+.span {
+  width: 100%;
+}
+</style>

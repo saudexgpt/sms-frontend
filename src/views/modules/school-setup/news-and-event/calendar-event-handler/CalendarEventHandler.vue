@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-sidebar
-      id="sidebar-add-new-event"
+      id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
       :visible="isEventHandlerSidebarActive"
       bg-variant="white"
@@ -12,221 +12,160 @@
       @change="(val) => $emit('update:is-event-handler-sidebar-active', val)"
     >
       <template #default="{ hide }">
-        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            {{ eventLocal.id ? 'Update': 'Add' }} Event
+            Create Event
           </h5>
           <div>
-            <feather-icon
-              v-if="eventLocal.id"
-              icon="TrashIcon"
-              class="cursor-pointer"
-              @click="$emit('remove-event'); hide();"
-            />
-            <feather-icon
-              class="ml-1 cursor-pointer"
-              icon="XIcon"
-              size="16"
+            <b-button
+              variant="gradient-danger"
+              class="btn-icon"
               @click="hide"
-            />
+            >
+              <feather-icon
+                icon="XIcon"
+              />
+            </b-button>
           </div>
         </div>
+        <div class="justify-content-between align-items-center px-2 py-1">
+          <b-row>
 
-        <!-- Body -->
-        <validation-observer
-          #default="{ handleSubmit }"
-          ref="refFormObserver"
-        >
-
-          <!-- Form -->
-          <b-form
-            class="p-2"
-            @submit.prevent="handleSubmit(onSubmit)"
-            @reset.prevent="resetForm"
-          >
-
-            <!-- Title -->
-            <validation-provider
-              #default="validationContext"
-              name="Title"
-              rules="required"
-            >
+            <!-- first name -->
+            <b-col cols="12">
               <b-form-group
                 label="Title"
                 label-for="event-title"
               >
                 <b-form-input
                   id="event-title"
-                  v-model="eventLocal.title"
+                  v-model="form.title"
                   autofocus
-                  :state="getValidationState(validationContext)"
                   trim
                   placeholder="Event Title"
                 />
-
-                <b-form-invalid-feedback>
-                  {{ validationContext.errors[0] }}
-                </b-form-invalid-feedback>
               </b-form-group>
-            </validation-provider>
-
-            <!-- Start Date -->
-            <validation-provider
-              #default="validationContext"
-              name="Start Date"
-              rules="required"
-            >
-
+            </b-col>
+            <b-col cols="12">
               <b-form-group
-                label="Start Date"
+                label="Start"
                 label-for="start-date"
-                :state="getValidationState(validationContext)"
               >
-                <flat-pickr
-                  v-model="eventLocal.start"
-                  class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
+                <el-date-picker
+                  v-model="form.start"
+                  type="date"
+                  placeholder="Pick a day"
+                  style="width: 100%"
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
-                  {{ validationContext.errors[0] }}
-                </b-form-invalid-feedback>
               </b-form-group>
-            </validation-provider>
-
-            <!-- End Date -->
-            <validation-provider
-              #default="validationContext"
-              name="End Date"
-              rules="required"
-            >
-
+            </b-col>
+            <b-col cols="12">
               <b-form-group
-                label="End Date"
+                label="End"
                 label-for="end-date"
-                :state="getValidationState(validationContext)"
               >
-                <flat-pickr
-                  v-model="eventLocal.end"
-                  class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
+                <el-date-picker
+                  v-model="form.end"
+                  type="date"
+                  placeholder="Pick a day"
+                  style="width: 100%"
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
-                  {{ validationContext.errors[0] }}
-                </b-form-invalid-feedback>
               </b-form-group>
-            </validation-provider>
-
-            <!-- All Day -->
-            <b-form-group>
-              <b-form-checkbox
-                v-model="eventLocal.allDay"
-                name="check-button"
-                switch
-                inline
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Description"
+                label-for="event-description"
               >
-                All Day
-              </b-form-checkbox>
-            </b-form-group>
-
-            <!-- Guests -->
-            <b-form-group
-              label="Add Guests"
-              label-for="add-guests"
-            >
-              <v-select
-                v-model="eventLocal.extendedProps.guests"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                multiple
-                :close-on-select="false"
-                :options="guestsOptions"
-                label="name"
-                input-id="add-guests"
+                <b-form-textarea
+                  id="event-description"
+                  v-model="form.description"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Targeted Audience"
               >
-
-                <template #option="{ avatar, name }">
-                  <b-avatar
-                    size="sm"
-                    :src="avatar"
+                <!-- <v-select
+                  v-model="selectedCurriculumClasss"
+                  :options="curriculumClasss"
+                  label="class_name"
+                  value="id"
+                /> -->
+                <el-select
+                  v-model="form.targeted_audience"
+                  multiple
+                  collapse-tags
+                  style="width: 100%;"
+                  placeholder="Select Audience"
+                  filterable
+                >
+                  <el-option
+                    label="Parent"
+                    value="parent"
                   />
-                  <span class="ml-50 align-middle"> {{ name }}</span>
-                </template>
-
-                <template #selected-option="{ avatar, name }">
-                  <b-avatar
-                    size="sm"
-                    class="border border-white"
-                    :src="avatar"
+                  <el-option
+                    label="Staff"
+                    value="staff"
                   />
-                  <span class="ml-50 align-middle"> {{ name }}</span>
-                </template>
-              </v-select>
-            </b-form-group>
-
-            <!-- Textarea -->
-            <b-form-group
-              label="Description"
-              label-for="event-description"
-            >
-              <b-form-textarea
-                id="event-description"
-                v-model="eventLocal.extendedProps.description"
-              />
-            </b-form-group>
-
-            <!-- Form Actions -->
-            <div class="d-flex mt-2">
+                  <el-option
+                    label="Student"
+                    value="Student"
+                  />
+                </el-select>
+                <br>
+                <code>You can select multiple audience</code>
+              </b-form-group>
+            </b-col>
+            <!-- submit and reset -->
+            <b-col cols="12">
               <b-button
+                v-if="form.id"
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                variant="primary"
-                class="mr-2"
                 type="submit"
+                variant="primary"
+                class="mr-1"
+                @click="update()"
               >
-                {{ eventLocal.id ? 'Update' : 'Add ' }}
+                Update
               </b-button>
               <b-button
-                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                type="reset"
-                variant="outline-secondary"
+                v-else
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                type="submit"
+                variant="primary"
+                class="mr-1"
+                @click="submit()"
               >
-                Reset
+                Add
               </b-button>
-            </div>
-          </b-form>
-        </validation-observer>
+            </b-col>
+          </b-row>
+        </div>
       </template>
     </b-sidebar>
   </div>
 </template>
 
 <script>
+// import vSelect from 'vue-select'
 import {
-  BSidebar, BForm, BFormGroup, BFormInput, BFormCheckbox, BAvatar, BFormTextarea, BButton, BFormInvalidFeedback,
+  BSidebar, BRow, BCol, BFormGroup, BButton, BFormInput, BFormTextarea,
 } from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import flatPickr from 'vue-flatpickr-component'
 import Ripple from 'vue-ripple-directive'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, url } from '@validations'
-import formValidation from '@core/comp-functions/forms/form-validation'
-import { ref, toRefs } from '@vue/composition-api'
-import useCalendarEventHandler from './useCalendarEventHandler'
+import Resource from '@/api/resource'
 
 export default {
   components: {
-    BButton,
+    // vSelect,
     BSidebar,
-    BForm,
+    BRow,
+    BCol,
     BFormGroup,
+    BButton,
     BFormInput,
-    BFormCheckbox,
     BFormTextarea,
-    BAvatar,
-    vSelect,
-    flatPickr,
-    ValidationProvider,
-    BFormInvalidFeedback,
-    ValidationObserver,
   },
   directives: {
     Ripple,
@@ -240,74 +179,73 @@ export default {
       type: Boolean,
       required: true,
     },
-    event: {
+    eventData: {
       type: Object,
       required: true,
-    },
-    clearEventData: {
-      type: Function,
-      required: true,
+      dafault: () => (null),
     },
   },
   data() {
     return {
-      required,
-      email,
-      url,
+      form: {
+        title: '',
+        description: '',
+        start: '',
+        end: '',
+        targeted_audience: [],
+      },
     }
   },
-  setup(props, { emit }) {
-    /*
-     ? This is handled quite differently in SFC due to deadlock of `useFormValidation` and this composition function.
-     ? If we don't handle it the way it is being handled then either of two composition function used by this SFC get undefined as one of it's argument.
-     * The Trick:
-
-     * We created reactive property `clearFormData` and set to null so we can get `resetEventLocal` from `useCalendarEventHandler` composition function.
-     * Once we get `resetEventLocal` function which is required by `useFormValidation` we will pass it to `useFormValidation` and in return we will get `clearForm` function which shall be original value of `clearFormData`.
-     * Later we just assign `clearForm` to `clearFormData` and can resolve the deadlock. 😎
-
-     ? Behind The Scene
-     ? When we passed it to `useCalendarEventHandler` for first time it will be null but right after it we are getting correct value (which is `clearForm`) and assigning that correct value.
-     ? As `clearFormData` is reactive it is being changed from `null` to corrent value and thanks to reactivity it is also update in `useCalendarEventHandler` composition function and it is getting correct value in second time and can work w/o any issues.
-    */
-    const clearFormData = ref(null)
-
-    const {
-      eventLocal,
-      resetEventLocal,
-      calendarOptions,
-
-      // UI
-      onSubmit,
-      guestsOptions,
-    } = useCalendarEventHandler(toRefs(props), clearFormData, emit)
-
-    const {
-      refFormObserver,
-      getValidationState,
-      resetForm,
-      clearForm,
-    } = formValidation(resetEventLocal, props.clearEventData)
-
-    clearFormData.value = clearForm
-
-    return {
-      // Add New Event
-      eventLocal,
-      calendarOptions,
-      onSubmit,
-      guestsOptions,
-
-      // Form Validation
-      resetForm,
-      refFormObserver,
-      getValidationState,
+  created() {
+    if (this.eventData !== null) {
+      this.form = this.eventData
     }
+    // this.fetchCurriculumClasss()
+  },
+  methods: {
+    // fetchCurriculumClasss() {
+    //   const app = this
+    //   const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-class-groups')
+    //   fetchCurriculumSetupResource.list()
+    //     .then(response => {
+    //       app.curriculum_class_groups = response.curriculum_class_groups
+    //     })
+    // },
+    // setClassNames() {
+    //   const app = this
+    //   app.form.classs = app.selectedCurriculumClasss
+    // },
+    // setCurriculumClass() {
+    //   const app = this
+    //   app.curriculumClasss = app.selected_curriculum_group.curriculum_classs
+    //   app.form.curriculum_class_group_id = app.selected_curriculum_group.id
+    //   app.form.classs = []
+    // },
+    submit() {
+      const app = this
+      const saveResource = new Resource('events/add-event')
+      const param = app.form
+      saveResource.store(param)
+        .then(response => {
+          // console.log(response)
+          app.$emit('saved', response.events)
+          // app.$emit('update:is-event-handler-sidebar-active', false)
+        })
+    },
+    update() {
+      const app = this
+      const updateResource = new Resource('events/update')
+      const param = app.form
+      updateResource.update(param.id, param)
+        .then(response => {
+          // console.log(response)
+          app.$emit('updated', response.events)
+          // app.$emit('update:is-event-handler-sidebar-active', false)
+        })
+    },
   },
 }
 </script>
-
-<style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
-@import '@core/scss/vue/libs/vue-flatpicker.scss';
+<style lang="scss" scoped>
+@import '~@core/scss/base/bootstrap-extended/include';
 </style>

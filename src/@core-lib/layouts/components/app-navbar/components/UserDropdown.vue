@@ -28,7 +28,7 @@
     </template>
 
     <b-dropdown-item
-      :to="{ name: 'pages-profile'}"
+      :to="{ name: 'UserProfile'}"
       link-class="d-flex align-items-center"
     >
       <feather-icon
@@ -38,7 +38,7 @@
       />
       <span>Profile</span>
     </b-dropdown-item>
-    <b-dropdown-item
+    <!-- <b-dropdown-item
       :to="{ name: 'apps-email' }"
       link-class="d-flex align-items-center"
     >
@@ -70,11 +70,11 @@
         class="mr-50"
       />
       <span>Chat</span>
-    </b-dropdown-item>
+    </b-dropdown-item> -->
 
     <b-dropdown-divider />
 
-    <b-dropdown-item
+    <!-- <b-dropdown-item
       :to="{ name: 'pages-account-setting' }"
       link-class="d-flex align-items-center"
     >
@@ -106,7 +106,7 @@
         class="mr-50"
       />
       <span>FAQ</span>
-    </b-dropdown-item>
+    </b-dropdown-item> -->
     <b-dropdown-item
       link-class="d-flex align-items-center"
       @click="logout"

@@ -43,17 +43,67 @@
         {{ props.row.registration_no }}
       </template>
       <template
+        slot="mid_term"
+        slot-scope="props"
+      >
+        {{ props.row.result_detail.mid_term / 10 }}
+
+      </template>
+      <template
         slot="ca1"
         slot-scope="props"
       >
-        {{ props.row.result_detail.ca1 }}
+        <div v-if="studentData.edit_ca1">
+          <select
+            v-model="props.row.result_detail.ca1"
 
+            @change="recordResult('ca1',props.row.result_detail.ca1, props.row.id,'ca1')"
+          >
+            <option
+              value=""
+              disabled
+            >
+              Select Score
+            </option>
+            <option
+              v-for="grade in over_10"
+              :key="grade"
+            >
+              {{ grade }}
+            </option>
+          </select>
+        </div>
+        <div v-else>
+          {{ props.row.result_detail.ca1 }}
+        </div>
       </template>
       <template
         slot="ca2"
         slot-scope="props"
       >
-        {{ props.row.result_detail.ca2 }}
+        <div v-if="studentData.edit_ca2">
+          <select
+            v-model="props.row.result_detail.ca2"
+
+            @change="recordResult('ca2',props.row.result_detail.ca2, props.row.id,'ca2')"
+          >
+            <option
+              value=""
+              disabled
+            >
+              Select Score
+            </option>
+            <option
+              v-for="grade in over_10"
+              :key="grade"
+            >
+              {{ grade }}
+            </option>
+          </select>
+        </div>
+        <div v-else>
+          {{ props.row.result_detail.ca2 }}
+        </div>
       </template>
       <template
         slot="ca3"
@@ -165,15 +215,16 @@ export default {
   },
   data() {
     return {
-      columns: ['photo', 'id', 'name', 'ca1', 'ca2', 'ca3', 'exam', 'total', 'comments'],
+      columns: ['photo', 'id', 'name', 'mid_term', 'ca1', 'ca2', 'ca3', 'exam', 'total', 'comments'],
       options: {
         headings: {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
-          ca1: '1st C.A (20%)',
-          ca2: '2nd C.A (10%)',
-          ca3: '3rd C.A (10%)',
+          mid_term: '1st C.A (10%)',
+          ca1: '2nd C.A (10%)',
+          ca2: '3rd C.A (10%)',
+          ca3: '4th C.A (10%)',
           exam: 'Exam (60%)',
           total: 'Total (100%)',
           comments: 'Remark',

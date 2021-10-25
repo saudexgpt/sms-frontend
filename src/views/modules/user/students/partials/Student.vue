@@ -42,7 +42,7 @@
           </div>
         </b-alert>
       </div> -->
-      <v-client-table
+      <!-- <v-client-table
         v-model="students_in_class"
         v-loading="loading"
         :columns="columns"
@@ -75,7 +75,7 @@
           <span>
             <b-button
               v-b-tooltip.hover.right="'View Details'"
-              variant="gradient-primary"
+              variant="primary"
               class="btn-icon rounded-circle"
             >
 
@@ -86,34 +86,44 @@
             </b-button>
             <b-button
               v-b-tooltip.hover.right="'Reset Password'"
-              variant="gradient-warning"
+              variant="warning"
               class="btn-icon rounded-circle"
               @click="resetPassword(props.row.student.user)"
+            >
+              <feather-icon icon="UnlockIcon" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.right="'Login as ' + props.row.student.user.first_name"
+              variant="dark"
+              class="btn-icon rounded-circle"
+              @click="loginAsUser(props.row.student.user)"
             >
               <feather-icon icon="KeyIcon" />
             </b-button>
           </span>
         </div>
-      </v-client-table>
-
+      </v-client-table> -->
+      <student-in-class-table :students-in-class="students_in_class" />
     </div>
   </div>
 </template>
 
 <script>
 import {
-  BButton, BRow, BCol, VBTooltip,
+  BRow, BCol, VBTooltip,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
+import StudentInClassTable from './StudentInClassTable.vue'
 
 export default {
   components: {
+    StudentInClassTable,
     // VueGoodTable,
     vSelect,
-    BButton,
+    // BButton,
     // BAlert,
     // BPagination,
     // BFormGroup,
@@ -235,38 +245,6 @@ export default {
           app.level = response.level
           app.loading = false
         })
-    },
-    resetPassword(user) {
-      const app = this
-      const param = {
-        user_id: user.id,
-      }
-      app.$confirm(`This will change the password for ${user.username}. Do you want to continue?`, 'Confirm Action', {
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        type: 'warning',
-      }).then(() => {
-        app.loading = true
-        const resetPasswordResource = new Resource('user-setup/admin-reset/password')
-        resetPasswordResource.list(param)
-          .then(() => {
-            app.$alert(`Password for ${user.username} has been reset to: password `, 'Password Reset', {
-              confirmButtonText: 'OK',
-            })
-            app.loading = false
-          })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: 'Delete canceled',
-        // })
-      })
-    },
-    editThisRow(value) {
-      // console.log(props)
-      const app = this
-      app.editable_row = value
-      app.isEditClassSidebarActive = true
     },
   },
 }

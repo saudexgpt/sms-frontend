@@ -10,8 +10,8 @@
 
 aside {
   background: #eef1f6;
-  padding: 8px 24px;
-  margin-bottom: 20px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
   border-radius: 2px;
   display: block;
   line-height: 32px;
@@ -174,4 +174,13 @@ th.verticalHeader>span {
 
 th.verticalHeader {
 border: 1px solid #f0f0f0!important;
+}
+
+.callout {
+  padding: 10px;
+}
+
+.callout-danger {
+  background: rgb(231, 39, 39);
+  color: #ffffff;
 }

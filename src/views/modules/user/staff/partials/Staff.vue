@@ -13,19 +13,6 @@
       <hr>
     </div>
     <div>
-      <!-- <div
-        v-if="level !== ''"
-        class="demo-spacing-0"
-      >
-        <b-alert
-          variant="primary"
-          show
-        >
-          <div class="alert-body">
-            <span><strong align="center">Students in {{ level.level }}</strong></span>
-          </div>
-        </b-alert>
-      </div> -->
       <v-client-table
         v-model="staff"
         v-loading="loading"
@@ -53,6 +40,14 @@
               variant="gradient-warning"
               class="btn-icon rounded-circle"
               @click="resetPassword(props.row.user)"
+            >
+              <feather-icon icon="UnlockIcon" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
+              variant="dark"
+              class="btn-icon rounded-circle"
+              @click="loginAsUser(props.row.user)"
             >
               <feather-icon icon="KeyIcon" />
             </b-button>
@@ -166,10 +161,10 @@ export default {
     }
   },
   created() {
-    this.fetchStudents()
+    this.fetchStaff()
   },
   methods: {
-    fetchStudents() {
+    fetchStaff() {
       const app = this
       app.loading = true
       const fetchStaffResource = new Resource('user-setup/staff')
@@ -178,6 +173,11 @@ export default {
           app.staff = response.staff
           app.loading = false
         })
+    },
+    async loginAsUser(user) {
+      await this.$store.dispatch('user/loginAsUser', { user_id: user.id })
+      // this.$router.push('/login').catch(() => {})
+      window.location = '/'
     },
     resetPassword(user) {
       const app = this

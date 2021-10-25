@@ -8,7 +8,14 @@ import 'vue-swatches/dist/vue-swatches.css'
 import ElementUI from 'element-ui'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
-
+import HighchartsVue from 'highcharts-vue'
+import Highcharts from 'highcharts'
+import drilldown from 'highcharts/modules/drilldown'
+import exporting from 'highcharts/modules/exporting'
+import highcharts3d from 'highcharts/highcharts-3d'
+import highchartsMore from 'highcharts/highcharts-more'
+import solidGauge from 'highcharts/modules/solid-gauge'
+import stockInit from 'highcharts/modules/stock'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2'
 import i18n from '@/libs/i18n'
 import lang from '@/lang'
@@ -48,6 +55,14 @@ Vue.use(ClientTable, {
     down: 'el-icon-caret-bottom',
   },
 }, false, 'bootstrap4')
+Vue.use(HighchartsVue)
+
+drilldown(Highcharts)
+exporting(Highcharts)
+highcharts3d(Highcharts)
+highchartsMore(Highcharts)
+solidGauge(Highcharts)
+stockInit(Highcharts)
 Vue.use(ServerTable)
 Vue.use(Event)
 // BSV Plugin Registration

@@ -104,6 +104,34 @@ const actions = {
         })
     })
   },
+  loginAsUser({ commit }, userId) {
+    return new Promise((resolve, reject) => {
+      logout(userId)
+        .then(response => {
+          commit('SET_USER_DATA', response)
+          commit('SET_TOKEN', response.tk)
+          setToken(response.tk)
+          resolve()
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  loginToASchool({ commit }, schoolId) {
+    return new Promise((resolve, reject) => {
+      logout(schoolId)
+        .then(response => {
+          commit('SET_USER_DATA', response)
+          commit('SET_TOKEN', response.tk)
+          setToken(response.tk)
+          resolve()
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
 
   // remove token
   resetToken({ commit }) {

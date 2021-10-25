@@ -1,0 +1,202 @@
+<style>
+#calc{width:100%;}
+#btn{width:100%;height:30px;font-size:16px;}
+</style>
+<template>
+  <div>
+    <form Name="calc">
+      <table
+        id="calc"
+      >
+        <tbody>
+
+          <tr>
+            <td colspan="5">
+              <input
+                id="btn"
+                name="display"
+                placeholder="0"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                type="text"
+              >
+            </td>
+            <td style="display:none">
+              <input
+                name="M"
+                type="number"
+              >
+            </td>
+          </tr>
+
+          <tr>
+            <td><input
+              id="btn"
+              type="button"
+              value="MC"
+              onclick="calc.M.value=''"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="MR"
+              onclick="calc.display.value=calc.M.value"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="MS"
+              onclick="calc.M.value=calc.display.value"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="M+"
+              onclick="calc.M.value=(Number(calc.M.value))+(Number(calc.display.value))"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="C"
+              onclick="calc.display.value=''"
+            ></td>
+          </tr>
+
+          <tr>
+            <td><input
+              id="btn"
+              type="button"
+              value="7"
+              onclick="calc.display.value+='7'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="8"
+              onclick="calc.display.value+='8'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="9"
+              onclick="calc.display.value+='9'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="/"
+              onclick="calc.display.value+='/'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="Sqrt"
+              onclick="calc.display.value=Math.sqrt(calc.display.value)"
+            ></td>
+          </tr>
+
+          <tr>
+            <td><input
+              id="btn"
+              type="button"
+              value="4"
+              onclick="calc.display.value+='4'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="5"
+              onclick="calc.display.value+='5'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="6"
+              onclick="calc.display.value+='6'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="*"
+              onclick="calc.display.value+='*'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="1/x"
+              onclick="calc.display.value=1/calc.display.value"
+            ></td>
+          </tr>
+
+          <tr>
+            <td><input
+              id="btn"
+              type="button"
+              value="1"
+              onclick="calc.display.value+='1'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="2"
+              onclick="calc.display.value+='2'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="3"
+              onclick="calc.display.value+='3'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="-"
+              onclick="calc.display.value+='-'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="Sqr"
+              onclick="calc.display.value=Math.pow(calc.display.value,2)"
+            ></td>
+
+          </tr>
+
+          <tr>
+
+            <td colspan="2">
+              <input
+                id="btn"
+                type="button"
+                value="0"
+                onclick="calc.display.value+='0'"
+              >
+            </td>
+
+            <td><input
+              id="btn"
+              type="button"
+              value="."
+              onclick="calc.display.value+='.'"
+            ></td>
+
+            <td><input
+              id="btn"
+              type="button"
+              value="+"
+              onclick="calc.display.value+='+'"
+            ></td>
+            <td><input
+              id="btn"
+              type="button"
+              value="="
+              onclick="calc.display.value=eval(calc.display.value)"
+            ></td>
+
+          </tr>
+        </tbody>
+
+      </table>
+    </form>
+
+  </div>
+</template>

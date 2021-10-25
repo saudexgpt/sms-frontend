@@ -1,10 +1,10 @@
 export default [
-  {
-    header: 'Result Module',
-    // acl: {
-    //   roles: ['admin'],
-    // },
-  },
+  // {
+  //   header: 'Result Module',
+  //   // acl: {
+  //   //   roles: ['admin'],
+  //   // },
+  // },
   {
     title: 'Result',
     icon: 'FileTextIcon',
@@ -15,12 +15,25 @@ export default [
     // },
     children: [
       {
+        title: 'Configure Grades',
+        route: 'ManageGrade',
+        acl: {
+          permissions: ['can configure grades'],
+        },
+      },
+      {
         title: 'Manage Result',
         route: 'ManageResult',
+        acl: {
+          permissions: ['can manage results'],
+        },
       },
       {
         title: 'Record Result',
         route: 'RecordResult',
+        acl: {
+          roles: ['teacher'],
+        },
       },
       {
         title: 'My Result',

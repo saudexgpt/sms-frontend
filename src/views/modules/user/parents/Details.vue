@@ -61,7 +61,7 @@
                   <b-avatar
                     size="114"
                     variant="light-danger"
-                    :src="guardian_student.student.user.photo"
+                    :src="baseServerUrl + 'storage/'+ guardian_student.student.user.photo"
                     :text="avatarText(guardian_student.student.user.last_name +' ' + guardian_student.student.user.first_name)"
                   />
                 </div>
@@ -105,15 +105,26 @@ export default {
     BCard,
     BAvatar,
   },
+  props: {
+    guardianId: {
+      type: Number,
+      default: () => (null),
+    },
+  },
   data() {
     return {
       guardian: '',
       loader: false,
     }
   },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+  },
   created() {
-    if (this.guardian_id) {
-      const id = this.guardian_id
+    if (this.guardianId) {
+      const id = this.guardianId
       this.getGuardian(id)
     } else {
       const id = this.$route.params && this.$route.params.id

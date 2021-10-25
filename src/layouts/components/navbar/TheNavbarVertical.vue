@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import Bookmarks from './components/Bookmarks.vue'
-import I18n from './components/I18n.vue'
-import SearchBar from './components/SearchBar.vue'
+// import Bookmarks from './components/Bookmarks.vue'
+// import I18n from './components/I18n.vue'
+// import SearchBar from './components/SearchBar.vue'
 import CartDropDown from './components/CartDropDown.vue'
 import NotificationDropDown from './components/NotificationDropDown.vue'
 import ProfileDropDown from './components/ProfileDropDown.vue'
@@ -58,9 +58,9 @@ import ProfileDropDown from './components/ProfileDropDown.vue'
 export default {
   name: 'TheNavbarVertical',
   components: {
-    Bookmarks,
-    I18n,
-    SearchBar,
+    // Bookmarks,
+    // I18n,
+    // SearchBar,
     CartDropDown,
     NotificationDropDown,
     ProfileDropDown,
@@ -86,6 +86,7 @@ export default {
     },
 
     // NAVBAR STYLE
+    // eslint-disable-next-line vue/return-in-computed-property
     classObj() {
       if (this.verticalNavMenuWidth === 'default') {
         return 'navbar-default'
@@ -94,6 +95,7 @@ export default {
       } if (this.verticalNavMenuWidth) {
         return 'navbar-full'
       }
+      return 'navbar-default'
     },
   },
   methods: {

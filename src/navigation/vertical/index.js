@@ -32,17 +32,24 @@ tagVariant
 */
 import dashboard from './nav-modules/dashboard'
 // import appsAndPages from './apps-and-pages'
+import assignment from './nav-modules/assignment'
+import attendance from './nav-modules/attendance'
 import results from './nav-modules/result'
+import eLearning from './nav-modules/lms'
+import timeTable from './nav-modules/time-table'
 import adminSettings from './nav-modules/school-setup'
 import appSetup from './nav-modules/app-setup'
 import userManagement from './nav-modules/user-management'
+import accessControl from './nav-modules/access-control'
+import subjects from './nav-modules/subjects'
+import classes from './nav-modules/classes'
 // import others from './others'
 // import chartsAndMaps from './charts-and-maps'
 // import uiElements from './ui-elements'
 // import formAndTable from './forms-and-table'
 
 // Array of sections
-export default [...dashboard, ...results, ...userManagement, ...adminSettings, ...appSetup]
+export default [...dashboard, ...classes, ...subjects, ...assignment, ...attendance, ...results, ...timeTable, ...eLearning, ...userManagement, ...adminSettings, ...appSetup, ...accessControl]
 
 // import store from '@/store'
 

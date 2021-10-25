@@ -5,7 +5,7 @@
   >
     <header class="box-header">
       <h4 class="box-title">
-        <div v-if="(studentData.active_assessment == 'half' && (studentData.edit_ca1 || studentData.edit_ca2) ) || (studentData.active_assessment == 'full' && (studentData.edit_ca3 || studentData.edit_exam))">
+        <div v-if="(studentData.active_assessment == 'half' && (studentData.edit_midterm) ) || (studentData.active_assessment == 'full' && (studentData.edit_ca1 || studentData.edit_ca2 || studentData.edit_ca3 || studentData.edit_exam))">
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="gradient-success"
@@ -104,7 +104,7 @@
           />
         </el-tab-pane>
 
-        <el-tab-pane label="Bulk Entry">
+        <!-- <el-tab-pane label="Bulk Entry">
           <div v-if="(studentData.active_assessment == 'half' && (studentData.edit_ca1 || studentData.edit_ca2) ) || (studentData.active_assessment == 'full' && (studentData.edit_ca3 || studentData.edit_exam))">
 
             <bulk-entry
@@ -118,7 +118,7 @@
 
             </div>
           </div>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
   </div>
@@ -129,13 +129,14 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import SingleEntry from './single/SingleResultUpload.vue'
-import BulkEntry from './bulk/BulkResultUpload.vue'
+// import BulkEntry from './bulk/BulkResultUpload.vue'
 import Resource from '@/api/resource'
 
 const saveResultAction = new Resource('result/result-action')
 export default {
   components: {
-    BModal, BButton, SingleEntry, BulkEntry,
+    BModal, BButton, SingleEntry,
+    // BulkEntry,
   },
   directives: {
     Ripple,

@@ -150,7 +150,7 @@
     </b-sidebar>
     <!--SIDEBAR MODAL-->
     <div v-if="show_table">
-      <subject-students
+      <subject-students-table
         :student-data="studentData"
         :form="form"
       />
@@ -172,7 +172,7 @@ import {
   BSidebar, BButton, BFormGroup, BAlert, BRow, BCol,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import SubjectStudents from './partials/SubjectStudentsTable.vue'
+import SubjectStudentsTable from './partials/SubjectStudentsTable.vue'
 import Resource from '@/api/resource'
 
 const selectionOptions = new Resource('result/set-selection-options')
@@ -180,7 +180,7 @@ const recordStudentResult = new Resource('result/get-subject-students')
 
 export default {
   components: {
-    BSidebar, BButton, BFormGroup, BAlert, BRow, BCol, SubjectStudents,
+    BSidebar, BButton, BFormGroup, BAlert, BRow, BCol, SubjectStudentsTable,
   },
   directives: {
     Ripple,

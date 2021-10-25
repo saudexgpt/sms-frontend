@@ -15,21 +15,38 @@
     />
     <!--/ images -->
 
-    <b-avatar
+    <!-- <b-avatar
       variant="primary"
-      size="70"
+      size="50"
       class="shadow mb-2"
     >
       <feather-icon
         size="28"
         icon="AwardIcon"
       />
-    </b-avatar>
-    <h1 class="mb-1 mt-50 text-white">
-      Congratulations {{ data.name }},
-    </h1>
-    <b-card-text class="m-auto w-75">
-      You have done <strong>{{ data.saleToday }}%</strong> more sales today. Check your new badge in your profile.
+    </b-avatar> -->
+    <b-avatar
+      size="75"
+      variant="dark"
+      :src="baseServerUrl +'storage/'+data.photo"
+    />
+    <h3 class="mb-1 mt-10 text-white">
+      Welcome {{ data.first_name }}<br>
+      {{ data.username }}
+    </h3>
+    <b-card-text
+      v-if="currentClass !== ''"
+      class="m-auto w-75"
+    >
+      <h4 class="mb-1 mt-10 text-white">
+        Your current class is: <strong>{{ currentClass }}</strong>
+      </h4>
+      <router-link
+        to="/profile"
+        class="text-white"
+      >
+        Click Here to see your profile
+      </router-link>
     </b-card-text>
   </b-card>
 </template>
@@ -50,6 +67,15 @@ export default {
     data: {
       type: Object,
       default: () => {},
+    },
+    currentClass: {
+      type: String,
+      default: () => '',
+    },
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
     },
   },
 }

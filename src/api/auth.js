@@ -21,9 +21,10 @@ export function getInfo() {
   })
 }
 
-export function logout() {
+export function logout(data) {
   return request({
     url: '/auth/logout',
     method: 'post',
+    data,
   })
 }

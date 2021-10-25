@@ -1,10 +1,10 @@
 export default [
-  {
-    header: 'App Settings',
-    acl: {
-      roles: ['super'],
-    },
-  },
+  // {
+  //   header: 'App Settings',
+  //   acl: {
+  //     roles: ['super'],
+  //   },
+  // },
   {
     title: 'Settings',
     icon: 'ToolIcon',

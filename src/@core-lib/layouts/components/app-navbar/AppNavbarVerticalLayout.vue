@@ -20,7 +20,7 @@
     <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
 
       <!-- Bookmarks Container -->
-      <bookmarks />
+      <!-- <bookmarks /> -->
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
@@ -28,6 +28,12 @@
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar /> -->
       <!-- <cart-dropdown /> -->
+      <b-nav-item to="/apps/email">
+        <feather-icon
+          icon="MailIcon"
+          size="21"
+        />
+      </b-nav-item>
       <notification-dropdown />
       <user-dropdown />
     </b-navbar-nav>
@@ -36,9 +42,9 @@
 
 <script>
 import {
-  BLink, BNavbarNav,
+  BLink, BNavbarNav, BNavItem,
 } from 'bootstrap-vue'
-import Bookmarks from './components/Bookmarks.vue'
+// import Bookmarks from './components/Bookmarks.vue'
 // import Locale from './components/Locale.vue'
 // import SearchBar from './components/SearchBar.vue'
 // import DarkToggler from './components/DarkToggler.vue'
@@ -52,7 +58,8 @@ export default {
 
     // Navbar Components
     BNavbarNav,
-    Bookmarks,
+    BNavItem,
+    // Bookmarks,
     // Locale,
     // SearchBar,
     // DarkToggler,

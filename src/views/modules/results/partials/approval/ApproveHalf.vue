@@ -32,20 +32,20 @@
         {{ props.row.registration_no }}
       </template>
       <template
-        slot="ca1"
+        slot="mid_term"
         slot-scope="props"
       >
-        {{ props.row.result_detail.ca1 }}
+        {{ props.row.result_detail.mid_term }}
 
       </template>
-      <template
+      <!-- <template
         slot="ca2"
         slot-scope="props"
       >
 
         {{ props.row.result_detail.ca2 }}
 
-      </template>
+      </template> -->
       <template
         slot="effort"
         slot-scope="props"
@@ -84,14 +84,14 @@ export default {
   },
   data() {
     return {
-      columns: ['photo', 'id', 'name', 'ca1', 'ca2', 'effort', 'behavior'],
+      columns: ['photo', 'id', 'name', 'mid_term', 'effort', 'behavior'],
       options: {
         headings: {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
-          ca1: '1st C.A (20%)',
-          ca2: '2nd C.A (10%)',
+          mid_term: 'Mid Term (100%)',
+          // ca2: '2nd C.A (10%)',
           effort: 'Academic Effort',
           behavior: 'Class Behavior',
 

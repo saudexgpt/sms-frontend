@@ -1,17 +1,17 @@
 export default [
-  {
-    header: 'School Setup',
-    acl: {
-      roles: ['admin'],
-    },
-  },
+  // {
+  //   header: 'School Setup',
+  //   acl: {
+  //     roles: ['admin'],
+  //   },
+  // },
   {
     title: 'Setup',
     icon: 'SettingsIcon',
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      roles: ['admin'],
+      permissions: ['can manage settings'],
     },
     children: [
       {

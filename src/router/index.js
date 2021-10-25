@@ -37,10 +37,15 @@ import dashboard from './modules/dashboard'
 // import chartsMaps from './modules/charts-maps'
 // import formsTable from './modules/forms-tables'
 // import others from './modules/others'
+import assignment from './modules/assignment'
+import attendance from './modules/attendance'
 import result from './modules/result'
+import timeTable from './modules/time-table'
+import eLearning from './modules/lms'
 import userSetup from './modules/user-management'
 import schoolSetup from './modules/school-setup'
 import appSetup from './modules/app-setup'
+import accessControl from './modules/access-control'
 
 Vue.use(Router)
 export const constantRoutes = [
@@ -56,6 +61,16 @@ export const constantRoutes = [
     meta: {
       layout: 'full',
       redirectIfLoggedIn: true,
+    },
+  },
+  {
+    hidden: true,
+    path: '/register',
+    name: 'school-registration',
+    component: () => import('@/views/pages/authentication/RegisterSchool.vue'),
+    meta: {
+      layout: 'full',
+      // redirectIfLoggedIn: true,
     },
   },
   {
@@ -115,10 +130,14 @@ export const asyncRoutes = [
   // =============================================================================
   // MAIN LAYOUT ROUTES
   // =============================================================================
-  { path: '/', redirect: { name: 'dashboard-ecommerce' } },
+  { path: '/', redirect: { name: 'dashboard' } },
   ...apps,
   ...dashboard,
+  ...assignment,
+  ...attendance,
   ...result,
+  ...timeTable,
+  ...eLearning,
   ...userSetup,
   ...schoolSetup,
   // ...pages,
@@ -127,6 +146,7 @@ export const asyncRoutes = [
   // ...uiElements,
   // ...others,
   ...appSetup,
+  ...accessControl,
   {
     path: '*',
     redirect: '/error-404',

@@ -26,19 +26,19 @@
         </template>
         <register-bulk-students />
       </b-tab>
-      <b-tab lazy>
+      <!-- <b-tab lazy>
         <template #title>
           <feather-icon icon="CornerRightUpIcon" />
           <span>Promote Students</span>
         </template>
-        Hello
+        Coming Soon
       </b-tab>
       <b-tab
         title="Alumni"
         lazy
       >
-        Hello2
-      </b-tab>
+        Coming Soon
+      </b-tab> -->
     </b-tabs>
   </el-card>
 </template>

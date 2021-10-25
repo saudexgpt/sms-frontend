@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="mb-1">
+    <div
+      v-if="staffId === null"
+      class="mb-1"
+    >
       <b-button
         variant="gradient-danger"
         class="btn-icon"
@@ -117,14 +120,20 @@ export default {
 
     // InvoiceList,
   },
+  props: {
+    staffId: {
+      type: Number,
+      default: () => (null),
+    },
+  },
   data() {
     return {
       staff: '',
     }
   },
   created() {
-    if (this.staff_id) {
-      const id = this.staff_id
+    if (this.staffId) {
+      const id = this.staffId
       this.getStaff(id)
     } else {
       const id = this.$route.params && this.$route.params.id

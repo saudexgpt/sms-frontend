@@ -53,14 +53,14 @@
         {{ props.row.registration_no }}
       </template>
       <template
-        slot="ca1"
+        slot="mid_term"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_ca1">
+        <div v-if="studentData.edit_midterm">
           <select
-            v-model="props.row.result_detail.ca1"
+            v-model="props.row.result_detail.mid_term"
             style="width: 100%"
-            @change="recordResult('ca1',props.row.result_detail.ca1, props.row.id,'test')"
+            @change="recordResult('mid_term',props.row.result_detail.mid_term, props.row.id,'test')"
           >
             <option
               value=""
@@ -69,7 +69,7 @@
               Select Score
             </option>
             <option
-              v-for="grade in over_20"
+              v-for="grade in over_100"
               :key="grade"
               :value="grade"
             >
@@ -78,10 +78,10 @@
           </select>
         </div>
         <div v-else>
-          {{ props.row.result_detail.ca1 }}
+          {{ props.row.result_detail.mid_term }}
         </div>
       </template>
-      <template
+      <!-- <template
         slot="ca2"
         slot-scope="props"
       >
@@ -109,12 +109,12 @@
         <div v-else>
           {{ props.row.result_detail.ca2 }}
         </div>
-      </template>
+      </template> -->
       <template
         slot="effort"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_ca1 || studentData.edit_ca2">
+        <div v-if="studentData.edit_midterm">
           <select
             v-model="props.row.result_detail.effort"
             style="width: 100%"
@@ -143,7 +143,7 @@
         slot="behavior"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_ca1 || studentData.edit_ca2">
+        <div v-if="studentData.edit_midterm">
           <select
             v-model="props.row.result_detail.behavior"
             style="width: 100%"
@@ -199,23 +199,23 @@ export default {
   },
   data() {
     return {
-      columns: ['photo', 'id', 'name', 'ca1', 'ca2', 'effort', 'behavior'],
+      columns: ['photo', 'id', 'name', 'mid_term', 'effort', 'behavior'],
       options: {
         headings: {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
-          ca1: '1st C.A (20%)',
-          ca2: '2nd C.A (10%)',
+          mid_term: 'Mid Term (100%)',
+          // ca2: '2nd C.A (10%)',
           effort: 'Academic Effort',
           behavior: 'Class Behavior',
 
         },
-        sortable: ['id', 'user.first_name', 'user.last_name', 'total'],
-        filterable: ['id', 'user.first_name', 'user.last_name', 'total'],
+        sortable: ['id', 'user.first_name', 'user.last_name'],
+        filterable: ['id', 'user.first_name', 'user.last_name'],
       },
       over_10: [],
-      over_20: [],
+      over_100: [],
       ratings: [
         { value: 5, label: 'Excellent' },
         { value: 4, label: 'Very Good' },
@@ -258,8 +258,8 @@ export default {
         this.over_10.unshift(index)
       }
       // eslint-disable-next-line no-plusplus
-      for (let index = 0; index <= 20; index++) {
-        this.over_20.unshift(index)
+      for (let index = 0; index <= 100; index++) {
+        this.over_100.unshift(index)
       }
     },
     recordResult(assessment, score, studentId, action) {
@@ -287,7 +287,7 @@ export default {
       const app = this
       app.percentageProgress = 0
       const emptyRecord = data.subject_teacher.empty_half_record
-      const totalEntryToMake = data.students.length * 4 // i.e ca1, ca2, effort, behavior entries for each student
+      const totalEntryToMake = data.students.length * 4 // i.e mid_term, ca2, effort, behavior entries for each student
       const percentageProgress = 100 - (emptyRecord / totalEntryToMake) * 100
       if (percentageProgress < 40) {
         app.status = 'danger'

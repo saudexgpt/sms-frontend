@@ -143,6 +143,7 @@
                         sub_term: broadSheetData.sub_term
                       }
                     }"
+                    target="_blank"
                     class="btn btn-info"
                     title="Student Result Detail"
                   ><i class="fa fa-newspaper-o" /> Details</router-link>

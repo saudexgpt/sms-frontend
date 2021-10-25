@@ -1,16 +1,15 @@
 <template>
   <div>
-    <div class="mb-1">
+    <div
+      v-if="studentId === null"
+      class="mb-1"
+    >
       <b-button
         variant="gradient-danger"
         class="btn-icon"
+        @click="$router.go(-1)"
       >
-        <router-link
-          :to="{name: 'manage-student'}"
-          style="color: #fff;"
-        >
-          Back
-        </router-link>
+        Back
       </b-button>
     </div>
     <el-card v-if="student.user">
@@ -63,6 +62,12 @@ export default {
     // StudentCurrentClassDetails,
     /* UpdateProfile  AcademicInformation */
   },
+  props: {
+    studentId: {
+      type: Number,
+      default: () => (null),
+    },
+  },
   // props: ['student_id'],
   data() {
     return {
@@ -75,8 +80,8 @@ export default {
     $route: 'getStudent',
   },
   created() {
-    if (this.student_id) {
-      const id = this.student_id
+    if (this.studentId) {
+      const id = this.studentId
       this.getStudent(id)
     } else {
       const id = this.$route.params && this.$route.params.id
