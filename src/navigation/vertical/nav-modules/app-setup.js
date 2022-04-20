@@ -22,6 +22,10 @@ export default [
         title: 'Curriculum Level',
         route: 'curriculum-level-setup',
       },
+      {
+        title: 'Academic Session',
+        route: 'AcademicSession',
+      },
     ],
   },
 ]

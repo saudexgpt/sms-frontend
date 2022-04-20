@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="load">
     <b-sidebar
       id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row>
+          <b-row v-loading="load">
 
             <!-- first name -->
             <b-col cols="12">
@@ -153,6 +153,7 @@ export default {
         level: '',
         sections: [],
       },
+      load: false,
     }
   },
   created() {
@@ -181,10 +182,12 @@ export default {
       const app = this
       const saveCurriculumSetupResource = new Resource('school-setup/classes')
       const param = app.form
+      app.load = true
       saveCurriculumSetupResource.store(param)
         .then(response => {
           app.$emit('save', response.class_teachers)
           app.$emit('update:is-create-class-sidebar-active', false)
+          app.load = false
         })
     },
   },

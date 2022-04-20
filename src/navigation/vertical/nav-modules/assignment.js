@@ -11,13 +11,18 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     // acl: {
-    //   roles: ['admin'],
+    //   except: ['super', 'parent', 'librarian'],
     // },
+    acl: {
+      modules: ['assignment'],
+      roles: ['admin', 'teacher', 'student'],
+    },
     children: [
       {
         title: 'All Assignments',
         route: 'AllAssignments',
         acl: {
+          modules: ['assignment'],
           roles: ['admin'],
         },
       },
@@ -25,6 +30,7 @@ export default [
         title: 'Add Assignment',
         route: 'AddAssignment',
         acl: {
+          modules: ['assignment'],
           roles: ['teacher'],
         },
       },
@@ -32,6 +38,7 @@ export default [
         title: 'View Assignments',
         route: 'ViewAssignments',
         acl: {
+          modules: ['assignment'],
           roles: ['teacher'],
         },
       },
@@ -39,6 +46,7 @@ export default [
         title: 'My Assignment',
         route: 'StudentAssignment',
         acl: {
+          modules: ['assignment'],
           roles: ['student'],
         },
       },

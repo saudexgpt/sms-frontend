@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row>
+          <b-row v-loading="load">
             <!-- first name -->
             <b-col cols="12">
               <b-form-group
@@ -113,6 +113,7 @@ export default {
         name: '',
         section: '',
       },
+      load: false,
     }
   },
   created() {
@@ -143,10 +144,12 @@ export default {
       const app = this
       const updateClassResource = new Resource('school-setup/classes')
       const param = app.form
+      app.load = true
       updateClassResource.update(param.id, param)
         .then(response => {
           app.$emit('update', response.class_teachers)
           app.$emit('update:is-edit-class-sidebar-active', false)
+          app.load = false
         })
     },
   },

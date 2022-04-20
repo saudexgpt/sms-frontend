@@ -575,7 +575,7 @@ export default {
     // },
     fetchFormDetails() {
       const app = this
-      const fetchCurriculumSetupResource = new Resource('user-setup/students/create')
+      const fetchCurriculumSetupResource = new Resource('school/create')
       fetchCurriculumSetupResource.list()
         .then(response => {
           app.countries = response.countries

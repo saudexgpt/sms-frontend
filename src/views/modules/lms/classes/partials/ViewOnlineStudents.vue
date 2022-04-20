@@ -3,11 +3,11 @@
   <div>
     <div class="col-xs-12">
       <!-- <a :href="'http://localhost:9001/live-class/dashboard/canvas-designer.html'+queryString" target="_blank" class="btn btn-success fa fa-video"> Live Video Class</a> -->
-      <a
+      <!-- <a
         :href="'https://liveclass.school-point.com/live-class/dashboard/canvas-designer.html'+queryString"
         target="_blank"
         class="btn btn-success fa fa-video"
-      > Live Video Class</a>
+      > Live Video Class</a> -->
       <legend>This classroom is scheduled to start at <strong>{{ classroom.start }}</strong> till <strong>{{ classroom.end }}</strong> on <strong>{{ classroom.date }}</strong> </legend>
 
       <div v-if="can_edit">
@@ -301,7 +301,7 @@ export default {
       return this.$store.getters.baseServerUrl
     },
   },
-  mounted() {
+  created() {
     this.fetchOnlineClassStudents()
     this.reload = setInterval(() => {
       this.fetchOnlineClassStudents()

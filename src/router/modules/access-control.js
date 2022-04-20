@@ -4,7 +4,7 @@ export default [
     name: 'manage-roles',
     component: () => import('@/views/modules/access-control/Roles.vue'),
     meta: {
-      roles: ['admin'],
+      permissions: ['can manage roles'],
     },
   },
   // {

@@ -9,7 +9,12 @@
       :lg="16"
       :xl="16"
     >
-
+      <el-alert
+        v-if="show_offline_badge"
+        title="You are currently offline. To be able to SUBMIT, kindly connect to the internet"
+        type="error"
+        effect="dark"
+      />
       <div id="clock">
 
         <stop-watch
@@ -19,210 +24,209 @@
         />
 
       </div>
-      <div class="box-body">
-        <form>
-
-          <div v-if="!preview">
+      <div
+        v-loading="loader"
+        class="box-body"
+      >
+        <div v-if="!preview">
+          <div
+            v-for="(quiz, index) in answers"
+            :key="index"
+          >
             <div
-              v-for="(quiz, index) in answers"
-              :key="index"
+              v-if="current_question == index"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
+              style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
             >
-              <div
-                v-if="current_question == index"
-                class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
-                style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
-              >
-                <font color="red">
-                  Question {{ index + 1 }}  of  {{ answers.length }}
-                </font>
-                <div class="demo-inline-spacing">
-                  <button
-                    v-if="index != 0"
-                    class="btn btn-primary"
-                    @click="load(index,index-1);"
-                  > <feather-icon
-                    icon="ArrowLeftIcon"
-                  /> Prev
-                  </button>
-                  <button
-                    v-if="index+1 === answers.length"
-                    class="btn btn-dark"
-                    @click="previewAswers()"
-                  > <feather-icon
-                    icon="ListIcon"
-                  /> Preview
-                  </button>
-                  <button
-                    v-else
-                    class="btn btn-primary"
-                    @click="load(index,index+1);"
-                  > Next
-                    <feather-icon
-                      icon="ArrowRightIcon"
-                    />
-                  </button>
+              <font color="red">
+                Question {{ index + 1 }}  of  {{ answers.length }}
+              </font>
+              <div class="demo-inline-spacing">
+                <button
+                  v-if="index != 0"
+                  class="btn btn-primary"
+                  @click="load(index,index-1);"
+                > <feather-icon
+                  icon="ArrowLeftIcon"
+                /> Prev
+                </button>
+                <button
+                  v-if="index+1 === answers.length"
+                  class="btn btn-dark"
+                  @click="previewAswers()"
+                > <feather-icon
+                  icon="ListIcon"
+                /> Preview
+                </button>
+                <button
+                  v-else
+                  class="btn btn-primary"
+                  @click="load(index,index+1);"
+                > Next
+                  <feather-icon
+                    icon="ArrowRightIcon"
+                  />
+                </button>
+              </div>
+              <div style="background: #fcfcfc; padding:10px;">
+                <div
+                  class="controls"
+                  style="font-size: 15px;"
+                >
+                  <span v-html="quiz.question.question" /><hr>
                 </div>
-                <div style="background: #fcfcfc; padding:10px;">
-                  <div
-                    class="controls"
-                    style="font-size: 15px;"
-                  >
-                    <span v-html="quiz.question.question" /><hr>
-                  </div>
 
-                  <div class="control-group">
-                    <label
-                      class="control-label"
-                      for="inputEmail"
-                    />
-                    <div class="controls">
+                <div class="control-group">
+                  <label
+                    class="control-label"
+                    for="inputEmail"
+                  />
+                  <div class="controls">
+                    <input
+                      v-model="quiz.question_id"
+                      type="hidden"
+                    >
+                    <div id="opt11">
+                      <label
+                        for="ansA"
+                        style="cursor: pointer"
+                      >(A)&nbsp;&nbsp;</label>
                       <input
-                        v-model="quiz.question_id"
-                        type="hidden"
-                      >
-                      <div id="opt11">
-                        <label
-                          for="ansA"
-                          style="cursor: pointer"
-                        >(A)&nbsp;&nbsp;</label>
-                        <input
-                          id="ansA"
-                          v-model="quiz.student_answer"
-                          :name="'answer'+index"
-                          value="A"
-                          type="radio"
-                          @click="quiz.student_answer_option = quiz.question.optA"
-                        > <span v-html="quiz.question.optA" /><br><br>
+                        id="ansA"
+                        v-model="quiz.student_answer"
+                        :name="'answer'+index"
+                        value="A"
+                        type="radio"
+                        @click="quiz.student_answer_option = quiz.question.optA"
+                      > <span v-html="quiz.question.optA" /><br><br>
 
-                        <label
-                          for="ansB"
-                          style="cursor: pointer"
-                        >(B)&nbsp;&nbsp;</label>
-                        <input
-                          id="ansB"
-                          v-model="quiz.student_answer"
-                          :name="'answer'+index"
-                          value="B"
-                          type="radio"
-                          @click="quiz.student_answer_option = quiz.question.optB"
-                        > <span v-html="quiz.question.optB" /><br><br>
+                      <label
+                        for="ansB"
+                        style="cursor: pointer"
+                      >(B)&nbsp;&nbsp;</label>
+                      <input
+                        id="ansB"
+                        v-model="quiz.student_answer"
+                        :name="'answer'+index"
+                        value="B"
+                        type="radio"
+                        @click="quiz.student_answer_option = quiz.question.optB"
+                      > <span v-html="quiz.question.optB" /><br><br>
 
-                        <label
-                          for="ansC"
-                          style="cursor: pointer"
-                        >(C)&nbsp;&nbsp;</label>
-                        <input
-                          id="ansC"
-                          v-model="quiz.student_answer"
-                          :name="'answer'+index"
-                          value="C"
-                          type="radio"
-                          @click="quiz.student_answer_option = quiz.question.optC"
-                        ><span v-html="quiz.question.optC" /><br><br>
+                      <label
+                        for="ansC"
+                        style="cursor: pointer"
+                      >(C)&nbsp;&nbsp;</label>
+                      <input
+                        id="ansC"
+                        v-model="quiz.student_answer"
+                        :name="'answer'+index"
+                        value="C"
+                        type="radio"
+                        @click="quiz.student_answer_option = quiz.question.optC"
+                      ><span v-html="quiz.question.optC" /><br><br>
 
-                        <label
-                          for="ansD"
-                          style="cursor: pointer"
-                        >(D)&nbsp;&nbsp;</label>
-                        <input
-                          id="ansD"
-                          v-model="quiz.student_answer"
-                          :name="'answer'+index"
-                          value="D"
-                          type="radio"
-                          @click="quiz.student_answer_option = quiz.question.optD"
-                        ><span v-html="quiz.question.optD" /><br>
-
-                      </div>
+                      <label
+                        for="ansD"
+                        style="cursor: pointer"
+                      >(D)&nbsp;&nbsp;</label>
+                      <input
+                        id="ansD"
+                        v-model="quiz.student_answer"
+                        :name="'answer'+index"
+                        value="D"
+                        type="radio"
+                        @click="quiz.student_answer_option = quiz.question.optD"
+                      ><span v-html="quiz.question.optD" /><br>
 
                     </div>
+
                   </div>
                 </div>
-                <br>
-                <div class="demo-inline-spacing">
-                  <button
-                    v-if="index != 0"
-                    class="btn btn-primary"
-                    @click="load(index,index-1);"
-                  > <feather-icon
-                    icon="ArrowLeftIcon"
-                  /> Prev
-                  </button>
-                  <button
-                    v-if="index+1 === answers.length"
-                    class="btn btn-dark"
-                    @click="previewAswers()"
-                  > <feather-icon
-                    icon="ListIcon"
-                  /> Preview
-                  </button>
-                  <button
-                    v-else
-                    class="btn btn-primary"
-                    @click="load(index,index+1);"
-                  > Next
-                    <feather-icon
-                      icon="ArrowRightIcon"
-                    />
-                  </button>
-                </div>
+              </div>
+              <br>
+              <div class="demo-inline-spacing">
+                <button
+                  v-if="index != 0"
+                  class="btn btn-primary"
+                  @click="load(index,index-1);"
+                > <feather-icon
+                  icon="ArrowLeftIcon"
+                /> Prev
+                </button>
+                <button
+                  v-if="index+1 === answers.length"
+                  class="btn btn-dark"
+                  @click="previewAswers()"
+                > <feather-icon
+                  icon="ListIcon"
+                /> Preview
+                </button>
+                <button
+                  v-else
+                  class="btn btn-primary"
+                  @click="load(index,index+1);"
+                > Next
+                  <feather-icon
+                    icon="ArrowRightIcon"
+                  />
+                </button>
               </div>
             </div>
           </div>
+        </div>
+        <div
+          v-if="preview"
+          id="preview"
+          class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          style="height: 350px; overflow:auto; background:#fcfcfc; border: 3px double #E1E1E1;border-radius: 8px; padding: 5px;"
+        >
+          <legend>Preview of your answers</legend>
+          <div
+            v-for="(quiz, index) in answers"
+            :key="index"
+          >
+            <h4><font color="green">
+              Question {{ index+1 }}:
+            </font><strong><span v-html="quiz.question.question" /></strong>You selected: (<font color="red">
+              <strong>{{ quiz.student_answer }}</strong>
+            </font>)<span v-html="quiz.student_answer_option" /></h4><br>
+          </div>
+        </div>
+
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
           <div
             v-if="preview"
-            id="preview"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-            style="height: 350px; overflow:auto; background:#fcfcfc; border: 3px double #E1E1E1;border-radius: 8px; padding: 5px;"
+            id="back_to_quest"
+            class="demo-inline-spacing"
           >
-            <legend>Preview of your answers</legend>
-            <div
-              v-for="(quiz, index) in answers"
-              :key="index"
-            >
-              <h4><font color="green">
-                Question {{ index+1 }}:
-              </font><strong><span v-html="quiz.question.question" /></strong>You selected: (<font color="red">
-                <strong>{{ quiz.student_answer }}</strong>
-              </font>)<span v-html="quiz.student_answer_option" /></h4><br>
-            </div>
-          </div>
-
-          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-            <div
-              v-if="preview"
-              id="back_to_quest"
-              class="demo-inline-spacing"
-            >
-              <hr>
-              <a
-                style="cursor:pointer;"
-                class="btn btn-warning"
-                @click="load(answers.length,answers.length-1);"
-              > Back to Question </a>
-              <button
-                class="btn btn-success"
-                @click="saveAnswers()"
-              >
-                SUBMIT
-              </button>
-
-            </div>
-
-            <legend>Navigate Questions</legend>
-
+            <hr>
             <a
-              v-for="(quiz, index) in answers"
-              :id="'quest_button_'+index"
-              :key="index"
-              style="cursor:pointer; font-size: 20px; border-radius: 4px; background-color: #ccc; color: #fff; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px;"
-              @click="change(index);"
-            >{{ index+1 }}</a>
+              style="cursor:pointer;"
+              class="btn btn-warning"
+              @click="load(answers.length,answers.length-1);"
+            > Back to Question </a>
+            <button
+              class="btn btn-success"
+              @click="saveAnswers()"
+            >
+              SUBMIT
+            </button>
 
           </div>
 
-        </form>
+          <legend>Navigate Questions</legend>
+
+          <a
+            v-for="(quiz, index) in answers"
+            :id="'quest_button_'+index"
+            :key="index"
+            style="cursor:pointer; font-size: 20px; border-radius: 4px; background-color: #ccc; color: #fff; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px;"
+            @click="change(index);"
+          >{{ index+1 }}</a>
+
+        </div>
       </div>
 
     </el-col>
@@ -328,9 +332,18 @@ export default {
       submit_response: '',
       score_board_message: '',
       exit_logo: '/img/exit.png',
+      loader: false,
+      show_offline_badge: false,
     }
   },
   mounted() {
+    setInterval(() => {
+      if (!navigator.onLine) {
+        this.show_offline_badge = true
+      } else {
+        this.show_offline_badge = false
+      }
+    }, 3000)
     this.attemptQuiz()
     // this.change(this.current_question);
   },
@@ -414,7 +427,7 @@ export default {
     },
     attemptQuiz() {
       const app = this
-
+      app.loader = true
       // let formData = new FormData();
       // formData.quiz_compilation_id = app.compiledQuiz.id;
       // formData.remaining_time = app.compiledQuiz.duration;
@@ -426,6 +439,7 @@ export default {
       attemptQuizResource.store(param) // back end route from web.php
 
         .then(response => {
+          app.loader = false
           app.quiz_attempt = response.quiz_attempt
           app.answers = response.answers
 
@@ -436,6 +450,8 @@ export default {
             app.doSubmit()
           }
           // app.checkKeyDown()
+        }).catch(() => {
+          app.loader = false
         })
     },
     checkTime() {
@@ -447,6 +463,7 @@ export default {
     },
     doSubmit() {
       const app = this
+      app.loader = true
       const submitQuizResource = new Resource('lms/submit-quiz-answers')
       app.quiz_attempt.remaining_time = 0
       const formData = app.answers
@@ -456,6 +473,7 @@ export default {
         .then(response => {
           app.submit_response = response
           app.submitted = true
+          app.loader = false
         })
     },
     saveAnswers() {

@@ -186,6 +186,7 @@
 // import 'vue-multiselect-listbox/dist/vue-multi-select-listbox.css'
 import Resource from '@/api/resource'
 import DndList from './partials/DndList.vue'
+import checkPermission from '@/utils/permission'
 
 const teacherSubjects = new Resource('attendance/subjects')
 const attendanceCreate = new Resource('attendance/create/subject')
@@ -235,6 +236,7 @@ export default {
     this.fetchTeacherSubjects()
   },
   methods: {
+    checkPermission,
     fetchTeacherSubjects() {
       const app = this
       teacherSubjects.list()

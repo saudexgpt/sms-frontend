@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="load">
     <b-sidebar
       id="sidebar-task-handler"
       sidebarsection="sidebar-lg"
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row>
+          <b-row v-loading="load">
             <!-- first name -->
             <b-col cols="12">
               <b-form-group
@@ -101,6 +101,7 @@ export default {
       form: {
         name: '',
       },
+      load: false,
     }
   },
   created() {
@@ -129,10 +130,14 @@ export default {
       const app = this
       const updateSectionResource = new Resource('school-setup/sections')
       const param = app.form
+      app.load = true
       updateSectionResource.update(param.id, param)
         .then(response => {
           app.$emit('update', response.sections)
           app.$emit('update:is-editsection-sidebar-active', false)
+          app.load = false
+        }).catch(() => {
+          app.load = false
         })
     },
   },

@@ -28,6 +28,11 @@ export default {
       required: true,
     },
   },
+  computed: {
+    school() {
+      return this.$store.getters.userData.school
+    },
+  },
   setup() {
     provide('openGroups', ref([]))
 

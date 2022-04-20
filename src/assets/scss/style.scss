@@ -5,11 +5,7 @@ NOTE:
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 
-.main-menu.menu-dark .navigation > li.open:not(.menu-item-closing) > a, [dir] .main-menu.menu-dark .navigation > li.sidebar-group-active > a {
-  background: #0c102a;
-  border-radius: 0 !important;
-  margin: 0;
-}
+
 
 @media print
 {
@@ -30,4 +26,49 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   .el-col-md-12 {
     width: 50% !important;
   }
+  .el-col-xs-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-sm-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-md-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-xs-9 {
+    width: 37.5% !important;
+  }
+  .el-col-sm-9 {
+    width: 37.5% !important;
+  }
+  .el-col-md-9 {
+    width: 37.5% !important;
+  }
+  .el-card {
+    margin: 0 !important;
+  }
+
+  .nav-item {
+    display: none !important;
+  }
+
+  .customizer-toggle {
+    display: none !important;
+  }
+  .btn-scroll-to-top {
+    display: none !important;
+  }
+  .app-content {
+    padding: 0px !important;
+  }
+
+  .content {
+    padding: 0px !important;
+  }
+  
+  table{
+    font-size: 12px;
+    padding: 3px !important;
+  }
+  body {-webkit-print-color-adjust: exact;}
 }

@@ -1,5 +1,8 @@
 <template>
-  <div class="email-app-details">
+  <div
+    v-if="selectedMessage !== null"
+    class="email-app-details"
+  >
 
     <!-- Email Header -->
     <div class="email-detail-header">
@@ -15,123 +18,8 @@
           />
         </span>
         <h4 class="email-subject mb-0">
-          {{ emailViewData.subject }}
+          {{ selectedMessage.subject }}
         </h4>
-      </div>
-
-      <!-- Header: Right -->
-      <div class="email-header-right ml-2 pl-1">
-
-        <!-- Mark Starred -->
-        <feather-icon
-          icon="StarIcon"
-          size="17"
-          class="cursor-pointer"
-          :class="{ 'text-warning fill-current': emailViewData.isStarred }"
-          @click="$emit('toggle-email-starred')"
-        />
-
-        <!-- Move email to folder -->
-        <b-dropdown
-          variant="link"
-          no-caret
-          toggle-class="p-0"
-          right
-          class="ml-75"
-        >
-          <template #button-content>
-            <feather-icon
-              icon="FolderIcon"
-              size="17"
-            />
-          </template>
-
-          <b-dropdown-item @click="$emit('move-email-to-folder', 'draft')">
-            <feather-icon icon="Edit2Icon" />
-            <span class="align-middle ml-50">Draft</span>
-          </b-dropdown-item>
-
-          <b-dropdown-item @click="$emit('move-email-to-folder', 'spam')">
-            <feather-icon icon="InfoIcon" />
-            <span class="align-middle ml-50">Spam</span>
-          </b-dropdown-item>
-
-          <b-dropdown-item
-            v-show="$route.params.folder !== 'trash'"
-            @click="$emit('move-email-to-folder', 'trash')"
-          >
-            <feather-icon icon="TrashIcon" />
-            <span class="align-middle ml-50">Trash</span>
-          </b-dropdown-item>
-        </b-dropdown>
-
-        <!-- Update Label -->
-        <b-dropdown
-          variant="link"
-          no-caret
-          toggle-class="p-0"
-          class="ml-75"
-          right
-        >
-          <template #button-content>
-            <feather-icon
-              icon="TagIcon"
-              size="17"
-              class="align-middle text-body"
-            />
-          </template>
-          <b-dropdown-item @click="$emit('update-email-label', 'personal')">
-            <span class="mr-50 bullet bullet-success bullet-sm" />
-            <span>Personal</span>
-          </b-dropdown-item>
-          <b-dropdown-item @click="$emit('update-email-label', 'company')">
-            <span class="mr-50 bullet bullet-primary bullet-sm" />
-            <span>Company</span>
-          </b-dropdown-item>
-          <b-dropdown-item @click="$emit('update-email-label', 'important')">
-            <span class="mr-50 bullet bullet-warning bullet-sm" />
-            <span>Important</span>
-          </b-dropdown-item>
-          <b-dropdown-item @click="$emit('update-email-label', 'private')">
-            <span class="mr-50 bullet bullet-danger bullet-sm" />
-            <span>Private</span>
-          </b-dropdown-item>
-        </b-dropdown>
-
-        <!-- Mark Un-Read -->
-        <feather-icon
-          icon="MailIcon"
-          class="ml-75 cursor-pointer"
-          size="17"
-          @click="$emit('mark-email-unread')"
-        />
-
-        <!-- Move to Trash -->
-        <feather-icon
-          v-show="$route.params.folder !== 'trash'"
-          icon="TrashIcon"
-          class="ml-75"
-          size="17"
-          @click="$emit('move-email-to-folder', 'trash')"
-        />
-
-        <!-- Show Previous Mail -->
-        <feather-icon
-          :icon="$store.state.appConfig.isRTL ? 'ChevronRightIcon' : 'ChevronLeftIcon'"
-          size="17"
-          class="ml-75 cursor-pointer"
-          :class="{'text-muted pointer-events-none': !opendedEmailMeta.hasPreviousEmail}"
-          @click="$emit('change-opened-email', 'previous')"
-        />
-
-        <!-- Show Next Mail -->
-        <feather-icon
-          :icon="$store.state.appConfig.isRTL ? 'ChevronLeftIcon' : 'ChevronRightIcon'"
-          size="17"
-          class="ml-75 cursor-pointer"
-          :class="{'text-muted pointer-events-none': !opendedEmailMeta.hasNextEmail}"
-          @click="$emit('change-opened-email', 'next')"
-        />
       </div>
     </div>
 
@@ -141,42 +29,58 @@
       class="email-scroll-area scroll-area"
     >
 
+      <br>
       <!-- Label Row -->
       <b-row>
         <b-col cols="12">
-          <div class="email-label">
-            <b-badge
-              v-for="(label) in emailViewData.labels"
-              :key="label"
-              pill
-              class="text-capitalize mr-50"
-              :variant="`light-${resolveLabelColor(label)}`"
+          <el-button-group>
+            <el-button
+              type="primary"
+              @click="handleReply = true"
             >
-              {{ label }}
-            </b-badge>
-          </div>
+              <feather-icon icon="CornerUpLeftIcon" />
+              <span class="align-middle ml-50">Reply</span>
+            </el-button>
+            <el-button
+              type="success"
+              @click="handleForward = true"
+            >
+              <feather-icon icon="CornerUpRightIcon" />
+              <span class="align-middle ml-50">Forward</span>
+            </el-button>
+            <el-button
+              type="danger"
+              @click="deleteMessage('delete_' + type)"
+            >
+              <feather-icon icon="TrashIcon" />
+              <span class="align-middle ml-50">Delete</span>
+            </el-button>
+          </el-button-group>
         </b-col>
       </b-row>
-
-      <!-- Action: Show Earlier Message -->
-      <b-row
-        v-if="!showWholeThread && emailViewData.replies && emailViewData.replies.length"
-        class="mb-1"
-      >
+      <!-- Email Thread -->
+      <b-row>
         <b-col cols="12">
-          <b-link
-            class="font-weight-bold"
-            @click="showWholeThread = true"
-          >
-            View {{ emailViewData.replies.length }} Earlier Message{{ emailViewData.replies.length > 1 ? 's' : '' }}
-          </b-link>
+          <email-message-card
+            :message="selectedMessage"
+            :options="options"
+            :recipients="recipients"
+          />
         </b-col>
       </b-row>
+      <!-- Action: Show Earlier Message -->
+      <!-- <b-row class="mb-1">
+        <b-col cols="12">
+          <b-card>
+            <div v-html="selectedMessage.message" />
+          </b-card>
+        </b-col>
+      </b-row> -->
 
       <!-- Earlier Email Messages -->
-      <template v-if="showWholeThread">
+      <template>
         <b-row
-          v-for="threadMail in emailViewData.replies.slice().reverse()"
+          v-for="threadMail in selectedMessage.replies.slice().reverse()"
           :key="threadMail.id"
         >
           <b-col cols="12">
@@ -184,53 +88,100 @@
           </b-col>
         </b-row>
       </template>
-
-      <!-- Email Thread -->
-      <b-row>
-        <b-col cols="12">
-          <email-message-card :message="emailViewData" />
-        </b-col>
-      </b-row>
-
-      <!-- Email Actions: Reply or Forward -->
-      <b-row>
-        <b-col cols="12">
-          <b-card>
-            <div class="d-flex justify-content-between">
-              <h5 class="mb-0">
-                Click here to
-                <b-link>Reply</b-link>
-                or
-                <b-link>Forward</b-link>
-              </h5>
-            </div>
-          </b-card>
-        </b-col>
-      </b-row>
     </vue-perfect-scrollbar>
+
+    <!-- REPLY MESSAGE DIALOG -->
+    <el-dialog
+      title="Reply Message"
+      :visible.sync="handleReply"
+      :modal-append-to-body="false"
+    >
+      <el-input
+        v-model="replied_message"
+        type="textarea"
+      />
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="handleReply = false">Cancel</el-button>
+        <el-button
+          type="primary"
+          @click="updateMessage('reply')"
+        >Reply</el-button>
+      </span>
+    </el-dialog>
+    <!-- REPLY MESSAGE DIALOG -->
+    <!-- FORWARD MESSAGE DIALOG -->
+    <el-dialog
+      title="Forward Message"
+      :visible.sync="handleForward"
+      :modal-append-to-body="false"
+    >
+      <el-select
+        v-model="selected_option"
+        style="width: 100%"
+        placeholder="Select Recipients' Category"
+        @input="setRecipients()"
+      >
+        <el-option
+          v-for="(option, index) in options"
+          :key="index"
+          :label="option.toUpperCase()"
+          :value="option"
+        />
+      </el-select>
+      <el-select
+        v-model="forward_recipients"
+        style="width: 100%"
+        placeholder="Select Recipients"
+        filterable
+        multiple
+        collapse-tags
+      >
+        <el-option
+          v-for="(recipient, index) in selected_recipients"
+          :key="index"
+          :label="(recipient.user) ? recipient.user.first_name + ' ' + recipient.user.last_name + ' (' + recipient.user.username +')' : ''"
+          :value="recipient.user_id"
+        />
+      </el-select>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="handleForward = false">Cancel</el-button>
+        <el-button
+          type="success"
+          @click="updateMessage('forward')"
+        >Forward</el-button>
+      </span>
+    </el-dialog>
+    <!-- FORWARD MESSAGE DIALOG -->
   </div>
 </template>
 
 <script>
 import {
-  BDropdown, BDropdownItem, BRow, BCol, BBadge, BCard, BLink,
+  /* BDropdown, BDropdownItem, BBadge, */ BRow, BCol, /* BCard, BLink, */
 } from 'bootstrap-vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { ref, watch } from '@vue/composition-api'
 import useEmail from './useEmail'
 import EmailMessageCard from './EmailMessageCard.vue'
+import Resource from '@/api/resource'
 
 export default {
   components: {
 
     // BSV
-    BDropdown,
-    BDropdownItem,
+    // BDropdown,
+    // BDropdownItem,
     BRow,
     BCol,
-    BBadge,
-    BCard,
-    BLink,
+    // BBadge,
+    // BCard,
+    // BLink,
 
     // 3rd Party
     VuePerfectScrollbar,
@@ -243,10 +194,22 @@ export default {
       type: Object,
       required: true,
     },
-    opendedEmailMeta: {
+    options: {
+      type: Array,
+      required: true,
+    },
+    recipients: {
       type: Object,
       required: true,
     },
+    type: {
+      type: String,
+      default: () => 'inbox',
+    },
+    // opendedEmailMeta: {
+    //   type: Object,
+    //   required: true,
+    // },
   },
   setup(props) {
     const { resolveLabelColor } = useEmail()
@@ -270,6 +233,66 @@ export default {
       // useEmail
       resolveLabelColor,
     }
+  },
+  data() {
+    return {
+      handleReply: false,
+      handleForward: false,
+      replied_message: '',
+      forward_recipients: [],
+      selected_option: '',
+      selected_recipients: [],
+      selectedMessage: null,
+    }
+  },
+  created() {
+    this.selectedMessage = this.emailViewData
+  },
+  methods: {
+    updateMessage(action) {
+      const app = this
+      const param = {
+        message: app.replied_message,
+        action,
+        recipients: app.forward_recipients,
+      }
+      const updateMessageResource = new Resource('messages/update')
+      updateMessageResource.update(app.selectedMessage.id, param)
+        .then(response => {
+          app.selectedMessage = response.message_details
+          app.handleReply = false
+          app.handleForward = false
+        })
+        .catch(() => {
+
+        })
+    },
+    deleteMessage(action) {
+      const app = this
+      // eslint-disable-next-line no-alert
+      if (window.confirm('Are you sure you want to delete conversation?')) {
+        const param = {
+          message: app.replied_message,
+          action,
+          recipients: app.forward_recipients,
+        }
+        const updateMessageResource = new Resource('messages/update')
+        updateMessageResource.update(app.selectedMessage.id, param)
+          .then(response => {
+            app.selectedMessage = response.message_details
+            app.$emit('close-email-view')
+            app.handleReply = false
+            app.handleForward = false
+          })
+          .catch(() => {
+
+          })
+      }
+    },
+    setRecipients() {
+      const app = this
+      app.selected_recipients = app.recipients[app.selected_option]
+    },
   },
 }
 </script>

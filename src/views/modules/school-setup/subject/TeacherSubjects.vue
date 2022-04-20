@@ -20,22 +20,24 @@
           class="text-center"
           style="cursor: pointer"
         >
-          <b-avatar
-            class="mb-1"
-            :variant="randomColor()"
-            size="45"
-          >
-            <feather-icon
-              size="21"
-              icon="BookOpenIcon"
-            />
-          </b-avatar>
-          <div class="truncate">
-            <h4 class="mb-25 font-weight-bolder">
-              {{ subject_teacher.subject.code }}
-            </h4>
-            <span>{{ subject_teacher.class_teacher.c_class.name }}</span>
-          </div>
+          <router-link :to="{name: 'SubjectStudents', params: {id: subject_teacher.id}}">
+            <b-avatar
+              class="mb-1"
+              :variant="randomColor()"
+              size="45"
+            >
+              <feather-icon
+                size="21"
+                icon="BookOpenIcon"
+              />
+            </b-avatar>
+            <div class="truncate">
+              <h4 class="mb-25 font-weight-bolder">
+                {{ subject_teacher.subject.code }}
+              </h4>
+              <span>{{ subject_teacher.class_teacher.c_class.name }}</span>
+            </div>
+          </router-link>
         </b-card>
         <!-- </router-link> -->
       </el-col>

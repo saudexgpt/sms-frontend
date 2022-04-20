@@ -1,38 +1,32 @@
 <template>
   <div class="app-container">
-    <!-- <my-wards />
-    <full-calendar :events="events"></full-calendar> -->
+    <my-wards
+      v-if="guardian !== null"
+      :guardian-id="guardian.id"
+      :ward-only="true"
+    />
+    <events />
   </div>
 </template>
 <script>
-// import MyWards from './components/MyWards';
-// import { FullCalendar } from 'vue-full-calendar'
-// import "fullcalendar/dist/fullcalendar.min.css";
+import Events from './components/UpcomingEvents.vue'
+import MyWards from '@/views/modules/user/parents/Details.vue'
+// import 'fullcalendar/dist/fullcalendar.min.css'
 
-// export default {
-//   components: {
-//     MyWards,FullCalendar
-//   },
+export default {
+  components: {
+    MyWards,
+    Events,
+  },
 
-//   data() {
-//     return {
-//       events: [
-//         {
-//             title  : 'event1',
-//             start  : '2010-01-01',
-//         },
-//         {
-//             title  : 'event2',
-//             start  : '2010-01-05',
-//             end    : '2010-01-07',
-//         },
-//         {
-//             title  : 'event3',
-//             start  : '2010-01-09T12:30:00',
-//             allDay : false,
-//         },
-//       ]
-//     }
-//   },
-// };
+  data() {
+    return {
+    }
+  },
+  computed: {
+    guardian() {
+      return this.$store.getters.userData.guardian
+    },
+  },
+}
 </script>

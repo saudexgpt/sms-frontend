@@ -4,7 +4,7 @@ export default [
     name: 'level-setup',
     component: () => import('@/views/modules/school-setup/level/LevelSetup.vue'),
     meta: {
-      roles: ['admin'],
+      permissions: ['can manage settings'],
     },
   },
   {
@@ -12,7 +12,7 @@ export default [
     name: 'class-setup',
     component: () => import('@/views/modules/school-setup/class/ClassSetup.vue'),
     meta: {
-      roles: ['admin'],
+      permissions: ['can manage settings'],
     },
   },
   {
@@ -20,7 +20,7 @@ export default [
     name: 'section-setup',
     component: () => import('@/views/modules/school-setup/section/SectionSetup.vue'),
     meta: {
-      roles: ['admin'],
+      permissions: ['can manage settings'],
     },
   },
   {
@@ -28,7 +28,7 @@ export default [
     name: 'subject-setup',
     component: () => import('@/views/modules/school-setup/subject/SubjectSetup.vue'),
     meta: {
-      roles: ['admin'],
+      permissions: ['can manage settings', 'can manage subjects'],
     },
   },
   {
@@ -37,6 +37,15 @@ export default [
     component: () => import('@/views/modules/school-setup/subject/TeacherSubjects.vue'),
     meta: {
       roles: ['teacher'],
+    },
+  },
+  {
+    path: '/subject-students/:id',
+    component: () => import('@/views/modules/school-setup/subject/SubjectStudents.vue'),
+    name: 'SubjectStudents',
+    meta: {
+      roles: ['teacher'],
+
     },
   },
   {
@@ -52,15 +61,7 @@ export default [
     name: 'session-and-term',
     component: () => import('@/views/modules/school-setup/session-and-term/index.vue'),
     meta: {
-      roles: ['admin'],
-    },
-  },
-  {
-    path: '/setup/news-and-event',
-    name: 'news-and-event',
-    component: () => import('@/views/modules/school-setup/news-and-event/Calendar.vue'),
-    meta: {
-      roles: ['admin'],
+      permissions: ['can manage settings'],
     },
   },
 ]

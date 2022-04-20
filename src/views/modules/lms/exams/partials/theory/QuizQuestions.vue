@@ -375,8 +375,8 @@ export default {
       attemptQuizResource.store(param) // back end route from web.php
 
         .then(response => {
-          app.quiz_attempt = response.data.quiz_attempt
-          app.answers = response.data.answers
+          app.quiz_attempt = response.quiz_attempt
+          app.answers = response.answers
 
           if (app.quiz_attempt.remaining_time < 1 || app.quiz_attempt.has_submitted === 'yes') {
             app.timeup = true
@@ -424,7 +424,7 @@ export default {
       submitQuizResource.store('/lms/submit-quiz-answers', formData) // back end route from web.php
 
         .then(response => {
-          app.submit_response = response.data
+          app.submit_response = response
           app.submitted = true
         })
     },

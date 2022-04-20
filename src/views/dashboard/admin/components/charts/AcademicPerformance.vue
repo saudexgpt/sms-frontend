@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <div class="box">
       <div class="box-header">
         <h4 class="box-title">
@@ -13,6 +13,7 @@
               :xs="24"
               :sm="12"
               :md="6"
+              :lg="6"
             >
               <select
                 v-model="level"
@@ -39,12 +40,12 @@
               :xs="24"
               :sm="12"
               :md="6"
+              :lg="6"
             >
               <el-select
                 v-model="params.class_teacher_id"
                 placeholder="Select Class"
                 style="width: 100%"
-                @change="loadChart()"
               >
                 <el-option
                   v-for="(class_teacher, index) in class_teachers"
@@ -58,13 +59,13 @@
             <el-col
               :xs="24"
               :sm="12"
-              :md="6"
+              :md="4"
+              :lg="4"
             >
               <el-select
                 v-model="params.sess_id"
                 placeholder="Select Academic Session"
                 style="width: 100%"
-                @change="loadChart()"
               >
                 <el-option
                   v-for="(all_session, index) in response_data.all_sessions"
@@ -77,13 +78,13 @@
             <el-col
               :xs="24"
               :sm="12"
-              :md="6"
+              :md="4"
+              :lg="4"
             >
               <el-select
                 v-model="params.term_id"
                 placeholder="Select Term"
                 style="width: 100%"
-                @change="loadChart()"
               >
                 <el-option
                   v-for="(select_term_name, index) in response_data.term_array"
@@ -94,29 +95,39 @@
               </el-select>
 
             </el-col>
+            <el-col
+              :xs="24"
+              :sm="24"
+              :md="4"
+              :lg="4"
+            >
+              <el-button
+                type="primary"
+                style="width: 100%"
+                @click="loadChart()"
+              >
+                Fetch
+              </el-button>
+
+            </el-col>
           </el-row>
         </aside>
 
-        <el-row
-          :gutter="0"
-          class="panel-group"
+        <el-tabs
+          style="margin-top:15px;"
+          type="border-box"
         >
-          <el-tabs
-            style="margin-top:15px;"
-            type="border-box"
-          >
-            <el-tab-pane label="Subject Performance Chart">
+          <el-tab-pane label="Subject Performance Chart">
 
-              <highcharts :options="subject_performance" />
+            <highcharts :options="subject_performance" />
 
-            </el-tab-pane>
-            <el-tab-pane label="Gender Performance Comparison">
+          </el-tab-pane>
+          <el-tab-pane label="Gender Performance Comparison">
 
-              <highcharts :options="gender_performance" />
+            <highcharts :options="gender_performance" />
 
-            </el-tab-pane>
-          </el-tabs>
-        </el-row>
+          </el-tab-pane>
+        </el-tabs>
 
       </div>
 

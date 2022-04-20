@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row>
+          <b-row v-loading="load">
             <b-col cols="12">
               <b-form-group
                 label="Subject Title"
@@ -110,6 +110,7 @@ export default {
         name: '',
         code: '',
       },
+      load: false,
     }
   },
   created() {
@@ -121,8 +122,10 @@ export default {
       const app = this
       const editSubjectsResource = new Resource('school-setup/subjects')
       const param = app.form
+      app.load = true
       editSubjectsResource.update(param.id, param)
         .then(response => {
+          app.load = false
           app.$emit('update', response)
           app.$emit('update:is-edit-subject-sidebar-active', false)
         })

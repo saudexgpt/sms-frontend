@@ -4,7 +4,7 @@
     <router-view />
 
     <app-customizer
-      v-if="showCustomizer"
+      v-if="roles.includes('admin')"
       slot="customizer"
     />
 
@@ -25,6 +25,11 @@ export default {
     return {
       showCustomizer: $themeConfig.layout.customizer,
     }
+  },
+  computed: {
+    roles() {
+      return this.$store.getters.userData.roles
+    },
   },
 }
 </script>

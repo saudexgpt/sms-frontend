@@ -46,6 +46,11 @@ import userSetup from './modules/user-management'
 import schoolSetup from './modules/school-setup'
 import appSetup from './modules/app-setup'
 import accessControl from './modules/access-control'
+import schools from './modules/schools'
+import materials from './modules/materials'
+import library from './modules/library'
+import packages from './modules/packages'
+import newsEvent from './modules/news-event'
 
 Vue.use(Router)
 export const constantRoutes = [
@@ -68,6 +73,16 @@ export const constantRoutes = [
     path: '/register',
     name: 'school-registration',
     component: () => import('@/views/pages/authentication/RegisterSchool.vue'),
+    meta: {
+      layout: 'full',
+      // redirectIfLoggedIn: true,
+    },
+  },
+  {
+    hidden: true,
+    path: '/register-partner',
+    name: 'RegisterPartner',
+    component: () => import('@/views/pages/authentication/RegisterPartner.vue'),
     meta: {
       layout: 'full',
       // redirectIfLoggedIn: true,
@@ -140,13 +155,18 @@ export const asyncRoutes = [
   ...eLearning,
   ...userSetup,
   ...schoolSetup,
-  // ...pages,
+  ...schools,
+  ...materials,
+  ...library,
+  ...packages,
+  ...newsEvent,
   // ...chartsMaps,
   // ...formsTable,
   // ...uiElements,
   // ...others,
   ...appSetup,
   ...accessControl,
+  // ...parent,
   {
     path: '*',
     redirect: '/error-404',

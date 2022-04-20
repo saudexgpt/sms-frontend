@@ -1,7 +1,9 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-mixed-operators */
 /**
  * Simple RESTful helper class
  */
+
 class Helper {
 // helper function to rank student result;
   rankResult(scoreAverage, resultAverages, option) {
@@ -41,6 +43,54 @@ class Helper {
       }
     }
     return position
+  }
+
+  checkRolesAndPermissionOnly(item, userData) {
+    let hasRole = true
+    let hasPermission = true
+    const { roles, permissions } = userData
+
+    if (item.acl) {
+      if (item.acl.roles || item.acl.permissions) {
+        // If it has meta.roles or meta.permissions, accessible = hasRole || permission
+        hasRole = false
+        hasPermission = false
+        if (item.acl.roles) {
+          hasRole = roles.some(role => item.acl.roles.includes(role))
+        }
+
+        if (item.acl.permissions) {
+          hasPermission = permissions.some(permission => item.acl.permissions.includes(permission))
+        }
+
+        return (hasRole || hasPermission)
+      }
+
+      if (item.acl.except) {
+        // we hide navigation for user whose role you have been excluded
+        const exclude = roles.some(permission => item.acl.except.includes(permission))
+        return (!exclude)
+      }
+    }
+
+    // If no meta.roles/meta.permissions inputted - the route should be accessible
+    return true
+  }
+
+  canAccessLink(item, userData) {
+    let hasModule = true
+    const { modules } = userData
+
+    if (item.acl) {
+      if (item.acl.modules !== '' && item.acl.modules !== undefined) {
+        hasModule = modules.some(eachModule => item.acl.modules.includes(eachModule))
+        return this.checkRolesAndPermissionOnly(item, userData) && hasModule
+      }
+      return this.checkRolesAndPermissionOnly(item, userData)
+    }
+
+    // If no meta.roles/meta.permissions inputted - the route should be accessible
+    return true
   }
 }
 export { Helper as default }

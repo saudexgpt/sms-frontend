@@ -6,7 +6,7 @@
       :columns="columns"
       :options="options"
     >
-      <template
+      <!-- <template
         slot="name"
         slot-scope="props"
         aria-sort="ascending"
@@ -30,6 +30,25 @@
         slot-scope="props"
       >
         {{ props.row.registration_no }}
+      </template> -->
+      <template
+        slot="student"
+        slot-scope="props"
+        aria-sort="ascending"
+      >
+        <div align="center">
+          <b-avatar
+            :src="baseServerUrl +'storage/'+props.row.user.photo"
+            variant="light-primary"
+            :text="avatarText(props.row.user.last_name +' ' + props.row.user.first_name)"
+            size="30px"
+            rounded
+          />
+          <br>
+          <small>{{ props.row.user.first_name + ' ' + props.row.user.last_name }}</small>
+          <br>
+          <small>{{ props.row.registration_no }}</small>
+        </div>
       </template>
       <template
         slot="ca1"
@@ -50,6 +69,20 @@
       >
 
         {{ props.row.result_detail.ca3 }}
+
+      </template>
+      <template
+        slot="ca4"
+        slot-scope="props"
+      >
+        {{ props.row.result_detail.ca4 }}
+      </template>
+      <template
+        slot="ca5"
+        slot-scope="props"
+      >
+
+        {{ props.row.result_detail.ca5 }}
 
       </template>
       <template
@@ -94,19 +127,25 @@ export default {
       type: Array,
       default: () => ({}),
     },
+    resultSettings: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
-      columns: ['photo', 'id', 'name', 'ca1', 'ca2', 'ca3', 'exam', 'total', 'comments'],
+      columns: ['student'],
       options: {
         headings: {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
-          ca1: '1st C.A (20%)',
-          ca2: '2nd C.A (10%)',
-          ca3: '3rd C.A (10%)',
-          exam: 'Exam (60%)',
+          ca1: `C.A 1 (${this.resultSettings.ca1}%)`,
+          ca2: `C.A 2 (${this.resultSettings.ca2}%)`,
+          ca3: `C.A 3 (${this.resultSettings.ca3}%)`,
+          ca4: `C.A 4 (${this.resultSettings.ca4}%)`,
+          ca5: `C.A 5 (${this.resultSettings.ca5}%)`,
+          exam: `Exam (${this.resultSettings.exam}%)`,
           total: 'Total (100%)',
           comments: 'Remark',
         },
@@ -126,8 +165,25 @@ export default {
       return this.$store.getters.baseServerUrl
     },
   },
+  created() {
+    this.setFullTermAssessmentFields()
+  },
   methods: {
     avatarText,
+    setFullTermAssessmentFields() {
+      const app = this
+      // const noOfMidtermCa = result_settings.no_of_ca_for_midterm
+      const noOfCa = app.resultSettings.no_of_ca
+      // eslint-disable-next-line no-plusplus
+      for (let index = 1; index <= noOfCa; index++) {
+        // if (index > noOfMidtermCa) {
+        app.columns.push(`ca${index}`)
+        // }
+      }
+      app.columns.push('exam')
+      app.columns.push('total')
+      app.columns.push('comments')
+    },
   },
 
 }

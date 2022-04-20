@@ -12,7 +12,7 @@
       </b-row>
       <hr>
     </div>
-    <div>
+    <div v-if="selectedStaff === null">
       <v-client-table
         v-model="staff"
         v-loading="loading"
@@ -36,6 +36,13 @@
               ><feather-icon icon="EyeIcon" /></router-link>
             </b-button>
             <b-button
+              v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
+              variant="success"
+              class="btn-icon rounded-circle"
+              @click="editStaff(props.row)"
+            ><feather-icon icon="Edit2Icon" />
+            </b-button>
+            <b-button
               v-b-tooltip.hover.right="'Reset Password'"
               variant="gradient-warning"
               class="btn-icon rounded-circle"
@@ -51,10 +58,24 @@
             >
               <feather-icon icon="KeyIcon" />
             </b-button>
+            <b-button
+              v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"
+              variant="danger"
+              class="btn-icon rounded-circle"
+              @click="removeStaff(props.row)"
+            >
+              <feather-icon icon="TrashIcon" />
+            </b-button>
           </span>
         </div>
       </v-client-table>
 
+    </div>
+    <div v-else>
+      <edit-staff
+        :selected-staff="selectedStaff"
+        @update="reloadTable()"
+      />
     </div>
   </div>
 </template>
@@ -63,13 +84,15 @@
 import {
   BButton, BRow, BCol, VBTooltip,
 } from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
+import EditStaff from './EditStaff.vue'
 // import vSelect from 'vue-select'
 // import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
   components: {
+    EditStaff,
     // VueGoodTable,
     // vSelect,
     BButton,
@@ -155,7 +178,7 @@ export default {
       },
       staff: [],
       loading: false,
-      editable_row: '',
+      selectedStaff: null,
       selected_row_index: '',
       selected_teacher: '',
     }
@@ -205,11 +228,34 @@ export default {
         // })
       })
     },
-    editThisRow(value) {
+    editStaff(value) {
       // console.log(props)
       const app = this
-      app.editable_row = value
-      app.isEditClassSidebarActive = true
+      app.selectedStaff = value
+    },
+    reloadTable() {
+      this.selectedStaff = null
+      this.fetchStaff()
+    },
+    removeStaff(staff) {
+      this.$confirm(`This will delete ${staff.user.username} from the portal. It cannot be undone. Do you want to continue?`, 'Confirm Action', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        type: 'warning',
+      }).then(() => {
+        this.loading = true
+        const deleteStaffResource = new Resource('user-setup/staff/destroy')
+        deleteStaffResource.destroy(staff.id)
+          .then(() => {
+            this.reloadTable()
+            this.loading = false
+          })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: 'Delete canceled',
+        // })
+      })
     },
   },
 }

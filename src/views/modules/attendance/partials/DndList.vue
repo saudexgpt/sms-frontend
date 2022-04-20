@@ -1,6 +1,6 @@
 <template>
   <el-row
-    :gutter="5"
+    :gutter="10"
     class=""
   >
     <el-col
@@ -9,7 +9,10 @@
       style="background: rgba(243, 129, 129, 0.904); color: #000; padding: 10px"
     >
       <h4>{{ unmarkedTitle }}</h4>
-      <!-- <a @click="markAll('marked')" class="btn btn-success">Mark All</a> -->
+      <a
+        class="btn btn-success"
+        @click="markAll('marked')"
+      >Mark All <i class="el-icon-d-arrow-right" /></a>
       <draggable
         :list="unmarked"
         :options="{group:'article'}"
@@ -21,6 +24,7 @@
           class="list-complete-item"
         >
           <div
+            v-if="student !== null"
             class="list-complete-item-handle"
             @click="pushEle(student)"
           >
@@ -45,7 +49,10 @@
       style="background: rgb(166, 247, 184); color: #000; padding: 10px "
     >
       <h4>{{ markedTitle }}</h4>
-      <!-- <a @click="markAll('unmarked')" class="btn btn-danger">Unmark All</a> -->
+      <a
+        class="btn btn-danger"
+        @click="markAll('unmarked')"
+      ><i class="el-icon-d-arrow-left" /> Unmark All</a>
       <draggable
         :list="marked"
         :options="{group:'article'}"
@@ -57,6 +64,7 @@
           class="list-complete-item"
         >
           <div
+            v-if="student !== null"
             class="list-complete-item-handle2"
             @click="deleteEle(student)"
           >
@@ -114,22 +122,17 @@ export default {
   },
 
   methods: {
-    // markAll(whatToMark)
-    // {
-
-    //   if (whatToMark == 'marked') {
-    //     for (const item of this.allStudents) {
-    //       this.pushEle(item);
-    //     }
-
-    //   }else{
-    //     for (const item of this.allStudents) {
-    //       this.deleteEle(item);
-    //     }
-
-    //   }
-
-    // },
+    markAll(whatToMark) {
+      if (whatToMark === 'marked') {
+        this.allStudents.forEach(item => {
+          this.pushEle(item)
+        })
+      } else {
+        this.allStudents.forEach(item => {
+          this.deleteEle(item)
+        })
+      }
+    },
     isNotInUnmarked(v) {
       return this.unmarked.every(k => v.id !== k.id)
     },

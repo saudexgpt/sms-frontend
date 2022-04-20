@@ -11,6 +11,7 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
+      modules: ['attendance'],
       permissions: ['can view class attendance', 'can view subject attendance'],
     },
     children: [
@@ -18,6 +19,7 @@ export default [
         title: 'Class Attendance',
         route: 'ClassAttendance',
         acl: {
+          modules: ['attendance'],
           permissions: ['can view class attendance'],
         },
       },
@@ -25,6 +27,7 @@ export default [
         title: 'Subject Attendance',
         route: 'SubjectAttendance',
         acl: {
+          modules: ['attendance'],
           permissions: ['can view subject attendance'],
         },
       },

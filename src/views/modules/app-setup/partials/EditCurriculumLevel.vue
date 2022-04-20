@@ -90,7 +90,7 @@
                 type="submit"
                 variant="warning"
                 class="mr-1"
-                @click="submit()"
+                @click="update()"
               >
                 Update
               </b-button>

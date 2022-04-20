@@ -3,107 +3,68 @@
     <div slot="header">
       <b-row>
         <b-col
-          cols="7"
+          cols="6"
         >
-          <h4 v-if="level !== ''">
-            Students in {{ level.level }}
+          <h4 v-if="level !== null">
+            Students in {{ (level !== null) ? level.level : '' }}
           </h4>
         </b-col>
         <b-col
-          cols="5"
+          cols="3"
+        >
+          <span
+            v-if="sessions.length > 0"
+          >
+            <el-select
+              id="sess_id"
+              v-model="sess_id"
+              style="width: 100%;"
+              placeholder="Select Session"
+              filterable
+              @input="fetchStudents()"
+            >
+              <el-option
+                v-for="(session) in sessions"
+                :key="session.id"
+                :label="session.name"
+                :value="session.id"
+              />
+            </el-select>
+          </span>
+        </b-col>
+        <b-col
+          cols="3"
         >
           <span
             v-if="levels.length > 0"
           >
-            <v-select
-              v-model="level"
+            <el-select
+              id="level"
+              v-model="level_index"
+              style="width: 100%;"
               placeholder="Select Level"
-              :options="levels"
-              label="level"
-              value="id"
-              @input="fetchStudents()"
-            />
+              filterable
+              @input="setLevel()"
+            >
+              <el-option
+                v-for="(each_level, index) in levels"
+                :key="index"
+                :label="each_level.level"
+                :value="index"
+              />
+            </el-select>
           </span>
         </b-col>
       </b-row>
       <hr>
     </div>
-    <div>
-      <!-- <div
-        v-if="level !== ''"
-        class="demo-spacing-0"
-      >
-        <b-alert
-          variant="primary"
-          show
-        >
-          <div class="alert-body">
-            <span><strong align="center">Students in {{ level.level }}</strong></span>
-          </div>
-        </b-alert>
-      </div> -->
-      <!-- <v-client-table
-        v-model="students_in_class"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="studentship_status"
-          slot-scope="{row}"
-        >{{ (row.student.studentship_status === 'left') ? 'withdrawn' : row.student.studentship_status }}
-        </div>
-        <div
-          slot="parent_name"
-          slot-scope="{row}"
-        >{{ row.student.student_guardian.guardian.user.first_name + ' ' + row.student.student_guardian.guardian.user.last_name }}
-        </div>
-        <div
-          slot="parent_phone"
-          slot-scope="{row}"
-        >{{ row.student.student_guardian.guardian.user.phone1 + ' | ' + row.student.student_guardian.guardian.user.phone2 }}
-        </div>
-        <div
-          slot="parent_email"
-          slot-scope="{row}"
-        >{{ row.student.student_guardian.guardian.user.email }}
-        </div>
-        <div
-          slot="action"
-          slot-scope="props"
-        >
-          <span>
-            <b-button
-              v-b-tooltip.hover.right="'View Details'"
-              variant="primary"
-              class="btn-icon rounded-circle"
-            >
-
-              <router-link
-                :to="{name: 'studentDetails', params: {id: props.row.student.id}}"
-                style="color: #fff;"
-              ><feather-icon icon="EyeIcon" /></router-link>
-            </b-button>
-            <b-button
-              v-b-tooltip.hover.right="'Reset Password'"
-              variant="warning"
-              class="btn-icon rounded-circle"
-              @click="resetPassword(props.row.student.user)"
-            >
-              <feather-icon icon="UnlockIcon" />
-            </b-button>
-            <b-button
-              v-b-tooltip.hover.right="'Login as ' + props.row.student.user.first_name"
-              variant="dark"
-              class="btn-icon rounded-circle"
-              @click="loginAsUser(props.row.student.user)"
-            >
-              <feather-icon icon="KeyIcon" />
-            </b-button>
-          </span>
-        </div>
-      </v-client-table> -->
-      <student-in-class-table :students-in-class="students_in_class" />
+    <div v-loading="loading">
+      <student-in-class-table
+        v-if="students_in_class.length > 0"
+        :students-in-class="students_in_class"
+        :level="level"
+        @reload="fetchStudents()"
+      />
     </div>
   </div>
 </template>
@@ -112,7 +73,7 @@
 import {
   BRow, BCol, VBTooltip,
 } from 'bootstrap-vue'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
@@ -122,7 +83,7 @@ export default {
   components: {
     StudentInClassTable,
     // VueGoodTable,
-    vSelect,
+    // vSelect,
     // BButton,
     // BAlert,
     // BPagination,
@@ -219,8 +180,11 @@ export default {
       },
       students_in_class: [],
       levels: [],
+      sessions: [],
+      sess_id: '',
       staff: [],
-      level: '',
+      level_index: 0,
+      level: null,
       loading: false,
       editable_row: '',
       selected_row_index: '',
@@ -235,16 +199,26 @@ export default {
       const app = this
       const param = {
         level_id: (app.level) ? app.level.id : '',
+        sess_id: app.sess_id,
       }
       app.loading = true
+      app.students_in_class = []
       const fetchStudentResource = new Resource('user-setup/all-students-table')
       fetchStudentResource.list(param)
         .then(response => {
           app.students_in_class = response.students_in_class
           app.levels = response.levels
           app.level = response.level
+          app.sessions = response.sessions
+          // eslint-disable-next-line radix
+          app.sess_id = parseInt(response.sess_id)
           app.loading = false
         })
+    },
+    setLevel() {
+      const app = this
+      app.level = app.levels[app.level_index]
+      this.fetchStudents()
     },
   },
 }

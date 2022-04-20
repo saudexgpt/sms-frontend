@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row>
+          <b-row v-loading="load">
 
             <!-- first name -->
             <b-col cols="12">

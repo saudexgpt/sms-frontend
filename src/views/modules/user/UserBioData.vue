@@ -14,33 +14,37 @@
           <b-avatar
             :src="baseServerUrl +'storage/'+user.photo"
             variant="light-primary"
-            :text="avatarText(user.last_name +' ' + user.first_name)"
+            :text="avatarText(user.first_name +' ' + user.last_name)"
             size="120px"
             rounded
           />
           <div class="d-flex flex-column ml-1">
             <div class="mb-1">
               <h2 class="mb-0">
-                {{ user.last_name +', ' + user.first_name }}
+                {{ user.first_name +' ' + user.last_name }}
               </h2>
               <small class="font-weight-bold">{{ user.email }}</small><br>
-              <span class="font-weight-bold">{{ user.phone1 }} | {{ user.phone2 }}</span>
+              <span class="font-weight-bold">{{ user.phone }}</span>
             </div>
-            <!-- <div class="d-flex flex-wrap">
-              <b-button
-                :to="{ name: 'apps-users-edit', params: { id: user.id } }"
-                variant="primary"
-              >
-                Edit
-              </b-button>
-              <b-button
-                variant="outline-danger"
-                class="ml-1"
-              >
-                Delete
-              </b-button>
-            </div> -->
           </div>
+        </div>
+
+        <div class="demo-inline-spacing">
+          <b-button
+            v-if="user.role !== 'student'"
+            size="sm"
+            variant="primary"
+            @click="changePhoto()"
+          >
+            Change Photo
+          </b-button>
+          <b-button
+            size="sm"
+            variant="danger"
+            @click="dialogVisible = true"
+          >
+            Update Password
+          </b-button>
         </div>
       </b-col>
       <b-col
@@ -121,22 +125,77 @@
         </table>
       </b-col>
     </b-row>
+    <el-dialog
+      title="Change Password"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
+      <el-row
+        v-loading="load"
+        :gutter="10"
+      >
+        <el-col :xs="24">
+          <el-input
+            v-model="form.email"
+            disabled
+          />
+          <br><br>
+        </el-col>
+        <el-col :xs="24">
+          <el-input
+            v-model="form.new_password"
+            placeholder="Enter New Password"
+            type="password"
+          />
+          <br><br>
+        </el-col>
+        <el-col :xs="24">
+          <el-input
+            v-model="form.confirm_password"
+            placeholder="Confirm New Password"
+            type="password"
+          />
+        </el-col>
+      </el-row>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="danger"
+          @click="dialogVisible = false"
+        >Cancel</el-button>
+        <el-button
+          type="success"
+          @click="updatePassword()"
+        >Submit</el-button>
+      </span>
+    </el-dialog>
+    <upload-photo
+      v-if="isUploadPhotoSidebarActive"
+      v-model="isUploadPhotoSidebarActive"
+      :user="user"
+      @save="updatePhoto"
+    />
   </b-card>
 </template>
 
 <script>
 import {
-  BCard, BAvatar, BRow, BCol,
+  BButton, BCard, BAvatar, BRow, BCol,
 } from 'bootstrap-vue'
 import { avatarText } from '@core/utils/filter'
+import UploadPhoto from '@/views/modules/user/UploadPhoto.vue'
+import Resource from '@/api/resource'
 
 export default {
   components: {
     BCard,
-    // BButton,
+    BButton,
     BRow,
     BCol,
     BAvatar,
+    UploadPhoto,
   },
   props: {
     user: {
@@ -145,17 +204,56 @@ export default {
       default: () => (null),
     },
   },
+  data() {
+    // const { resolveUserRoleVariant } = useUsersList()
+    return {
+      avatarText,
+      // resolveUserRoleVariant,
+      form: {
+        email: this.user.email,
+        new_password: '',
+        confirm_password: '',
+      },
+      dialogVisible: false,
+      load: false,
+      isUploadPhotoSidebarActive: false,
+    }
+  },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
   },
-  setup() {
-    // const { resolveUserRoleVariant } = useUsersList()
-    return {
-      avatarText,
-      // resolveUserRoleVariant,
-    }
+  methods: {
+    updatePassword() {
+      const app = this
+      if (app.form.confirm_password === app.form.new_password && app.form.new_password !== '') {
+        app.load = true
+        const changePasswordResource = new Resource('user-setup/reset/password')
+        changePasswordResource.update(app.user.id, app.form)
+          .then(() => {
+            app.$message('Password updated successfully')
+            app.logout()
+          }).catch(error => {
+            console.log(error)
+            app.load = false
+          })
+      } else {
+        app.$alert('New Password does not match')
+      }
+    },
+    changePhoto() {
+      const app = this
+      app.isUploadPhotoSidebarActive = true
+    },
+    updatePhoto(photo) {
+      const app = this
+      app.user.photo = photo
+    },
+    async logout() {
+      await this.$store.dispatch('user/logout')
+      this.$router.push('/login').catch(() => {})
+    },
   },
 }
 </script>

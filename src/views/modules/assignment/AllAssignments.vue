@@ -1,108 +1,119 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <el-card>
-    <div
-      slot="header"
-      class="clearfix"
-    >
-      <h3>View All Assignments</h3>
+  <div>
+    <el-card v-if="!mark_assignment">
+      <div
+        slot="header"
+        class="clearfix"
+      >
+        <h3>View All Assignments</h3>
+      </div>
+      <el-row :gutter="5">
+        <el-col
+          :md="20"
+          :sm="20"
+          :xs="24"
+        >
+
+          <span class="demonstration">Select Date</span>
+          <el-date-picker
+            v-model="date_range"
+            type="daterange"
+            unlink-panels
+            range-separator="To"
+            start-placeholder="Start date"
+            end-placeholder="End date"
+            format="dd-MM-yyyy"
+            :picker-options="pickerOptions"
+            style="width: 100%"
+          />
+        </el-col>
+        <el-col
+          :md="4"
+          :sm="4"
+          :xs="24"
+        >
+          <span class="demonstration">&nbsp;</span>
+          <button
+            class="btn btn-primary"
+            style="width: 100%"
+            @click="fetchAssignments()"
+          >Fetch
+          </button>
+        </el-col>
+      </el-row>
+      <br>
+      <b-alert
+        variant="primary"
+        show
+      >
+        <div class="alert-body">
+          Click on the + sign to view details
+        </div>
+      </b-alert>
+      <v-client-table
+        v-model="assignments"
+        v-loading="load"
+        :columns="columns"
+        :options="options"
+      >
+        <div
+          slot="child_row"
+          slot-scope="{row}"
+        >
+          <aside>
+            <legend>Assignment details</legend>
+            <span v-html="row.assignment_details" />
+          </aside>
+
+        </div>
+        <div
+          slot="created_at"
+          slot-scope="{row}"
+        >{{ moment(row.created_at).format('MMM Do YYYY') }}
+        </div>
+        <div
+          slot="deadline"
+          slot-scope="{row}"
+        >{{ moment(row.deadline).format('MMM Do YYYY [at] h:mm a') }}
+        </div>
+        <div
+          slot="action"
+          slot-scope="{row}"
+          class="demo-inline-spacing"
+        >
+          <button
+            class="btn btn-primary"
+            @click="viewStudentResponses(row)"
+          >
+            Students' Responses
+          </button>
+        </div>
+      </v-client-table>
+    </el-card>
+    <div v-if="mark_assignment">
+      <button
+        class="btn btn-danger"
+        @click="mark_assignment = false"
+      >
+        Go Back
+      </button>
+      <mark-assignment
+        :student-assignments="selected_student_assignments"
+        :assignment-details="assignment_details"
+        :can-score="false"
+      />
     </div>
-    <el-row :gutter="5">
-      <el-col
-        :md="20"
-        :sm="20"
-        :xs="24"
-      >
-
-        <span class="demonstration">Select Date</span>
-        <el-date-picker
-          v-model="date_range"
-          type="daterange"
-          unlink-panels
-          range-separator="To"
-          start-placeholder="Start date"
-          end-placeholder="End date"
-          format="dd-MM-yyyy"
-          :picker-options="pickerOptions"
-          style="width: 100%"
-        />
-      </el-col>
-      <el-col
-        :md="4"
-        :sm="4"
-        :xs="24"
-      >
-        <span class="demonstration">&nbsp;</span>
-        <button
-          class="btn btn-primary"
-          style="width: 100%"
-          @click="fetchAssignments()"
-        >Fetch
-        </button>
-      </el-col>
-    </el-row>
-    <b-alert
-      variant="primary"
-      show
-    >
-      <div class="alert-body">
-        Click on the + sign to view details
-      </div>
-    </b-alert>
-    <v-client-table
-      v-model="assignments"
-      v-loading="load"
-      :columns="columns"
-      :options="options"
-    >
-      <div
-        slot="child_row"
-        slot-scope="{row}"
-      >
-        <aside>
-          <legend>Assignment details</legend>
-          <span v-html="row.assignment_details" />
-        </aside>
-
-      </div>
-      <div
-        slot="created_at"
-        slot-scope="{row}"
-      >{{ moment(row.created_at).format('MMM Do YYYY') }}
-      </div>
-      <div
-        slot="deadline"
-        slot-scope="{row}"
-      >{{ moment(row.deadline).format('MMM Do YYYY [at] h:mm a') }}
-      </div>
-      <!-- <div
-        slot="action"
-        slot-scope="{row}"
-        class="demo-inline-spacing"
-      >
-        <button
-          class="btn btn-primary"
-          @click="viewStudentResponses(row)"
-        >
-          Mark
-        </button>
-        <button
-          class="btn btn-danger"
-          @click="deleteAssignment(row)"
-        >
-          Delete
-        </button>
-      </div> -->
-    </v-client-table>
-  </el-card>
+  </div>
 </template>
 <script>
 import { BAlert } from 'bootstrap-vue'
 import moment from 'moment'
 import Resource from '@/api/resource'
+import MarkAssignment from './MarkAssignment.vue'
 
 export default {
-  components: { BAlert },
+  components: { BAlert, MarkAssignment },
   data() {
     return {
       pickerOptions: {
@@ -149,7 +160,7 @@ export default {
         'subject_teacher.class_teacher.c_class.name',
         'created_at',
         'deadline',
-        // 'action',
+        'action',
       ],
 
       options: {
@@ -167,6 +178,7 @@ export default {
       },
       load: false,
       selected_student_assignments: [],
+      assignment_details: '',
       mark_assignment: false,
     }
   },
@@ -177,6 +189,7 @@ export default {
     moment,
     viewStudentResponses(row) {
       this.selected_student_assignments = row.student_assignments
+      this.assignment_details = row.assignment_details
       this.mark_assignment = true
     },
     fetchAssignments() {

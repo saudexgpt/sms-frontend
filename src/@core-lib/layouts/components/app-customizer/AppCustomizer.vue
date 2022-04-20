@@ -37,10 +37,60 @@
       :settings="perfectScrollbarSettings"
       class="ps-customizer-area scroll-area"
     >
+      <!-- Logo Update -->
+      <div
+        v-if="school"
+        class="customizer-section"
+      >
+        <span class="school-logo">
+          <b-img
+            align="center"
+            :src="baseServerUrl +'storage/'+ school.logo"
+            alt="logo"
+            width="220"
+          />
+        </span>
+        <!-- <el-upload
+          ref="upload"
+          class="upload-demo"
+          action="/"
+          :auto-upload="false"
+        >
+          <el-button
+            slot="trigger"
+            size="small"
+            type="primary"
+          >
+            Select School Logo
+          </el-button>
+          <el-button
+            style="margin-left: 10px;"
+            size="small"
+            type="success"
+            @click="submitUpload"
+          >
+            Upload to server
+          </el-button>
+          <div
+            slot="tip"
+            class="el-upload__tip"
+          >
+            jpg/png files with a size less than 500kb
+          </div>
+        </el-upload> -->
+        <b-form-group
+          label="Change Logo"
+        >
+          <input
+            type="file"
+            class="form-control"
+            @change="onImageChange"
+          >
+        </b-form-group>
+      </div>
       <!-- Skin, RTL, Router Animation -->
-      <div class="customizer-section">
+      <!-- <div class="customizer-section">
 
-        <!-- Skin -->
         <b-form-group label="Skin">
           <b-form-radio-group
             id="skin-radio-group"
@@ -50,7 +100,6 @@
           />
         </b-form-group>
 
-        <!-- Skin -->
         <b-form-group label="Content Width">
           <b-form-radio-group
             id="content-width-radio-group"
@@ -59,22 +108,6 @@
             :options="contentWidthOptions"
           />
         </b-form-group>
-
-        <!-- RTL -->
-        <!-- <b-form-group
-          label="RTL"
-          label-cols="10"
-        >
-          <b-form-checkbox
-            v-model="isRTL"
-            class="mr-0 mt-50"
-            name="is-rtl"
-            switch
-            inline
-          />
-        </b-form-group> -->
-
-        <!-- Router Transition -->
         <b-form-group
           label="Router Transition"
           label-cols="6"
@@ -88,13 +121,12 @@
             :reduce="option => option.value"
           />
         </b-form-group>
-      </div>
+      </div> -->
       <!-- /Skin, RTL, Router Animation -->
 
       <!-- SECTION: Menu -->
-      <div class="customizer-section">
+      <!-- <div class="customizer-section">
 
-        <!-- Layout Type -->
         <b-form-group
           label="Menu Layout"
         >
@@ -104,8 +136,6 @@
             :options="layoutTypeOptions"
           />
         </b-form-group>
-
-        <!-- Collapsible -->
         <div
           v-if="layoutType === 'vertical'"
           class="d-flex justify-content-between align-items-center mt-2"
@@ -120,7 +150,6 @@
           />
         </div>
 
-        <!-- Menu Visiblity -->
         <div class="d-flex justify-content-between align-items-center mt-2">
           <span class="font-weight-bold">Menu Hidden</span>
           <b-form-checkbox
@@ -132,7 +161,7 @@
           />
         </div>
 
-      </div>
+      </div> -->
 
       <!-- SECTION: Navbar -->
       <div class="customizer-section">
@@ -140,31 +169,41 @@
         <!-- Navbar Color -->
         <b-form-group
           v-show="layoutType === 'vertical'"
-          label="Navbar Color"
+          label="Change Navbar Color"
         >
-          <div
-            v-for="(color, index) in navbarColors"
-            :key="color"
-            class="p-1 d-inline-block rounded mr-1 cursor-pointer"
-            :class="[`bg-${color}`, {'border border-light': !index}, {'mark-active': navbarBackgroundColor === color}]"
-            @click="navbarBackgroundColor = color"
+          <el-color-picker
+            v-model="navbar_color"
+            show-alpha
+            :predefine="predefineColors"
+            @change="setNavbarColor()"
+          />
+        </b-form-group>
+
+        <!-- Sidebar Color -->
+        <b-form-group
+          v-show="layoutType === 'vertical'"
+          label="Change Side Menu Color"
+        >
+          <el-color-picker
+            v-model="sidebar_color"
+            show-alpha
+            :predefine="predefineColors"
+            @change="setSidebarColor()"
           />
         </b-form-group>
 
         <!-- Navbar Type -->
-        <b-form-group :label="layoutType === 'vertical' ? 'Navbar Type' : 'Menu Type'">
+        <!-- <b-form-group :label="layoutType === 'vertical' ? 'Navbar Type' : 'Menu Type'">
           <b-form-radio-group
             v-model="navbarType"
             name="navbar-type"
             :options="navbarTypes"
           />
-        </b-form-group>
+        </b-form-group> -->
       </div>
 
       <!-- SECTION: Footer -->
-      <div class="customizer-section">
-
-        <!-- Footer Type -->
+      <!-- <div class="customizer-section">
         <b-form-group label="Footer Type">
           <b-form-radio-group
             v-model="footerType"
@@ -172,31 +211,55 @@
             :options="footerTypes"
           />
         </b-form-group>
-      </div>
+      </div> -->
     </vue-perfect-scrollbar>
   </div>
 </template>
 
 <script>
 import {
-  BLink, BFormRadioGroup, BFormGroup, BFormCheckbox,
+  BLink, BImg, BFormGroup, /* BFormCheckbox, BFormRadioGroup */
 } from 'bootstrap-vue'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import useAppCustomizer from './useAppCustomizer'
+import Resource from '@/api/resource'
 
 export default {
   components: {
     // BSV
     BLink,
-    BFormRadioGroup,
-    BFormCheckbox,
+    BImg,
+    // BFormRadioGroup,
+    // BFormCheckbox,
     BFormGroup,
 
     // 3rd party
-    vSelect,
+    // vSelect,
     VuePerfectScrollbar,
 
+  },
+  data() {
+    return {
+      navbar_color: '',
+      sidebar_color: '',
+      predefineColors: [
+        '#ff4500',
+        '#ff8c00',
+        '#ffd700',
+        '#90ee90',
+        '#00ced1',
+        '#1e90ff',
+        '#c71585',
+        'rgba(255, 69, 0, 0.68)',
+        'rgb(255, 120, 0)',
+        'hsv(51, 100, 98)',
+        'hsva(120, 40, 94, 0.5)',
+        'hsl(181, 100%, 37%)',
+        'hsla(209, 100%, 56%, 0.73)',
+        '#c7158577',
+      ],
+    }
   },
   setup() {
     const {
@@ -255,6 +318,7 @@ export default {
       wheelPropagation: false,
     }
 
+    const logoToBeUploaded = ''
     return {
       // Vertical Menu
       isVerticalMenuCollapsed,
@@ -296,7 +360,68 @@ export default {
 
       // Perfect Scrollbar
       perfectScrollbarSettings,
+
+      logoToBeUploaded,
     }
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+    school() {
+      return this.$store.getters.userData.school
+    },
+  },
+  created() {
+    this.navbar_color = this.school.navbar_bg
+    this.sidebar_color = this.school.sidebar_bg
+  },
+  methods: {
+    onImageChange(e) {
+      const app = this
+      // console.log(e)
+      // eslint-disable-next-line prefer-destructuring
+      app.logoToBeUploaded = e.target.files[0]
+
+      app.submitUpload()
+    },
+    submitUpload() {
+      const app = this
+      const formData = new FormData()
+      formData.append('sch_logo', app.logoToBeUploaded)
+      const updateLogResource = new Resource('school-setup/update-logo')
+      updateLogResource.store(formData)
+        .then(response => {
+          app.$store.dispatch('user/updateSchoolLogo', response)
+        })
+        .catch(e => {
+          app.$message(e.response.message)
+        })
+    },
+    setNavbarColor() {
+      const app = this
+      const formData = { navbar_bg: this.navbar_color }
+      const updateLogResource = new Resource('school-setup/update-color')
+      this.$store.dispatch('user/updateNavbarColor', this.navbar_color)
+      updateLogResource.update(app.school.id, formData)
+        .then(() => {
+        })
+        .catch(e => {
+          app.$message(e.response.message)
+        })
+    },
+    setSidebarColor() {
+      const app = this
+      const formData = { sidebar_bg: this.sidebar_color }
+      const updateLogResource = new Resource('school-setup/update-color')
+      this.$store.dispatch('user/updateSidebarColor', this.sidebar_color)
+      updateLogResource.update(app.school.id, formData)
+        .then(() => {
+        })
+        .catch(e => {
+          app.$message(e.response.message)
+        })
+    },
   },
 }
 </script>

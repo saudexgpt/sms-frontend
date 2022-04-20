@@ -315,13 +315,28 @@
                   label-for="level"
                   :state="errors.length > 0 ? false:null"
                 >
-                  <v-select
+                  <!-- <v-select
                     id="level"
-                    v-model="selectedLevel"
+                    v-model="selectedLevelIndex"
                     :options="levels"
                     label="level"
                     @input="setClass()"
-                  />
+                  /> -->
+                  <el-select
+                    id="level"
+                    v-model="selectedLevelIndex"
+                    style="width: 100%;"
+                    placeholder="Select Level"
+                    filterable
+                    @input="setClass()"
+                  >
+                    <el-option
+                      v-for="(level, index) in levels"
+                      :key="index"
+                      :label="level.level"
+                      :value="index"
+                    />
+                  </el-select>
                   <b-form-invalid-feedback :state="errors.length > 0 ? false:null">
                     {{ errors[0] }}
                   </b-form-invalid-feedback>
@@ -836,7 +851,7 @@ export default {
       },
       // codeIcon,
       levels: [],
-      selectedLevel: '',
+      selectedLevelIndex: '',
       classes: [],
       countries: [],
       selectedCountry: '',
@@ -886,13 +901,13 @@ export default {
     },
     setClass() {
       const app = this
-      app.classes = app.selectedLevel.class_teachers
+      app.classes = app.levels[app.selectedLevelIndex].class_teachers
     },
     formSubmitted() {
       const app = this
       const saveStudentResource = new Resource('user-setup/students/store')
       const { form } = app
-      form.level_id = app.selectedLevel.id
+      form.level_id = app.levels[app.selectedLevelIndex].id
       form.country_id = app.selectedCountry.id
       form.state_id = app.selectedState.id
       form.lga_id = app.selectedLGA.id
@@ -911,7 +926,16 @@ export default {
             },
           })
         }).catch(error => {
-          console.log(error)
+          app.loader = false
+          app.$toast({
+            component: ToastificationContent,
+            props: {
+              title: `Issues: ${error.response.data.message}`,
+              icon: 'EditIcon',
+              variant: 'danger',
+            },
+          })
+          // console.log(error)
         })
     },
     validationFormAdmission() {

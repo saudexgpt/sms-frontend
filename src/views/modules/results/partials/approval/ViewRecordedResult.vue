@@ -8,9 +8,8 @@
           Result List for {{ recordedResultData.class_details.c_class.name }} ({{ recordedResultData.sub_term.toUpperCase() }} Term)
         </legend>
 
-        <span
-          v-if="recordedResultData.cant_approve == 0"
-        >
+        <!-- <span v-if="recordedResultData.cant_approve == 0"> -->
+        <span>
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="gradient-primary"
@@ -23,7 +22,7 @@
             <span class="align-middle">Publish Results</span>
           </b-button>
         </span>
-        <span
+        <!-- <span
           v-else
         >
           <b-alert
@@ -34,7 +33,7 @@
               <span><strong>You can't publish until all results are submitted by each teacher</strong></span>
             </div>
           </b-alert>
-        </span>
+        </span> -->
         <b-modal
           v-model="showPublishModal"
           title="Confirm Result Publishing"
@@ -53,20 +52,65 @@
           ok-only
           @ok="resultAction(selectedSubTerm, action, selectedSubjectTeacher.id)"
         >
-          Do you want to {{ action }} {{ selectedSubjectTeacher.subject.name }} Result?<br>
+          Do you want to change {{ selectedSubjectTeacher.subject.name }} Result status to {{ action }} ?<br>
           <p>Click {{ action.toUpperCase() }} to confirm</p>
         </b-modal>
       </div>
-      <app-collapse
+      <el-collapse
         accordion
         type="margin"
       >
 
-        <app-collapse-item
+        <el-collapse-item
           v-for="(subject_teacher, index) in recordedResultData.subject_teachers"
           :key="index"
-          :title="subject_teacher.subject.name + ' by ' + subject_teacher.staff.user.first_name+' '+subject_teacher.staff.user.last_name"
+          :title="(subject_teacher.staff !== null) ? subject_teacher.subject.name + ' by ' + subject_teacher.staff.user.first_name+' '+subject_teacher.staff.user.last_name : subject_teacher.subject.name"
         >
+          <template slot="title">
+            <div>
+              <strong>{{ (subject_teacher.staff !== null) ? subject_teacher.subject.name + ' by ' + subject_teacher.staff.user.first_name+' '+subject_teacher.staff.user.last_name : subject_teacher.subject.name }}</strong>
+            </div>
+            <div>
+              <div
+                v-if="recordedResultData.sub_term === 'half'"
+              >
+                <strong
+                  v-if="subject_teacher.result_action_array[2] === 'approved' || subject_teacher.result_action_array[2] === 'published'"
+                  :id="'half_status_'+subject_teacher.id"
+                  class="alert alert-success"
+                >&nbsp; Status: {{ subject_teacher.result_action_array[2].toUpperCase() }}</strong>
+                <strong
+                  v-else-if="subject_teacher.result_action_array[2] === 'submitted'"
+                  :id="'half_status_'+subject_teacher.id"
+                  class="alert alert-primary"
+                >&nbsp; Status: {{ subject_teacher.result_action_array[2].toUpperCase() }}</strong>
+                <strong
+                  v-else
+                  :id="'half_status_'+subject_teacher.id"
+                  class="alert alert-danger"
+                >&nbsp; Status: {{ subject_teacher.result_action_array[2].toUpperCase() }}</strong>
+              </div>
+              <div
+                v-if="recordedResultData.sub_term === 'full'"
+              >
+                <strong
+                  v-if="subject_teacher.result_action_array[3] === 'approved' || subject_teacher.result_action_array[3] === 'published'"
+                  :id="'full_status_'+subject_teacher.id"
+                  class="alert alert-success"
+                >&nbsp; Status: {{ subject_teacher.result_action_array[3].toUpperCase() }}</strong>
+                <strong
+                  v-else-if="subject_teacher.result_action_array[3] === 'submitted'"
+                  :id="'full_status_'+subject_teacher.id"
+                  class="alert alert-primary"
+                >&nbsp; Status: {{ subject_teacher.result_action_array[3].toUpperCase() }}</strong>
+                <strong
+                  v-else
+                  :id="'full_status_'+subject_teacher.id"
+                  class="alert alert-danger"
+                >&nbsp; Status: {{ subject_teacher.result_action_array[3].toUpperCase() }}</strong>
+              </div>
+            </div>
+          </template>
           <div>
             <div v-if="subject_teacher.students ">
               <!--
@@ -75,27 +119,18 @@
                     subject_teacher.result_action_array[2] == status_half
                   subject_teacher.result_action_array[3] == status_full
                 -->
-              <div v-if="recordedResultData.sub_term === 'half'">
-                <span
-                  :id="'half_status_'+subject_teacher.id"
-                  class="pull-right"
-                >Status: {{ subject_teacher.result_action_array[2].toUpperCase() }}</span>
-              </div>
-              <div v-if="recordedResultData.sub_term === 'full'">
-                <span
-                  :id="'full_status_'+subject_teacher.id"
-                  class="pull-right"
-                >Status: {{ subject_teacher.result_action_array[3].toUpperCase() }}</span>
-              </div>
               <!--Approve Buttons-->
-              <div
+              <!-- <div
                 v-if="(subject_teacher.result_action_array[0]==='true' && subject_teacher.result_action_array[2] !== 'published') || (subject_teacher.result_action_array[1]==='true' && subject_teacher.result_action_array[3] !== 'published')"
+                class="demo-inline-spacing"
+              > -->
+              <div
                 class="demo-inline-spacing"
               >
                 <b-button
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   variant="gradient-success"
-                  @click="confirmApproval(subject_teacher, recordedResultData.sub_term, 'approve');"
+                  @click="confirmApproval(index,subject_teacher, recordedResultData.sub_term, 'approved');"
                 >
                   <feather-icon
                     icon="CheckIcon"
@@ -106,7 +141,7 @@
                 <b-button
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   variant="gradient-danger"
-                  @click="confirmApproval(subject_teacher, recordedResultData.sub_term, 'reject');"
+                  @click="confirmApproval(index,subject_teacher, recordedResultData.sub_term, 'rejected');"
                 >
                   <feather-icon
                     icon="XIcon"
@@ -116,13 +151,20 @@
                 </b-button>
               </div>
               <!--Approve Buttons-->
+
               <br><br>
               <div v-if="recordedResultData.sub_term == 'half'">
-                <approve-half :students="subject_teacher.students" />
+                <approve-half
+                  :students="subject_teacher.students"
+                  :result-settings="recordedResultData.result_settings"
+                />
 
               </div>
               <div v-if="recordedResultData.sub_term == 'full'">
-                <approve-full :students="subject_teacher.students" />
+                <approve-full
+                  :students="subject_teacher.students"
+                  :result-settings="recordedResultData.result_settings"
+                />
 
               </div>
             </div>
@@ -132,19 +174,19 @@
               </div>
             </div>
           </div>
-        </app-collapse-item>
-      </app-collapse>
+        </el-collapse-item>
+      </el-collapse>
 
     </div>
   </div>
 </template>
 <script>
 import {
-  BModal, BButton, BAlert,
+  BModal, BButton,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
+// import AppCollapse from '@core/components/el-collapse/AppCollapse.vue'
+// import AppCollapseItem from '@core/components/el-collapse/AppCollapseItem.vue'
 import Resource from '@/api/resource'
 import ApproveHalf from './ApproveHalf.vue'
 import ApproveFull from './ApproveFull.vue'
@@ -154,7 +196,7 @@ const recordedResult = new Resource('result/get-recorded-result')
 // const publishClassResult = new Resource('result/get-recorded-result');
 export default {
   components: {
-    BModal, BButton, BAlert, AppCollapse, AppCollapseItem, ApproveHalf, ApproveFull,
+    BModal, BButton, /* AppCollapse, AppCollapseItem, */ ApproveHalf, ApproveFull,
   },
   directives: {
     Ripple,
@@ -185,6 +227,7 @@ export default {
       },
       action: '',
       selectedSubTerm: '',
+      selected_index: '',
       load: false,
     }
   },
@@ -205,14 +248,16 @@ export default {
       saveResultAction.store(params)
         .then(response => {
           app.showApprovalModal = false
-          app.recordedResultData.result_action_array = response.result_action_array
+          app.recordedResultData.subject_teachers[app.selected_index - 1].result_action_array = response.result_action_array
           app.recordedResultData.edit_ca1 = response.edit_ca1
           app.recordedResultData.edit_ca2 = response.edit_ca2
           app.recordedResultData.edit_ca3 = response.edit_ca3
+          app.recordedResultData.edit_ca4 = response.edit_ca4
+          app.recordedResultData.edit_ca5 = response.edit_ca5
           app.recordedResultData.edit_exam = response.edit_exam
-          document.getElementById(`${assessment}_status_${subjectTeacherId}`).innerHTML = `Status: ${app.formatStatus(action).toUpperCase()}`
+          document.getElementById(`${assessment}_status_${subjectTeacherId}`).innerHTML = ` Status: ${action.toUpperCase()}`
 
-          this.$message(`Result ${app.formatStatus(action)} successfully!`)
+          this.$message(`Result ${action} successfully!`)
         })
         .catch(error => {
           console.log(error)
@@ -237,27 +282,29 @@ export default {
         sub_term,
         term_id,
         sess_id: sessId,
-        bublish_result: publishResult,
+        publish_result: publishResult,
 
       }
       const action = 'published'
       recordedResult.list(params)
-        .then(response => {
-          document.getElementById('publish_close').click()
-          app.recordedResultData = response
+        .then(() => {
+          app.$emit('published')
 
-          this.$message(`${sub_term.toUpperCase()}-Term Result ${action} successfully!`)
+          app.$message(`${sub_term.toUpperCase()}-Term Result ${action} successfully!`)
+          app.showPublishModal = false
         })
         .catch(error => {
-          console.log(error)
+          app.$alert(error.response.data.message)
+          app.showPublishModal = false
         })
     },
-    confirmApproval(subjectTeacher, selectedSubTerm, action) {
+    confirmApproval(index, subjectTeacher, selectedSubTerm, action) {
       const app = this
       app.showApprovalModal = true
       app.selectedSubjectTeacher = subjectTeacher
       app.action = action
       app.selectedSubTerm = selectedSubTerm
+      app.selected_index = index
     },
   },
 

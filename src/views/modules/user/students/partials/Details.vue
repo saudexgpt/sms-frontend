@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="load">
     <div
       v-if="studentId === null"
       class="mb-1"
@@ -15,7 +15,7 @@
     <el-card v-if="student.user">
       <el-tabs v-model="activeActivity">
         <el-tab-pane
-          :label="student.user.last_name+'\'s Information'"
+          :label="student.user.first_name+'\'s Information'"
           name="first"
         >
           <student-details :student="student" />
@@ -74,6 +74,7 @@ export default {
       activeActivity: 'first',
       student: {},
       can_edit: false,
+      load: false,
     }
   },
   watch: {
@@ -89,10 +90,15 @@ export default {
     }
   },
   methods: {
-    async getStudent(id) {
-      const response = await studentResource.get(id)
-      this.student = response.student
-      this.can_edit = response.can_edit
+    getStudent(id) {
+      const app = this
+      app.load = true
+      studentResource.get(id)
+        .then(response => {
+          app.student = response.student
+          app.can_edit = response.can_edit
+          app.load = false
+        })
     },
 
   },

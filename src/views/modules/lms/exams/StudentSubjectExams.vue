@@ -29,6 +29,7 @@
         <b-card
           class="text-center"
           style="cursor: pointer"
+          :style="'cursor: pointer; color: #ffffff; background: ' + subject_teacher.subject.color_code"
           @click="showExamList(subject_teacher.quiz_compilations)"
         >
           <b-avatar

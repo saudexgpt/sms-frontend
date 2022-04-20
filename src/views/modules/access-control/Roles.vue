@@ -20,7 +20,7 @@
                 icon="FilePlusIcon"
                 class="mr-50"
               />
-              <span class="align-middle">Create</span>
+              <span class="align-middle">Create Role</span>
             </b-button>
           </span>
         </b-col>
@@ -34,6 +34,7 @@
           :sm="12"
           :xs="12"
         >
+          <small>Select Role</small>
           <el-select
             v-model="selected_role_index"
             filterable
@@ -52,6 +53,7 @@
               :key="index"
               :value="index"
               :label="role.display_name"
+              :disabled="role.name ==='teacher' || role.name ==='admin'"
             />
           </el-select>
         </el-col>
@@ -61,6 +63,7 @@
           :sm="12"
           :xs="12"
         >
+          <small>Select relevant permissions to assign to selected role</small>
           <el-select
             v-model="new_permissions"
             multiple
@@ -88,6 +91,22 @@
       :options="options"
     >
       <div
+        slot="level_groups"
+        slot-scope="props"
+      >
+        <template v-if="school">
+          <span
+            v-for="(level_group, level_index) in props.row.level_groups"
+            :key="level_index"
+          >
+            <small>{{ level_index + 1 + ') ' + level_group.name }}<br></small>
+          </span>
+        </template>
+        <template v-else>
+          N/A
+        </template>
+      </div>
+      <div
         slot="assigned_permissions"
         slot-scope="props"
       >
@@ -102,14 +121,27 @@
         slot="action"
         slot-scope="props"
       >
-        <b-button
-          v-if="school.id === props.row.school_id"
-          variant="gradient-warning"
-          class="btn-icon rounded-circle"
-          @click="editThisRow(props.row)"
-        >
-          <feather-icon icon="EditIcon" />
-        </b-button>
+        <template v-if="school">
+
+          <b-button
+            v-if="school.id === props.row.school_id"
+            variant="gradient-warning"
+            class="btn-icon rounded-circle"
+            @click="editThisRow(props.row)"
+          >
+            <feather-icon icon="EditIcon" />
+          </b-button>
+        </template>
+        <template v-else>
+
+          <b-button
+            variant="gradient-warning"
+            class="btn-icon rounded-circle"
+            @click="editThisRow(props.row)"
+          >
+            <feather-icon icon="EditIcon" />
+          </b-button>
+        </template>
       </div>
     </v-client-table>
     <create-role
@@ -163,6 +195,7 @@ export default {
         // 'name',
         'display_name',
         'description',
+        'level_groups',
         'assigned_permissions',
         'action',
       ],

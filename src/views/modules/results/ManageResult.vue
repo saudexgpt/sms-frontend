@@ -1,6 +1,9 @@
 <template>
   <el-card>
-    <div slot="header">
+    <div
+      slot="header"
+      class="no-print"
+    >
       <b-row>
         <b-col
           cols="6"
@@ -60,7 +63,7 @@
             <b-button
               variant="gradient-danger"
               class="btn-icon"
-              @click="hide; loadResult=true"
+              @click="hide; loadResult=false; modalShow = false"
             >
               <feather-icon
                 icon="XIcon"
@@ -68,13 +71,17 @@
             </b-button>
           </div>
         </div>
-        <div class="justify-content-between align-items-center px-2 py-1">
-          <b-form-group>
+        <div
+          v-loading="load"
+          class="justify-content-between align-items-center px-2 py-1"
+        >
+          <b-form-group v-if="levels.length > 0">
             <label>Level</label>
             <el-select
               v-model="level_key"
               placeholder="Select Level"
               class="span"
+              filterable
               @change="fetchClassTeachers"
             >
               <el-option
@@ -208,6 +215,7 @@ export default {
       show_table: false,
       show_selection: true,
       display_label: '',
+      load: false,
 
     }
   },
@@ -218,13 +226,17 @@ export default {
   methods: {
     setSelectionOptions() {
       const app = this
+      app.load = true
       selectionOptions.list()
         .then(response => {
+          app.load = false
           app.sessions = response.sessions
           app.terms = response.terms
           app.levels = response.levels
+          app.class_teachers = response.class_teachers
         })
         .catch(error => {
+          app.load = false
           console.log(error)
         })
     },

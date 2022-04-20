@@ -4,9 +4,23 @@
     menu-class="dropdown-menu-media"
     right
   >
+    <audio id="myAudio">
+      <source
+        src="/alert.mp3"
+        type="audio/mpeg"
+      >
+    </audio>
+    <div style="display: none">
+      <button
+        id="play_audio"
+        @click="playAudio()"
+      >
+        Play Audio
+      </button>
+    </div>
     <template #button-content>
       <feather-icon
-        badge="6"
+        :badge="unreadNotificationCount"
         badge-classes="bg-danger"
         class="text-body"
         icon="BellIcon"
@@ -18,19 +32,14 @@
     <li class="dropdown-menu-header">
       <div class="dropdown-header d-flex">
         <h4 class="notification-title mb-0 mr-auto">
-          Notifications
+          Recent Notifications
         </h4>
-        <b-badge
-          pill
-          variant="light-primary"
-        >
-          6 New
-        </b-badge>
       </div>
     </li>
 
     <!-- Notifications -->
     <vue-perfect-scrollbar
+      v-if="notifications.length > 0"
       v-once
       :settings="perfectScrollbarSettings"
       class="scrollable-container media-list scroll-area"
@@ -39,147 +48,160 @@
       <!-- Account Notification -->
       <b-link
         v-for="notification in notifications"
-        :key="notification.subtitle"
+        :key="notification.id"
       >
         <b-media>
           <template #aside>
-            <b-avatar
-              size="32"
-              :src="notification.avatar"
-              :text="notification.avatar"
-              :variant="notification.type"
+            <feather-icon
+              badge-classes="bg-info"
+              class="text-body"
+              icon="InfoIcon"
+              size="20"
             />
           </template>
           <p class="media-heading">
             <span class="font-weight-bolder">
-              {{ notification.title }}
+              {{ notification.data.title }}
             </span>
           </p>
-          <small class="notification-text">{{ notification.subtitle }}</small>
-        </b-media>
-      </b-link>
-
-      <!-- System Notification Toggler -->
-      <div class="media d-flex align-items-center">
-        <h6 class="font-weight-bolder mr-auto mb-0">
-          System Notifications
-        </h6>
-        <b-form-checkbox
-          :checked="true"
-          switch
-        />
-      </div>
-
-      <!-- System Notifications -->
-      <b-link
-        v-for="notification in systemNotifications"
-        :key="notification.subtitle"
-      >
-        <b-media>
-          <template #aside>
-            <b-avatar
-              size="32"
-              :variant="notification.type"
-            >
-              <feather-icon :icon="notification.icon" />
-            </b-avatar>
-          </template>
-          <p class="media-heading">
-            <span class="font-weight-bolder">
-              {{ notification.title }}
-            </span>
-          </p>
-          <small class="notification-text">{{ notification.subtitle }}</small>
+          <small class="notification-text">{{ notification.data.description }}</small>
+          <small class="mt-1 whitespace-no-wrap">{{ moment(notification.created_at).fromNow() }}</small>
         </b-media>
       </b-link>
     </vue-perfect-scrollbar>
-
+    <vue-perfect-scrollbar
+      v-else
+      :settings="perfectScrollbarSettings"
+      class="scrollable-container media-list scroll-area"
+      tagname="li"
+    >
+      <b-link>
+        <b-media>
+          <template #aside>
+            <feather-icon
+              badge-classes="bg-info"
+              class="text-body"
+              icon="InfoIcon"
+              size="20"
+            />
+          </template>
+          <small class="notification-text">You have no recent notifications</small>
+        </b-media>
+      </b-link>
+    </vue-perfect-scrollbar>
     <!-- Cart Footer -->
     <li class="dropdown-menu-footer"><b-button
       v-ripple.400="'rgba(255, 255, 255, 0.15)'"
       variant="primary"
       block
+      @click="loadNotifications"
     >Read all notifications</b-button>
     </li>
   </b-nav-item-dropdown>
 </template>
 
 <script>
+import moment from 'moment'
 import {
-  BNavItemDropdown, BBadge, BMedia, BLink, BAvatar, BButton, BFormCheckbox,
+  BNavItemDropdown, BMedia, BLink, BButton,
 } from 'bootstrap-vue'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import Ripple from 'vue-ripple-directive'
+import Pusher from 'pusher-js'
+import Echo from 'laravel-echo'
+import Resource from '@/api/resource'
 
 export default {
   components: {
     BNavItemDropdown,
-    BBadge,
     BMedia,
     BLink,
-    BAvatar,
     VuePerfectScrollbar,
     BButton,
-    BFormCheckbox,
   },
   directives: {
     Ripple,
   },
-  setup() {
-    /* eslint-disable global-require */
-    const notifications = [
-      {
-        title: 'Congratulation Sam 🎉',
-        avatar: require('@/assets/images/avatars/6-small.png'),
-        subtitle: 'Won the monthly best seller badge',
-        type: 'light-success',
-      },
-      {
-        title: 'New message received',
-        avatar: require('@/assets/images/avatars/9-small.png'),
-        subtitle: 'You have 10 unread messages',
-        type: 'light-info',
-      },
-      {
-        title: 'Revised Order 👋',
-        avatar: 'MD',
-        subtitle: 'MD Inc. order updated',
-        type: 'light-danger',
-      },
-    ]
-    /* eslint-disable global-require */
-
-    const systemNotifications = [
-      {
-        title: 'Server down',
-        subtitle: 'USA Server is down due to hight CPU usage',
-        type: 'light-danger',
-        icon: 'XIcon',
-      },
-      {
-        title: 'Sales report generated',
-        subtitle: 'Last month sales report generated',
-        type: 'light-success',
-        icon: 'CheckIcon',
-      },
-      {
-        title: 'High memory usage',
-        subtitle: 'BLR Server using high memory',
-        type: 'light-warning',
-        icon: 'AlertTriangleIcon',
-      },
-    ]
-
-    const perfectScrollbarSettings = {
-      maxScrollbarLength: 60,
-      wheelPropagation: false,
-    }
-
+  data() {
     return {
-      notifications,
-      systemNotifications,
-      perfectScrollbarSettings,
+      // settings: {
+      //   maxScrollbarLength: 60,
+      //   wheelSpeed: 0.60,
+      // },
+      perfectScrollbarSettings: {
+        maxScrollbarLength: 60,
+        wheelPropagation: false,
+      },
     }
+  },
+  computed: {
+    unreadNotificationCount() {
+      return this.$store.getters.userData.unreadNotificationCount
+    },
+    notifications() {
+      return this.$store.getters.userData.notifications
+    },
+    scrollbarTag() {
+      return this.$store.getters.scrollbarTag
+    },
+    listenForChanges() {
+      window.Pusher = Pusher
+      window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        encrypted: true,
+        auth: {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters.token}`,
+          },
+        },
+      })
+      const currentUserId = this.$store.getters.userId
+      // console.log(currentUserId)
+      return window.Echo.private(`App.Models.User.${currentUserId}`)
+        .notification(notification => {
+          // this.playAudio()
+          // console.log(this.$refs.play_audio)
+          document.getElementById('play_audio').click()
+          this.pushNotification(notification)
+          this.$notify({
+            title: notification.title,
+            message: notification.description,
+            type: 'success',
+            duration: 10000,
+          })
+        })
+    },
+  },
+  methods: {
+    moment,
+    fetchUserNotifications() {
+      const app = this
+      const userNotifications = new Resource('user-notifications')
+      userNotifications.list().then(response => {
+        app.$store.dispatch('user/setNotifications', response.notifications)
+        app.$store.dispatch('user/setUnreadNotificationCount', response.unread_notifications)
+      })
+    },
+    pushNotification(notification) {
+      const data = {
+        title: notification.title,
+        description: notification.description,
+      }
+      // eslint-disable-next-line no-param-reassign
+      notification.data = data
+      this.$store.dispatch('user/addNewNotifications', notification)
+    },
+    playAudio() {
+      const audio = document.getElementById('myAudio')
+      audio.play()
+    },
+    loadNotifications() {
+      this.show_notification = false
+      // then update notifications as read
+      this.$router.push('/notifications')
+    },
   },
 }
 </script>

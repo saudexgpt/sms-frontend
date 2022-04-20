@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row>
+          <b-row v-loading="load">
             <b-col cols="12">
               <b-form-group
                 label="Subject Title"
@@ -46,7 +46,7 @@
               >
                 <b-form-input
                   v-model="form.code"
-                  placeholder="Subject Title"
+                  placeholder="Subject Code"
                 />
               </b-form-group>
             </b-col>
@@ -137,6 +137,7 @@ export default {
         code: '',
         level_group: [],
       },
+      load: false,
     }
   },
   created() {
@@ -165,8 +166,10 @@ export default {
       const app = this
       const saveSubjectsResource = new Resource('school-setup/subjects')
       const param = app.form
+      app.load = true
       saveSubjectsResource.store(param)
         .then(response => {
+          app.load = false
           app.$emit('save', response.level_groups)
           app.$emit('update:is-create-subject-sidebar-active', false)
         })

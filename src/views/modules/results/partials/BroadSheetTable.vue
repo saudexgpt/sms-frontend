@@ -3,12 +3,12 @@
     class=""
   >
     <div
-      v-if="broadSheetData"
+      v-if="broadSheetData !== null"
       class="box"
     >
       <div class="box-header">
         <h4 class="box-title">
-          Result BroadSheet ({{ broadSheetData.sub_term.toUpperCase() }} Term)
+          Result BroadSheet ({{ (broadSheetData) ? broadSheetData.sub_term.toUpperCase() : '-' }} Term)
         </h4>
 
       </div>
@@ -111,12 +111,12 @@
                 </td>
 
                 <td
-                  v-for="(result_detail, result_index) in student_in_class.student_result.result_details"
+                  v-for="(result_detail, result_index) in student_in_class.student_result.result_details_array"
                   :key="result_index"
-                  :style="'background:'+result_detail.color+'; color: #000;'"
+                  :style="'background:'+result_detail['color']+'; color: #000;'"
                 >
-                  <span v-if="result_detail.total">
-                    {{ result_detail.total }}
+                  <span v-if="result_detail['total']">
+                    {{ result_detail['total'] }}
                   </span>
                   <span v-else>-</span>
 
@@ -164,17 +164,17 @@
 import {
   BFormGroup, BFormInput,
 } from 'bootstrap-vue'
-import Resource from '@/api/resource'
+// import Resource from '@/api/resource'
 import Helper from '@/api/helper'
 
-const getResultBroadSheet = new Resource('result/class-broadsheet')
+// const getResultBroadSheet = new Resource('result/class-broadsheet')
 const loadHelper = new Helper()
 export default {
   components: { BFormGroup, BFormInput },
   props: {
     broadSheetData: {
       type: Object,
-      default: () => ({}),
+      default: () => (null),
     },
     params: {
       type: Object,
@@ -203,29 +203,29 @@ export default {
     }
   }, */
   methods: {
-    fetchBroadSheet() {
-      const app = this
-      const param = app.params
-      app.loader = true
-      // let param = {
+    // fetchBroadSheet() {
+    //   const app = this
+    //   const param = app.params
+    //   app.loader = true
+    //   // let param = {
 
-      //   sess_id: app.$route.params.sess_id,
-      //   term_id: app.$route.params.term_id,
-      //   sub_term: app.$route.params.sub_term,
-      //   class_teacher_id: app.$route.params.class_teacher_id,
-      // };
+    //   //   sess_id: app.$route.params.sess_id,
+    //   //   term_id: app.$route.params.term_id,
+    //   //   sub_term: app.$route.params.sub_term,
+    //   //   class_teacher_id: app.$route.params.class_teacher_id,
+    //   // };
 
-      getResultBroadSheet.list(param)
-        .then(response => {
-          app.broadSheetData = response
-          app.filtered_students_in_class = app.broadSheetData.students_in_class
-          app.loader = false
-          // setTimeout(() => { app.setDataTable() }, 0)// delay for zero seconds
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
+    //   getResultBroadSheet.list(param)
+    //     .then(response => {
+    //       app.broadSheetData = response
+    //       app.filtered_students_in_class = app.broadSheetData.students_in_class
+    //       app.loader = false
+    //       // setTimeout(() => { app.setDataTable() }, 0)// delay for zero seconds
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //     })
+    // },
 
     rankResult(scoreAverage, resultAverages, option) {
       // function called from @/api/resource.js script

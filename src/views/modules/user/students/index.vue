@@ -9,7 +9,13 @@
         </template>
         <students-table />
       </b-tab>
-
+      <b-tab>
+        <template #title>
+          <feather-icon icon="UsersIcon" />
+          <span>Duplicate Students</span>
+        </template>
+        <duplicate-students />
+      </b-tab>
       <!-- This tabs content will not be mounted until the tab is shown -->
       <!-- and will be un-mounted when hidden -->
       <b-tab>
@@ -48,6 +54,7 @@ import {
   BTabs, BTab,
 } from 'bootstrap-vue'
 import StudentsTable from './partials/Student.vue'
+import DuplicateStudents from './partials/DuplicateStudents.vue'
 import RegisterNewStudent from './partials/RegisterNewStudents.vue'
 import RegisterBulkStudents from './partials/RegisterBulkStudents.vue'
 
@@ -56,6 +63,7 @@ export default {
     BTabs,
     BTab,
     StudentsTable,
+    DuplicateStudents,
     RegisterNewStudent,
     RegisterBulkStudents,
   },

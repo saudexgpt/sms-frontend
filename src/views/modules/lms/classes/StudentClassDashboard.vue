@@ -20,6 +20,7 @@
           >All Classes</button>
         </span>
         <v-client-table
+          v-loading="load"
           :data="daily_classrooms"
           :columns="columns"
           :options="options"
@@ -93,6 +94,7 @@ export default {
       go_online: false,
       view_all: 'no',
       query_string: '',
+      load: false,
     }
   },
   mounted() {
@@ -103,10 +105,12 @@ export default {
       const app = this
       const studentRoutineResource = new Resource('lms/student-routine')
       const param = { option: viewAll }
+      app.load = true
       studentRoutineResource.list(param) // back end route from web.php
 
         .then(response => {
-          app.daily_classrooms = response.daily_classrooms.data
+          app.load = false
+          app.daily_classrooms = response.daily_classrooms
         })
     },
     setOnlineClass(dayInWords, day, subjectTeacher) {

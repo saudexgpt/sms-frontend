@@ -1,91 +1,118 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
-    <div class="box">
-        <div class="box-header">
-            <div class="box-title">My Subjects</div>
-        </div>
-        <div class="box-body">
-            <div v-if="!set_online_class">
-                <v-client-table
-                    :data="subject_teachers"
-                    :columns="columns"
-                    :options="options">
+  <el-card v-loading="load">
+    <div class="box-header">
+      <div class="box-title">
+        My Subjects
+      </div>
+    </div>
+    <div class="box-body">
+      <div v-if="!set_online_class">
+        <v-client-table
+          :data="subject_teachers"
+          :columns="columns"
+          :options="options"
+        >
 
-                    <template slot="subject" slot-scope="props">
-                        <span v-html="props.row.subject.name"></span>
-                    </template>
-                    <template slot="class" slot-scope="props">
-                        <span v-html="props.row.class_teacher.c_class.name"></span>
-                    </template>
+          <template
+            slot="subject"
+            slot-scope="props"
+          >
+            <span v-html="props.row.subject.name" />
+          </template>
+          <template
+            slot="class"
+            slot-scope="props"
+          >
+            <span v-html="props.row.class_teacher.c_class.name" />
+          </template>
 
+          <template
+            slot="days"
+            slot-scope="props"
+          >
+            <span
+              v-for="(routine , routine_index) in props.row.routines"
+              :key="routine_index"
+            >
 
-                    <template slot="days" slot-scope="props">
-                        <span v-for="(routine , routine_index) in props.row.routines" :key="routine_index">
+              <a
+                class="btn btn-primary btn-sm"
+                @click="setOnlineClass(days[routine.day-1],routine.day, props.row)"
+              ><i class="fa fa-users" /> {{ days[routine.day-1] }}</a>
 
-                            <a @click="setOnlineClass(days[routine.day-1],routine.day, props.row)" class="btn btn-primary btn-sm"><i class="fa fa-users"></i> {{days[routine.day-1]}}</a>
+            </span>
+          </template>
 
-                        </span>
-                    </template>
-
-                </v-client-table>
-            </div>
-            <div v-if="set_online_class">
-                <a @click="set_online_class = false" class="btn btn-danger"> Go Back</a>
-                <set-online-class :day="day" :day_in_words="day_in_words" :subject_teacher="subject_teacher"/>
-            </div>
-
-        </div>
+        </v-client-table>
+      </div>
+      <div v-if="set_online_class">
+        <a
+          class="btn btn-danger"
+          @click="set_online_class = false"
+        > Go Back</a>
+        <set-online-class
+          :day="day"
+          :day-in-words="day_in_words"
+          :subject-teacher="subject_teacher"
+        />
+      </div>
 
     </div>
+
+  </el-card>
 </template>
 <script>
-import SetOnlineClass from './partials/SetOnlineClass'
+import Resource from '@/api/resource'
+import SetOnlineClass from './partials/SetOnlineClass.vue'
+
 export default {
-    components: {SetOnlineClass},
-    data() {
-        return {
-            subject_teachers: [],
-            columns: ['subject', 'class', 'days'],
-            options: {
-                headings: {
-                    subject: 'Subject',
-                    class: 'Class',
+  components: { SetOnlineClass },
+  data() {
+    return {
+      subject_teachers: [],
+      columns: ['subject', 'class', 'days'],
+      options: {
+        headings: {
+          subject: 'Subject',
+          class: 'Class',
 
-                    days: 'Days (Click to setup online class for each day)',
-                },
-                sortable: ['subject', 'class'],
-                filterable: ['subject', 'class']
-            },
-            days: ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-            set_online_class: false,
+          days: 'Days (Click to setup online class for each day)',
+        },
+        sortable: ['subject', 'class'],
+        filterable: ['subject', 'class'],
+      },
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      set_online_class: false,
 
-            subject_teacher: '',
-            day: '',
-            day_in_words: ''
-        }
-    },
- mounted() {
-     this.fetchData();
- },
- methods: {
-    fetchData()
-    {
-        let app = this;
-        axios.get('/lms/teacher-routine') //back end route from web.php
+      subject_teacher: '',
+      day: '',
+      day_in_words: '',
+      load: false,
+    }
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      const app = this
+      app.load = true
+      const teacherRoutineResource = new Resource('lms/teacher-routine')
+      teacherRoutineResource.list() // back end route from web.php
 
         .then(response => {
-            app.subject_teachers = response.data.subject_teachers;
-
-
+          app.subject_teachers = response.subject_teachers
+          app.load = false
         })
     },
-    setOnlineClass(day_in_words, day, subject_teacher)
-    {
-        let app = this;
-        app.day_in_words = day_in_words;
-        app.day = day;
-        app.subject_teacher = subject_teacher;
-        app.set_online_class = true;
-    }
- }
+    setOnlineClass(dayInWords, day, subjectTeacher) {
+      const app = this
+      app.day_in_words = dayInWords
+      app.day = day
+      app.subject_teacher = subjectTeacher
+      app.set_online_class = true
+    },
+  },
 }
 </script>

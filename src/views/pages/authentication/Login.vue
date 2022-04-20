@@ -11,7 +11,7 @@
           <b-img
             fluid
             :src="imgUrl"
-            alt="Login V2"
+            alt="Login"
           />
         </div>
       </b-col>
@@ -41,7 +41,13 @@
               class="mx-auto"
             >
           </b-card-title>
+          <el-alert
+            v-if="password_updated"
+            title="Login with your updated password"
+            type="primary"
+          />
           <b-form
+            v-if="!reset_password"
             v-loading="loading"
             class="auth-login-form mt-2"
             @submit.prevent="login"
@@ -81,19 +87,6 @@
                 </b-input-group-append>
               </b-input-group>
             </b-form-group>
-
-            <!-- checkbox -->
-            <!-- <b-form-group>
-                <b-form-checkbox
-                  id="remember-me"
-                  v-model="status"
-                  name="checkbox-1"
-                >
-                  Remember Me
-                </b-form-checkbox>
-              </b-form-group> -->
-
-            <!-- submit buttons -->
             <b-button
               variant="primary"
               block
@@ -102,7 +95,84 @@
               Sign in
             </b-button>
           </b-form>
+          <el-alert
+            v-if="reset_password"
+            title="You need to update your password from the default one"
+            type="error"
+          />
+          <b-form
+            v-if="reset_password"
+            v-loading="loading"
+            class="auth-login-form mt-2"
+            @submit.prevent="updatePassword"
+          >
+            <!-- email -->
+            <b-form-group
+              label="Username"
+              label-for="login-email"
+            >
+              <b-form-input
+                id="login-email"
+                v-model="form.email"
+                name="login-email"
+                disabled
+              />
+            </b-form-group>
 
+            <!-- forgot password -->
+            <b-form-group>
+              <b-input-group
+                class="input-group-merge"
+              >
+                <b-form-input
+                  v-model="form.new_password"
+                  class="form-control-merge"
+                  :type="passwordFieldType"
+                  name="login-password"
+                  placeholder="New Password"
+                />
+                <b-input-group-append is-text>
+                  <feather-icon
+                    class="cursor-pointer"
+                    :icon="passwordToggleIcon"
+                    @click="togglePasswordVisibility"
+                  />
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+
+            <b-form-group>
+              <b-input-group
+                class="input-group-merge"
+              >
+                <b-form-input
+                  v-model="form.confirm_password"
+                  class="form-control-merge"
+                  :type="passwordFieldType"
+                  name="login-password"
+                  placeholder="Confirm Password"
+                />
+                <b-input-group-append is-text>
+                  <feather-icon
+                    class="cursor-pointer"
+                    :icon="passwordToggleIcon"
+                    @click="togglePasswordVisibility"
+                  />
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+            <b-button
+              variant="warning"
+              block
+              @click="updatePassword"
+            >
+              Update Password
+            </b-button>
+            <br>
+            <a href="/dashboard">
+              I will do that later from my profile
+            </a>
+          </b-form>
         </b-col>
       </b-col>
     <!-- /Login-->
@@ -123,6 +193,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import store from '@/store'
 // import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { isUserLoggedIn } from '@/utils/auth' // get token from cookie
+import Resource from '@/api/resource'
 
 export default {
   directives: {
@@ -148,14 +219,21 @@ export default {
   data() {
     return {
       status: '',
-      password: 'password',
-      userEmail: 'admin@demo.com',
+      password: '',
+      userEmail: '',
       sideImg: require('@/assets/images/pages/login-v2.svg'),
 
       // validation rules
       required,
       email,
       loading: false,
+      reset_password: false,
+      form: {
+        email: '',
+        new_password: '',
+        confirm_password: '',
+      },
+      password_updated: false,
     }
   },
   computed: {
@@ -219,21 +297,6 @@ export default {
       return false
     },
     login() {
-      // if (this.isLoggedIn()) {
-      //   window.location = '/dashboard-ecommerce' // this.$router.push('/').catch(() => {}) // window.location = '/dashboard/ecommerce'
-      //   this.$toast({
-      //     component: ToastificationContent,
-      //     position: 'top-right',
-      //     props: {
-      //       title: 'Already Logged In',
-      //       icon: 'BellIcon',
-      //       variant: 'warning',
-      //       text: 'You are already logged in!',
-      //     },
-      //   })
-      //   return
-      // }
-
       // Loading
       this.loading = true
 
@@ -246,19 +309,26 @@ export default {
       }
       this.$store
         .dispatch('user/login', payload.userDetails)
-        .then(() => {
-          this.$toast({
-            component: ToastificationContent,
-            position: 'top-right',
-            props: {
-              title: 'Login Success',
-              icon: 'BellIcon',
-              variant: 'success',
-              text: 'Welcome',
-            },
-          })
-          // we load the browser this once
-          window.location = '/' // this.$router.push({ path: '/' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
+        .then(response => {
+          if (response.data.password_status === 'default') {
+            this.reset_password = true
+            this.form.email = response.data.email
+            this.form.id = response.data.id
+          } else {
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Login Success',
+                icon: 'BellIcon',
+                variant: 'success',
+                text: 'Welcome',
+              },
+            })
+
+            // we load the browser this once
+            window.location = '/' // this.$router.push({ path: '/' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
+          }
           this.loading = false
         })
         .catch(error => {
@@ -275,19 +345,25 @@ export default {
           })
           // console.log(error.response)
         })
-
-      //   this.$store.dispatch('auth/login', payload)
-      //     .then(() => { this.$vs.loading.close() })
-      //     .catch(error => {
-      //       this.$vs.loading.close()
-      //       this.$vs.notify({
-      //         title: 'Error',
-      //         text: error.message,
-      //         iconPack: 'feather',
-      //         icon: 'icon-alert-circle',
-      //         color: 'danger'
-      //       })
-      //     })
+    },
+    updatePassword() {
+      const app = this
+      if (app.form.confirm_password === app.form.new_password && app.form.new_password !== '') {
+        app.loading = true
+        const changePasswordResource = new Resource('user-setup/reset/password')
+        changePasswordResource.update(app.form.id, app.form)
+          .then(() => {
+            app.loading = false
+            app.$message('Password updated successfully')
+            app.password_updated = true
+            app.reset_password = false
+          }).catch(error => {
+            console.log(error)
+            app.loading = false
+          })
+      } else {
+        app.$alert('New Password does not match')
+      }
     },
   },
 }

@@ -16,6 +16,14 @@ export default [
     },
   },
   {
+    path: '/manage-company-staff',
+    name: 'manage-company-staff',
+    component: () => import('@/views/modules/user/staff/Partners.vue'),
+    meta: {
+      permissions: ['can company manage staff'],
+    },
+  },
+  {
     path: '/manage-user/parent',
     name: 'manage-parent',
     component: () => import('@/views/modules/user/parents/Parent.vue'),
@@ -57,5 +65,11 @@ export default [
     path: '/profile',
     component: () => import('@/views/modules/user/Profile.vue'),
     name: 'UserProfile',
+  },
+  {
+
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('@/views/modules/Notifications.vue'),
   },
 ]

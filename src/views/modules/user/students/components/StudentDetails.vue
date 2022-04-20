@@ -8,28 +8,22 @@
             align="center"
           >
             <img
-              :src="'http://localhost:8000/storage/'+student.school.logo"
+              :src="baseServerUrl + 'storage/'+student.school.logo"
               width="200"
             >
-            <h4>{{ student.school.name+', '+student.school.lga.name }}</h4>
+            <h4>{{ student.school.name.toUpperCase() }}</h4>
             <p>{{ student.school.address }}</p>
 
           </td>
           <td rowspan="1">
             <div class="user-avatar box-center">
               <b-avatar
-                :src="'http://localhost:8000/storage/' + student.user.photo"
+                :src="baseServerUrl +'storage/' + student.user.photo"
                 variant="light-primary"
                 :text="avatarText(student.user.first_name +' ' + student.user.last_name)"
                 size="120px"
                 rounded
               />
-              <!-- <img
-                :src="'http://localhost:8000/storage/' + student.user.photo"
-                :height="'100px'"
-                :width="'100px'"
-                :hoverable="false"
-              > -->
             </div>
           </td>
         </tr>
@@ -54,15 +48,15 @@
         </tr>
         <tr>
           <td><strong>Residential Address: </strong><br>{{ student.user.address }}</td>
-          <td><strong>State of Origin: </strong><br>{{ (student.user.state) ? student.user.state.name : 'NIL' }}</td>
-          <td><strong>LGA of Origin: </strong><br>{{ (student.user.lga) ? student.user.lga.name : 'NIL' }}</td>
+          <td><strong>State of Origin: </strong><br>{{ (student.user.state !== null) ? student.user.state.name : 'NIL' }}</td>
+          <td><strong>LGA of Origin: </strong><br>{{ (student.user.lga !== null) ? student.user.lga.name : 'NIL' }}</td>
 
         </tr>
-        <tr>
+        <tr v-if="student.my_classes.length > 0">
 
-          <td><strong>Current Level: </strong><br>{{ (student.current_student_level) ? student.current_student_level.level : 'Not Set' }}</td>
-          <td><strong>Current Class: </strong><br>{{ (student.my_classes.length > 0 ) ? student.my_classes[0].class_teacher.c_class.name : 'Not Set' }}</td>
-          <td><strong>Current Class Teacher: </strong><br>{{ (student.my_classes.length > 0 ) ? student.my_classes[0].class_teacher.staff.user.first_name+' '+student.my_classes[0].class_teacher.staff.user.last_name : 'Not Set' }}</td>
+          <td><strong>Current Level: </strong><br>{{ (student.current_student_level !== null) ? student.current_student_level.level : 'Not Set' }}</td>
+          <td><strong>Current Class: </strong><br>{{ (student.my_classes[0].class_teacher.c_class ) ? student.my_classes[0].class_teacher.c_class.name : 'Not Set' }}</td>
+          <td><strong>Current Class Teacher: </strong><br>{{ (student.my_classes[0].class_teacher.staff) ? student.my_classes[0].class_teacher.staff.user.first_name+' '+student.my_classes[0].class_teacher.staff.user.last_name : 'Not Set' }}</td>
         </tr>
 
         <tr v-if="student.student_guardian != null">
@@ -73,13 +67,13 @@
             <h4>PARENT/GUARDIAN INFORMATION</h4>
           </td>
         </tr>
-        <tr v-if="student.student_guardian != null">
+        <tr v-if="student.student_guardian !== null">
           <td><strong>Name: </strong><br>{{ student.student_guardian.guardian.user.first_name }} {{ student.student_guardian.guardian.user.last_name }}</td>
           <td><strong>Email: </strong><br>{{ student.student_guardian.guardian.user.email }}</td>
           <td><strong>Relationship: </strong><br>{{ student.student_guardian.relationship }}</td>
 
         </tr>
-        <tr v-if="student.student_guardian != null">
+        <tr v-if="student.student_guardian !== null">
           <td><strong>Occupation: </strong><br>{{ student.student_guardian.guardian.occupation }}</td>
           <td><strong>Primary Phone No.: </strong><br>{{ student.student_guardian.guardian.user.phone1 }}</td>
           <td><strong>Alternative Phone No.: </strong><br>{{ student.student_guardian.guardian.user.phone2 }}</td>
@@ -160,6 +154,12 @@ export default {
     return {
       avatarText,
     }
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+
   },
   mounted() {
     // console.log(this.student)

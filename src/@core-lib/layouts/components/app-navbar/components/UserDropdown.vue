@@ -7,7 +7,7 @@
     <template #button-content>
       <div class="d-sm-flex d-none user-nav">
         <p class="user-name font-weight-bolder mb-0">
-          {{ userData.fullName || userData.username }}
+          Hi, {{ userData.first_name }}
         </p>
         <span class="user-status">{{ userData.role }}</span>
       </div>
@@ -17,7 +17,7 @@
         variant="light-primary"
         badge
         class="badge-minimal"
-        badge-variant="success"
+        :badge-variant="online"
       >
         <feather-icon
           v-if="!userData.fullName"
@@ -137,12 +137,22 @@ export default {
     return {
       // userData: JSON.parse(localStorage.getItem('userData')),
       avatarText,
+      online: 'danger',
     }
   },
   computed: {
     userData() {
       return this.$store.getters.userData
     },
+  },
+  created() {
+    setInterval(() => {
+      if (navigator.onLine) {
+        this.online = 'success'
+      } else {
+        this.online = 'danger'
+      }
+    }, 5000)
   },
   methods: {
     async logout() {

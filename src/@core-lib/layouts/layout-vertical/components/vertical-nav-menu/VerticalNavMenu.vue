@@ -1,6 +1,6 @@
 <template>
   <div
-    class="main-menu menu-fixed menu-accordion menu-shadow"
+    class="main-menu menu-fixed menu-accordion menu-shadow no-print"
     :class="[
       { 'expanded': !isVerticalMenuCollapsed || (isVerticalMenuCollapsed && isMouseHovered) },
       skin === 'semi-dark' ? 'menu-dark' : 'menu-light'
@@ -8,33 +8,67 @@
     @mouseenter="updateMouseHovered(true)"
     @mouseleave="updateMouseHovered(false)"
   >
-    <!-- main menu header-->
-    <div class="navbar-header expanded">
-      <slot
-        name="header"
-        :toggleVerticalMenuActive="toggleVerticalMenuActive"
-        :toggleCollapsed="toggleCollapsed"
-        :collapseTogglerIcon="collapseTogglerIcon"
+    <vue-perfect-scrollbar
+      :settings="perfectScrollbarSettings"
+      class="main-menu-content scroll-area no-print"
+      tagname="ul"
+      @ps-scroll-y="evt => { shallShadowBottom = evt.srcElement.scrollTop > 0 }"
+    >
+      <!-- main menu header-->
+      <!-- Uncomment this if you want the logo part to have background color-->
+      <!-- <div
+      class="navbar-header expanded no-print"
+      :style="'background: ' + school.sidebar_bg"
+    > -->
+      <div
+        class="navbar-header expanded no-print"
       >
-        <ul class="nav navbar-nav flex-row">
+        <slot
+          name="header"
+          :toggleVerticalMenuActive="toggleVerticalMenuActive"
+          :toggleCollapsed="toggleCollapsed"
+          :collapseTogglerIcon="collapseTogglerIcon"
+        >
+          <ul
+            class="nav navbar-nav flex-row"
+          >
 
-          <!-- Logo & Text -->
-          <li class="nav-item mr-auto">
-            <b-link
-              class="navbar-brand"
-              to="/"
+            <!-- Logo & Text -->
+            <li
+              v-if="school"
+              class="nav-item mr-auto"
             >
-              <span class="brand-logo">
-                <b-img
-                  :src="appLogoImage"
-                  alt="logo"
-                />
-              </span>
-              <h2 class="brand-text">
-                {{ appName }}
-              </h2>
-            </b-link>
-          </li>
+              <b-link
+                class="navbar-brand"
+                to="/"
+              >
+                <div class="school-logo">
+                  <img
+                    align="center"
+                    :src="baseServerUrl +'storage/'+ school.logo"
+                    alt="logo"
+                  >
+                </div>
+              </b-link>
+            </li>
+            <li
+              v-else
+              class="nav-item mr-auto"
+            >
+              <b-link
+                class="navbar-brand"
+                to="/"
+              >
+                <div class="school-logo">
+                  <img
+                    align="center"
+                    :src="appLogoImage"
+                    alt="logo"
+                    width="150"
+                  >
+                </div>
+              </b-link>
+            </li>
 
           <!-- Toggler Button -->
           <!-- <li class="nav-item nav-toggle">
@@ -53,24 +87,19 @@
               />
             </b-link>
           </li> -->
-        </ul>
-      </slot>
-    </div>
-    <!-- / main menu header-->
+          </ul>
+        </slot>
+      </div>
+      <!-- / main menu header-->
 
-    <!-- Shadow -->
-    <div
-      :class="{'d-block': shallShadowBottom}"
-      class="shadow-bottom"
-    />
+      <!-- Shadow -->
+      <div
+        :class="{'d-block': shallShadowBottom}"
+        class="shadow-bottom no-print"
+      />
 
-    <!-- main menu content-->
-    <vue-perfect-scrollbar
-      :settings="perfectScrollbarSettings"
-      class="main-menu-content scroll-area"
-      tagname="ul"
-      @ps-scroll-y="evt => { shallShadowBottom = evt.srcElement.scrollTop > 0 }"
-    >
+      <!-- main menu content-->
+
       <vertical-nav-menu-items
         :items="navMenuItems"
         class="navigation navigation-main"
@@ -82,7 +111,7 @@
 
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import { BLink, BImg } from 'bootstrap-vue'
+import { BLink } from 'bootstrap-vue'
 import { provide, computed, ref } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 import { $themeConfig } from '@themeConfig'
@@ -95,7 +124,7 @@ export default {
     VuePerfectScrollbar,
     VerticalNavMenuItems,
     BLink,
-    BImg,
+    // BImg,
   },
   props: {
     isVerticalMenuActive: {
@@ -108,6 +137,7 @@ export default {
     },
   },
   setup(props) {
+    const dialogVisible = ref(false)
     const {
       isMouseHovered,
       isVerticalMenuCollapsed,
@@ -125,7 +155,7 @@ export default {
 
     const perfectScrollbarSettings = {
       maxScrollbarLength: 60,
-      wheelPropagation: false,
+      wheelPropagation: true,
     }
 
     const collapseTogglerIconFeather = computed(() => (collapseTogglerIcon.value === 'unpinned' ? 'CircleIcon' : 'DiscIcon'))
@@ -134,6 +164,7 @@ export default {
     const { appName, appLogoImage } = $themeConfig.app
 
     return {
+      dialogVisible,
       navMenuItems,
       perfectScrollbarSettings,
       isVerticalMenuCollapsed,
@@ -154,9 +185,39 @@ export default {
       appLogoImage,
     }
   },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+    school() {
+      return this.$store.getters.userData.school
+    },
+  },
+  methods: {
+  },
 }
 </script>
 
 <style lang="scss">
 @import "~@core/scss/base/core/menu/menu-types/vertical-menu.scss";
+</style>
+
+<style scoped>
+.main-menu .navbar-header {
+  height: 100%;
+  width: 260px;
+  height: 8rem;
+  position: relative;
+  text-align: center;
+  transition: 300ms ease all, background 0s;
+}
+.school-logo {
+  width: 220px;
+  height: 6rem;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
 </style>

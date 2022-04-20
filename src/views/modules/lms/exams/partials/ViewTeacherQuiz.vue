@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <div>
+  <div v-loading="load">
     <div
       v-if="!view_students_responses"
       class="box"
@@ -18,35 +18,51 @@
             </div>
           </div>
           <div v-else>
-            <div
-              v-for="(compiled_quiz, index) in subject_teacher.quiz_compilations"
-              :key="index"
-              class="col-md-3 col-sm-4 col-xs-6"
-            >
-              <div class="div-square">
-                <i class="fa fa-folder fa-3x" />
-                <p>
-                  <strong class="red">EXAM ID: {{ compiled_quiz.id }}</strong><br>
-                  <strong class="">{{ compiled_quiz.quizzes.length }} Questions Compiled</strong>
-                </p>
-                <p>{{ compiled_quiz.question_type.toUpperCase() }}</p>
-                <p>
-                  <a
-                    class="btn btn-success btn-sm"
-                    @click="editCompilation(index,compiled_quiz)"
-                  ><i class="fa fa-eye" /> View Details</a>
+            <el-row :gutter="10">
+              <el-col
+                v-for="(compiled_quiz, index) in subject_teacher.quiz_compilations"
+                :key="index"
+                :xs="12"
+                :sm="6"
+                :md="6"
+                :lg="6"
+                :xl="6"
+              >
+                <b-card
+                  class="text-center"
+                >
+                  <feather-icon
+                    size="21"
+                    icon="FolderIcon"
+                  />
+                  <p>
+                    <strong class="red">EXAM ID: {{ compiled_quiz.id }}</strong><br>
+                    <strong class="">{{ compiled_quiz.quizzes.length }} Questions Compiled</strong>
+                  </p>
+                  <p>{{ compiled_quiz.question_type.toUpperCase() }}</p>
+                  <p>
+                    <a
+                      class="btn btn-success btn-sm"
+                      @click="editCompilation(index,compiled_quiz)"
+                    ><feather-icon
+                      icon="EyeIcon"
+                    /> View Details</a>
 
-                </p>
+                  </p>
 
-                <p>
-                  <a
-                    class="btn btn-primary"
-                    @click="viewResponses(compiled_quiz)"
-                  ><i class="fa fa-users" /> Students' Responses</a>
+                  <p>
+                    <a
+                      class="btn btn-primary"
+                      @click="viewResponses(compiled_quiz)"
+                    ><feather-icon
+                      icon="UsersIcon"
+                    /> Students' Responses</a>
 
-                </p>
-              </div>
-            </div>
+                  </p>
+                </b-card>
+              </el-col>
+
+            </el-row>
           </div>
         </div>
         <!-- /.tab-pane -->
@@ -54,27 +70,61 @@
           v-if="new_compilation || edit_compilation"
           class="tab-pane"
         >
-          <div class="col-md-12">
-            <a
-              class="btn btn-danger"
-              @click="compiled_exam = true; new_compilation=false; edit_compilation=false"
-            >Go back</a>
-          </div>
-          <div class="col-md-8">
-            <div class="box primary">
-              <div class="box-header bg-blue">
-                <h4 class="box-title">
-                  Examination Questions
-                </h4>
+          <el-row :gutter="10">
+            <el-col :xs="24">
+              <span class="pull-right">
+                <a
+                  class="btn btn-danger"
+                  @click="compiled_exam = true; new_compilation=false; edit_compilation=false"
+                >Go back</a>
 
-              </div>
-              <div class="box-body">
+              </span>
+            </el-col>
+          </el-row>
+          <el-row :gutter="5">
+            <el-col
+              :xs="24"
+              :sm="18"
+              :md="18"
+              :lg="18"
+            >
+              <el-card>
+                <div class="box-header bg-blue">
+                  <h4 class="card-title">
+                    Examination Questions
+                  </h4>
+
+                </div>
                 <div class="box-body">
+                  <div class="box-body">
+                    <v-client-table
+                      v-if="detail_option == 'theory'"
+                      :data="subject_teacher.theory_questions"
+                      :columns="columnsTheory"
+                      :options="optionsTheory"
+                    >
+
+                      <template
+                        slot="question"
+                        slot-scope="props"
+                      >
+                        <span v-html="props.row.question" />
+                      </template>
+
+                      <template
+                        slot="sn"
+                        slot-scope="props"
+                      >
+                        {{ props.index }}
+                      </template>
+
+                    </v-client-table>
+                  </div>
                   <v-client-table
-                    v-if="detail_option == 'theory'"
-                    :data="subject_teacher.theory_questions"
-                    :columns="columnsTheory"
-                    :options="optionsTheory"
+                    v-if="detail_option == 'objective'"
+                    :data="subject_teacher.questions"
+                    :columns="columnsObj"
+                    :options="optionsObj"
                   >
 
                     <template
@@ -82,6 +132,36 @@
                       slot-scope="props"
                     >
                       <span v-html="props.row.question" />
+                    </template>
+                    <template
+                      slot="optA"
+                      slot-scope="props"
+                    >
+                      <span v-html="props.row.optA" />
+                    </template>
+                    <template
+                      slot="optB"
+                      slot-scope="props"
+                    >
+                      <span v-html="props.row.optB" />
+                    </template>
+                    <template
+                      slot="optC"
+                      slot-scope="props"
+                    >
+                      <span v-html="props.row.optC" />
+                    </template>
+                    <template
+                      slot="optD"
+                      slot-scope="props"
+                    >
+                      <span v-html="props.row.optD" />
+                    </template>
+                    <template
+                      slot="answer"
+                      slot-scope="props"
+                    >
+                      <span v-html="props.row.answer" />
                     </template>
 
                     <template
@@ -93,104 +173,45 @@
 
                   </v-client-table>
                 </div>
-                <v-client-table
-                  v-if="detail_option == 'objective'"
-                  :data="subject_teacher.questions"
-                  :columns="columnsObj"
-                  :options="optionsObj"
-                >
+              </el-card>
+            </el-col>
+            <el-col
+              :xs="24"
+              :sm="6"
+              :md="6"
+              :lg="6"
+            >
+              <el-card>
+                <div class="box-header bg-blue">
+                  <h4 class="box-title">
+                    Examination Details
+                  </h4>
+                </div>
+                <div class="box-body">
 
-                  <template
-                    slot="question"
-                    slot-scope="props"
-                  >
-                    <span v-html="props.row.question" />
-                  </template>
-                  <template
-                    slot="optA"
-                    slot-scope="props"
-                  >
-                    <span v-html="props.row.optA" />
-                  </template>
-                  <template
-                    slot="optB"
-                    slot-scope="props"
-                  >
-                    <span v-html="props.row.optB" />
-                  </template>
-                  <template
-                    slot="optC"
-                    slot-scope="props"
-                  >
-                    <span v-html="props.row.optC" />
-                  </template>
-                  <template
-                    slot="optD"
-                    slot-scope="props"
-                  >
-                    <span v-html="props.row.optD" />
-                  </template>
-                  <template
-                    slot="answer"
-                    slot-scope="props"
-                  >
-                    <span v-html="props.row.answer" />
-                  </template>
+                  <table class="table table-bordered table-striped">
+                    <tr>
+                      <td>Brief Instruction</td>
+                      <td>{{ form.instructions }}</td>
+                    </tr>
+                    <tr>
+                      <td>Examination duration in seconds [60secs = 1min]</td>
+                      <td>{{ form.duration }}</td>
+                    </tr>
+                    <tr>
+                      <td>Maximum Point</td>
+                      <td>{{ form.point }}</td>
+                    </tr>
+                    <tr>
+                      <td>Status</td>
+                      <td>{{ form.status }}</td>
+                    </tr>
+                  </table>
+                </div>
 
-                  <template
-                    slot="sn"
-                    slot-scope="props"
-                  >
-                    {{ props.index }}
-                  </template>
-
-                </v-client-table>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="box primary">
-              <div class="box-header bg-blue">
-                <h4 class="box-title">
-                  Examination Details
-                </h4>
-              </div>
-              <div class="box-body">
-                <form @submit.prevent="saveQuiz()">
-
-                  <div class="col-md-12">
-                    <p for="">
-                      Brief instruction
-                    </p>
-                    <label>{{ form.instructions }}</label>
-                  </div>
-                  <div class="col-md-12">
-                    <p for="">
-                      Examination duration in seconds [Remember 60secs = 1min]
-                    </p>
-                    <label>{{ form.duration }}</label>
-
-                  </div>
-                  <div class="col-md-12">
-                    <p for="">
-                      Points to be acquired
-                    </p>
-                    <label>{{ form.point }}</label>
-
-                  </div>
-                  <div class="col-md-12">
-                    <p for="">
-                      Status
-                    </p>
-                    <label>{{ form.status }}</label>
-
-                  </div>
-
-                </form>
-              </div>
-
-            </div>
-          </div>
+              </el-card>
+            </el-col>
+          </el-row>
         </div>
 
       </div>
@@ -202,23 +223,24 @@
       >Go Back</a>
       <obj-students-responses
         v-if="option=='objective'"
-        :quiz_attempts="quiz_attempts"
+        :quiz-attempts="quiz_attempts"
       />
       <theory-students-responses
         v-if="option=='theory'"
-        :quiz_attempts="quiz_attempts"
+        :quiz-attempts="quiz_attempts"
       />
     </div>
 
   </div>
 </template>
 <script>
+import { BCard } from 'bootstrap-vue'
 import ObjStudentsResponses from './objective/StudentsResponses.vue'
 import TheoryStudentsResponses from './theory/StudentsResponses.vue'
 import Resource from '@/api/resource'
 
 export default {
-  components: { ObjStudentsResponses, TheoryStudentsResponses },
+  components: { BCard, ObjStudentsResponses, TheoryStudentsResponses },
   props: {
     subjectTeacher: {
       type: Object,
@@ -282,6 +304,7 @@ export default {
       option: '',
       detail_option: '',
       subject_teacher: '',
+      load: false,
 
     }
   },
@@ -312,17 +335,14 @@ export default {
       const alert = 'Confirm Delete Action! This cannot be undone'
       // eslint-disable-next-line no-alert
       if (window.confirm(alert)) {
-        const l = app.$message.loading({
-          message: 'deleting...',
-          align: 'center',
-        })
+        app.load = true
 
         const deleteQuizResource = new Resource('lms/delete-quiz')
         const formData = compiledQuiz
         deleteQuizResource.destroy(formData.id, formData) // back end route from web.php
 
           .then(() => {
-            l.close()
+            app.load = false
             app.subject_teacher.quiz_compilations.splice(index, 1)
             // app.subject_teacher.quiz_compilations.push(response.data.quiz_compilations);
             // app.subject_teacher.quiz_compilations = response.data.quiz_compilations;
@@ -334,17 +354,14 @@ export default {
       const message = 'Confirm Action'
       // eslint-disable-next-line no-alert
       if (window.confirm(message)) {
-        const l = app.$message.loading({
-          message: 'loading...',
-          align: 'center',
-        })
+        app.load = true
         const formData = compiledQuiz
         formData.status = status
         const activateQuizResource = new Resource('lms/activate-quiz')
         activateQuizResource.update(formData.id, formData) // back end route from web.php
 
           .then(() => {
-            l.close()
+            app.load = false
             // app.subject_teacher.quiz_compilations.push(response.data.quiz_compilations);
             // app.subject_teacher.quiz_compilations = response.data.quiz_compilations;
           })
@@ -372,7 +389,6 @@ export default {
     saveQuiz() {
       const app = this
       app.error = false
-      // app.handleCenterLoading();
       const checkEmptyFields = app.form.question_ids.length === 0 || app.form.instructions === ''
 
       if (checkEmptyFields === true) {
@@ -380,10 +396,7 @@ export default {
 
         return
       }
-      const l = app.$message.loading({
-        message: 'loading...',
-        align: 'center',
-      })
+      app.load = true
       const formData = app.form
 
       if (app.edit_compilation) {
@@ -391,7 +404,7 @@ export default {
         updateQuizResource.update(formData.id, formData) // back end route from web.php
 
           .then(response => {
-            l.close()
+            app.load = false
             app.subject_teacher.quiz_compilations.splice(app.edit_quiz_index, 1)
             app.subject_teacher.quiz_compilations.push(response.data.compilation)
             // app.form = app.empty_form
@@ -401,7 +414,7 @@ export default {
         const setQuizResource = new Resource('lms/set-quiz')
         setQuizResource.store('/lms/set-quiz', formData) // back end route from web.php
           .then(response => {
-            l.close()
+            app.load = false
             app.subject_teacher.quiz_compilations.push(response.data.compilation)
             // app.subject_teacher.quiz_compilations = response.data.quiz_compilations;
             app.form = app.empty_form
@@ -411,20 +424,9 @@ export default {
     },
     viewResponses(compiledQuiz) {
       const app = this
-      app.handleCenterLoading()
       app.view_students_responses = true
       app.quiz_attempts = compiledQuiz.quiz_attempts
       app.option = compiledQuiz.question_type
-    },
-    handleCenterLoading() {
-      const l = this.$message.loading({
-        message: 'loading...',
-        align: 'center',
-
-      })
-      setTimeout(() => {
-        l.close()
-      }, 500)
     },
   },
 }

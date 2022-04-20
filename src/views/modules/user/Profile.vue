@@ -12,6 +12,10 @@
       v-if="role==='parent'"
       :guardian-id="currentRoleId"
     />
+    <user-bio-data
+      v-if="role==='others'"
+      :user="userData"
+    />
   </div>
 </template>
 
@@ -20,11 +24,12 @@ import { mapGetters } from 'vuex'
 import StudentDetails from '@/views/modules/user/students/partials/Details.vue'
 import StaffDetails from '@/views/modules/user/staff/partials/Details.vue'
 import ParentDetails from '@/views/modules/user/parents/Details.vue'
+import UserBioData from '@/views/modules/user/UserBioData.vue'
 
 export default {
   // name: 'Dashboard',
   components: {
-    StudentDetails, StaffDetails, ParentDetails,
+    StudentDetails, StaffDetails, ParentDetails, UserBioData,
   },
   data() {
     return {
@@ -47,6 +52,8 @@ export default {
     } else if (this.userData.roles.includes('parent')) {
       this.currentRoleId = this.userData.guardian.id
       this.role = 'parent'
+    } else {
+      this.role = 'others'
     }
   },
 }

@@ -16,10 +16,18 @@ const state = {
     last_name: '',
     avatar: '',
     introduction: '',
+    modules: [],
     roles: [],
     permissions: [],
     p_status: '',
     notifications: [],
+    password_status: '',
+    unreadNotificationCount: null,
+    school: {
+      current_session: '',
+      current_term: '',
+    },
+    whatsapp_no: '2347044449412',
   },
 }
 
@@ -27,12 +35,49 @@ const mutations = {
   SET_USER_DATA(state, objValue) {
     Object.assign(state.userData, objValue)
   },
+  UPDATE_SCHOOL_LOGO(state, logo) {
+    state.userData.school.logo = logo
+  },
+  UPDATE_NAVBAR_COLOR(state, color) {
+    state.userData.school.navbar_bg = color
+  },
+  UPDATE_SIDEBAR_COLOR(state, color) {
+    state.userData.school.sidebar_bg = color
+  },
+
   SET_TOKEN(state, token) {
     state.token = token
+  },
+  SET_NOTIFICATIONS: (state, notifications) => {
+    state.userData.notifications = notifications
+  },
+  SET_UNREADNOTIFICATION_COUNT: (state, count) => {
+    state.userData.unreadNotificationCount = count
+  },
+  ADD_NEW_NOTIFICATION: (state, notification) => {
+    state.userData.notifications.unshift(notification)
   },
 }
 
 const actions = {
+  addNewNotifications({ commit }, notification) {
+    commit('ADD_NEW_NOTIFICATION', notification)
+  },
+  updateSchoolLogo({ commit }, logo) {
+    commit('UPDATE_SCHOOL_LOGO', logo)
+  },
+  updateNavbarColor({ commit }, color) {
+    commit('UPDATE_NAVBAR_COLOR', color)
+  },
+  updateSidebarColor({ commit }, color) {
+    commit('UPDATE_SIDEBAR_COLOR', color)
+  },
+  setNotifications({ commit }, notifications) {
+    commit('SET_NOTIFICATIONS', notifications)
+  },
+  setUnreadNotificationCount({ commit }, count) {
+    commit('SET_UNREADNOTIFICATION_COUNT', count)
+  },
   // user login
   register(userInfo) {
     // const { name, email, password, c_password } = userInfo;
@@ -55,7 +100,7 @@ const actions = {
           commit('SET_USER_DATA', response)
           commit('SET_TOKEN', response.tk)
           setToken(response.tk)
-          resolve()
+          resolve(response)
         })
         .catch(error => {
           reject(error)

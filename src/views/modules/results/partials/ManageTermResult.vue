@@ -1,51 +1,92 @@
 <template>
   <b-tabs
     v-loading="load"
-    style="margin-top:15px;"
     type="border-card"
   >
-    <b-tab lazy>
-      <template #title>
+    <b-tab
+      v-if="checkPermission(['can manage results'])"
+      lazy
+    >
+      <template
+        #title
+        class="no-print"
+      >
         <feather-icon icon="CheckIcon" />
         <span>Approve Result</span>
       </template>
       <approve-result
+        v-if="recordedResultData"
         :recorded-result-data="recordedResultData"
         :params="params"
+        @published="fetchRecordedResult"
       />
     </b-tab>
 
-    <b-tab lazy>
-      <template #title>
+    <b-tab
+      v-if="checkPermission(['can manage results']) || checkRole(['teacher'])"
+      lazy
+      @click="fetchBroadSheet"
+    >
+      <template
+        #title
+        class="no-print"
+      >
         <feather-icon icon="BookOpenIcon" />
         <span>Class Broad Sheet</span>
       </template>
       <broad-sheet
+        v-if="broadSheetData"
         :broad-sheet-data="broadSheetData"
         :params="params"
       />
 
     </b-tab>
     <b-tab
+      v-if="checkPermission(['can manage results']) || checkRole(['teacher'])"
       lazy
     >
-      <template #title>
+      <template
+        #title
+        class="no-print"
+      >
         <feather-icon icon="MessageCircleIcon" />
         <span>Class Teacher Remark</span>
       </template>
       <class-teacher-remark
+        v-if="broadSheetData"
         :broad-sheet-data="broadSheetData"
         :params="params"
       />
     </b-tab>
     <b-tab
+      v-if="checkPermission(['can manage results'])"
       lazy
     >
-      <template #title>
+      <template
+        #title
+        class="no-print"
+      >
         <feather-icon icon="MessageCircleIcon" />
         <span>Principal/Head Teacher Remark</span>
       </template>
       <principal-remark
+        v-if="broadSheetData"
+        :broad-sheet-data="broadSheetData"
+        :params="params"
+      />
+    </b-tab>
+    <b-tab
+      v-if="checkPermission(['can manage results']) || checkRole(['teacher'])"
+      lazy
+    >
+      <template
+        #title
+        class="no-print"
+      >
+        <feather-icon icon="PrinterIcon" />
+        <span>Print Bulk</span>
+      </template>
+      <print-bulk-result
         :broad-sheet-data="broadSheetData"
         :params="params"
       />
@@ -61,6 +102,9 @@ import ApproveResult from './approval/ViewRecordedResult.vue'
 import BroadSheet from './BroadSheetTable.vue'
 import ClassTeacherRemark from './ClassTeacherRemark.vue'
 import PrincipalRemark from './PrincipalRemark.vue'
+import PrintBulkResult from './PrintBulkResult.vue'
+import checkRole from '@/utils/role'
+import checkPermission from '@/utils/permission'
 
 const getResultBroadSheet = new Resource('result/class-broadsheet')
 
@@ -71,6 +115,7 @@ export default {
     BroadSheet,
     ClassTeacherRemark,
     PrincipalRemark,
+    PrintBulkResult,
     BTab,
     BTabs,
   },
@@ -83,8 +128,8 @@ export default {
 
   data() {
     return {
-      broadSheetData: {},
-      recordedResultData: {},
+      broadSheetData: null,
+      recordedResultData: null,
       load: false,
     }
   },
@@ -94,6 +139,8 @@ export default {
     app.fetchBroadSheet()
   },
   methods: {
+    checkPermission,
+    checkRole,
     fetchRecordedResult() {
       const app = this
       const param = app.params

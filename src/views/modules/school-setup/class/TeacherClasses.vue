@@ -41,8 +41,16 @@
         <!-- </router-link> -->
       </el-col>
     </el-row>
-    <el-row>
-      <student-in-class-table :students-in-class="students_in_class" />
+    <el-row v-if="students_in_class.length > 0">
+      <el-tabs type="border-card">
+        <el-tab-pane label="Student Details">
+
+          <student-in-class-table :students-in-class="students_in_class" />
+        </el-tab-pane>
+        <el-tab-pane label="Behavior/Skill Ratings">
+          <behavior-skill-settings :students-in-class="students_in_class" />
+        </el-tab-pane>
+      </el-tabs>
     </el-row>
   </el-card>
 </template>
@@ -50,6 +58,7 @@
 import { BCard, BAvatar } from 'bootstrap-vue'
 import Resource from '@/api/resource'
 import StudentInClassTable from '@/views/modules/user/students/partials/StudentInClassTable.vue'
+import BehaviorSkillSettings from './BehaviorSkillSettings.vue'
 
 const teacherClassesResource = new Resource('school-setup/class-teacher-class')
 const classStudentsResource = new Resource('school-setup/get-class-students')
@@ -59,6 +68,7 @@ export default {
     BCard,
     BAvatar,
     StudentInClassTable,
+    BehaviorSkillSettings,
   },
   data() {
     return {

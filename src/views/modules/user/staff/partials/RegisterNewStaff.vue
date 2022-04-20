@@ -602,6 +602,7 @@ export default {
             },
           })
         }).catch(error => {
+          app.loader = false
           console.log(error)
         })
     },

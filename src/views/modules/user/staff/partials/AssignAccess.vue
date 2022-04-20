@@ -26,12 +26,18 @@
             style="width: 100%"
             @input="setRolesAndPermissions()"
           >
-            <el-option
+            <!-- <el-option
               v-for="(each_staff, index) in staff"
               :key="index"
               :value="index"
               :label="each_staff.user.first_name + ' ' + each_staff.user.last_name"
               :disabled="disableAdmin(each_staff.user.roles)"
+            /> -->
+            <el-option
+              v-for="(each_staff, index) in staff"
+              :key="index"
+              :value="index"
+              :label="each_staff.user.first_name + ' ' + each_staff.user.last_name"
             />
           </el-select>
         </el-col>

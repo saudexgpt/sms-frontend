@@ -294,22 +294,24 @@ export default {
       const app = this
       const events = []
       routines.forEach(routine => {
-        const teacherName = (routine.subject_teacher.staff) ? `${routine.subject_teacher.staff.user.first_name} ${routine.subject_teacher.staff.user.last_name}` : ''
+        if (routine.subject_teacher) {
+          const teacherName = (routine.subject_teacher.staff) ? `${routine.subject_teacher.staff.user.first_name} ${routine.subject_teacher.staff.user.last_name}` : 'No assigned teacher'
 
-        const eachEvent = {
-          id: routine.id,
-          title: `${routine.subject_teacher.subject.name} by ${teacherName}`,
-          start: routine.start,
-          end: routine.end,
-          startTime: routine.start,
-          endTime: routine.end,
-          backgroundColor: routine.subject_teacher.subject.color_code,
-          textColor: 'white',
-          borderColor: 'white',
-          daysOfWeek: [routine.day],
-          allDay: false,
+          const eachEvent = {
+            id: routine.id,
+            title: `${routine.subject_teacher.subject.name} by ${teacherName}`,
+            start: routine.start,
+            end: routine.end,
+            startTime: routine.start,
+            endTime: routine.end,
+            backgroundColor: routine.subject_teacher.subject.color_code,
+            textColor: 'white',
+            borderColor: 'white',
+            daysOfWeek: [routine.day],
+            allDay: false,
+          }
+          events.push(eachEvent)
         }
-        events.push(eachEvent)
       })
       app.calendarOptions.events = events
     },

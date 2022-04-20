@@ -15,4 +15,12 @@ export default [
       roles: ['super'],
     },
   },
+  {
+    path: '/session',
+    name: 'AcademicSession',
+    component: () => import('@/views/modules/app-setup/AcademicSession.vue'),
+    meta: {
+      roles: ['super'],
+    },
+  },
 ]

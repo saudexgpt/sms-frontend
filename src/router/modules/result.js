@@ -16,6 +16,14 @@ export default [
     },
   },
   {
+    path: '/results/broad-sheet',
+    name: 'ManageBroadSheet',
+    component: () => import('@/views/modules/results/ManageResult.vue'),
+    meta: {
+      roles: ['teacher'],
+    },
+  },
+  {
     path: '/manage-term-result/:class_teacher_id/:sess_id/:term_id/:sub_term',
     name: 'ManageTermResult',
     component: () => import('@/views/modules/results/partials/ManageTermResult.vue'),
@@ -29,6 +37,15 @@ export default [
     component: () => import('@/views/modules/results/partials/BroadSheetTable.vue'),
     meta: {
       permissions: ['can manage results'],
+      roles: ['teacher'],
+    },
+  },
+  {
+    path: '/result-display-settings',
+    name: 'ResultDisplaySettings',
+    component: () => import('@/views/modules/results/ResultDisplaySettings.vue'),
+    meta: {
+      permissions: ['can manage result settings'],
     },
   },
   {
@@ -50,6 +67,14 @@ export default [
     component: () => import('@/views/modules/results/MyResult.vue'),
     meta: {
       roles: ['student'],
+    },
+  },
+  {
+    path: '/my-ward-result/:student_id',
+    name: 'MyWardResult',
+    component: () => import('@/views/modules/results/MyResult.vue'),
+    meta: {
+      roles: ['parent'],
     },
   },
 ]

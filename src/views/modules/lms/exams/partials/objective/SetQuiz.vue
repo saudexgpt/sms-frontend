@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <div>
+  <div v-loading="load">
     <div
       v-if="!view_students_responses"
       class="box"
@@ -17,59 +17,69 @@
 
       </div>
       <div class="box-body">
+
+        <br>
         <div v-if="compiled_exam">
-          <div v-if="subject_teacher.quiz_compilations.length < 1">
+          <div v-if="subjectTeacher.quiz_compilations.length < 1">
             <div class="callout callout-danger">
-              No quiz is compiled for {{ subject_teacher.subject.name }}
+              No quiz is compiled for {{ subjectTeacher.subject.name }}
             </div>
           </div>
           <div v-else>
-            <div
-              v-for="(compiled_quiz, index) in subject_teacher.quiz_compilations"
-              :key="index"
-              class="col-md-3 col-sm-4 col-xs-6"
-            >
-              <div class="div-square">
-                <i class="fa fa-folder fa-3x" />
-                <p>
-                  <strong class="red">{{ compiled_quiz.question_type.toUpperCase() }} EXAM ID: {{ compiled_quiz.id }}</strong><br>
-                  <strong class="">{{ compiled_quiz.quizzes.length }} Questions Compiled</strong>
-                </p>
+            <el-row :gutter="10">
+              <el-col
+                v-for="(compiled_quiz, index) in subjectTeacher.quiz_compilations"
+                :key="index"
+                :xs="12"
+                :sm="12"
+                :md="6"
+              >
+                <el-card v-if="compiled_quiz.question_type === 'objective'">
+                  <i class="fa fa-folder fa-3x" />
+                  <p>
+                    <strong class="red">{{ compiled_quiz.question_type.toUpperCase() }} EXAM ID: {{ compiled_quiz.id }}</strong><br>
+                    <strong class="">{{ compiled_quiz.quizzes.length }} Questions Compiled</strong>
+                  </p>
 
-                <p>
-                  <a @click="editCompilation(index,compiled_quiz)"><i class="fa fa-edit" /> Edit</a> |
-                  <a @click="deleteCompiledQuiz(compiled_quiz, index)"><i class="fa fa-trash" /> Delete</a>
-                </p>
+                  <p>
+                    <a @click="editCompilation(index,compiled_quiz)"><i class="fa fa-edit" /> Edit</a> |
+                    <a @click="deleteCompiledQuiz(compiled_quiz, index)"><i class="fa fa-trash" /> Delete</a>
+                  </p>
 
-                <div v-if="compiled_quiz.status == 'Inactive'">
-                  <a
-                    class="btn btn-success btn-sm"
-                    @click="activateQuiz(compiled_quiz, 'Active')"
-                  >Activate</a>
-                </div>
-                <div v-if="compiled_quiz.status == 'Active'">
-                  <a
-                    class="btn btn-danger btn-sm"
-                    @click="activateQuiz(compiled_quiz, 'Inactive')"
-                  >Deactivate</a>
-                </div>
-                <p>
-                  <a
-                    class="btn btn-primary"
-                    @click="viewResponses(compiled_quiz)"
-                  ><i class="fa fa-users" /> Students' Responses</a>
+                  <div v-if="compiled_quiz.status == 'Inactive'">
+                    <a
+                      class="btn btn-success btn-sm"
+                      @click="activateQuiz(compiled_quiz, 'Active')"
+                    >Activate</a>
+                  </div>
+                  <div v-if="compiled_quiz.status == 'Active'">
+                    <a
+                      class="btn btn-danger btn-sm"
+                      @click="activateQuiz(compiled_quiz, 'Inactive')"
+                    >Deactivate</a>
+                  </div>
+                  <p>
+                    <a
+                      class="btn btn-primary btn-sm"
+                      @click="viewResponses(compiled_quiz)"
+                    ><i class="fa fa-users" /> Students' Responses</a>
 
-                </p>
-              </div>
-            </div>
+                  </p>
+                </el-card>
+              </el-col>
+            </el-row>
           </div>
         </div>
         <!-- /.tab-pane -->
-        <div
+        <el-row
           v-if="new_compilation || edit_compilation"
-          class="tab-pane"
+          :gutter="5"
         >
-          <div class="col-md-8">
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="18"
+          >
             <div class="box primary">
               <div class="box-header bg-blue">
                 <h4 class="box-title">
@@ -79,7 +89,7 @@
               </div>
               <div class="box-body">
                 <v-client-table
-                  :data="subject_teacher.questions"
+                  :data="subjectTeacher.questions"
                   :columns="columns"
                   :options="options"
                 >
@@ -139,8 +149,12 @@
                 </v-client-table>
               </div>
             </div>
-          </div>
-          <div class="col-md-4">
+          </el-col>
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="6"
+          >
             <div class="box primary">
               <div class="box-header bg-blue">
                 <h4 class="box-title">
@@ -227,8 +241,8 @@
               </div>
 
             </div>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
 
       </div>
     </div>
@@ -264,7 +278,7 @@
           </div>
 
         </div>
-        <students-responses :quiz_attempts="quiz_attempts" />
+        <students-responses :quiz-attempts="quiz_attempts" />
       </div>
 
     </div>
@@ -313,7 +327,7 @@ export default {
         filterable: ['question'],
       },
       form: {
-        subject_teacher_id: this.subject_teacher.id,
+        subject_teacher_id: this.subjectTeacher.id,
         instructions: '',
         duration: 60,
         point: 30,
@@ -323,7 +337,7 @@ export default {
 
       },
       empty_form: {
-        subject_teacher_id: this.subject_teacher.id,
+        subject_teacher_id: this.subjectTeacher.id,
         instructions: '',
         duration: 60,
         point: 30,
@@ -341,6 +355,7 @@ export default {
       compiled_exam: true,
       new_compilation: false,
       edit_quiz_index: '',
+      load: false,
 
     }
   },
@@ -369,18 +384,15 @@ export default {
       const deleteQuizResource = new Resource('lms/attempt-quiz')
       // eslint-disable-next-line no-alert
       if (window.confirm(alert)) {
-        const l = app.$message.loading({
-          message: 'deleting...',
-          align: 'center',
-        })
+        app.load = true
         const formData = compiledQuiz
         deleteQuizResource.destroy(formData.id, formData) // back end route from web.php
 
           .then(() => {
-            l.close()
-            app.subject_teacher.quiz_compilations.splice(index, 1)
-            // app.subject_teacher.quiz_compilations.push(response.data.quiz_compilations);
-            // app.subject_teacher.quiz_compilations = response.data.quiz_compilations;
+            app.load = false
+            app.subjectTeacher.quiz_compilations.splice(index, 1)
+            // app.subjectTeacher.quiz_compilations.push(response.data.quiz_compilations);
+            // app.subjectTeacher.quiz_compilations = response.data.quiz_compilations;
           })
       }
     },
@@ -389,19 +401,16 @@ export default {
       const message = 'Confirm Action'
       // eslint-disable-next-line no-alert
       if (window.confirm(message)) {
-        const l = app.$message.loading({
-          message: 'loading...',
-          align: 'center',
-        })
+        app.load = true
         const activateQuizResource = new Resource('lms/activate-quiz')
         const formData = compiledQuiz
         formData.status = status
         activateQuizResource.update(formData.id, formData) // back end route from web.php
 
           .then(() => {
-            l.close()
-            // app.subject_teacher.quiz_compilations.push(response.data.quiz_compilations);
-            // app.subject_teacher.quiz_compilations = response.data.quiz_compilations;
+            app.load = false
+            // app.subjectTeacher.quiz_compilations.push(response.data.quiz_compilations);
+            // app.subjectTeacher.quiz_compilations = response.data.quiz_compilations;
           })
       }
     },
@@ -412,7 +421,7 @@ export default {
         questionIds.push(element.question_id)
       })
       app.form.id = compiledQuiz.id
-      app.form.subject_teacher_id = compiledQuiz.subject_teacher_id
+      app.form.subject_teacher_id = compiledQuiz.subjectTeacher.id
       app.form.instructions = compiledQuiz.instructions
       app.form.duration = compiledQuiz.duration
       app.form.point = compiledQuiz.point
@@ -430,55 +439,41 @@ export default {
       const checkEmptyFields = app.form.question_ids.length === 0 || app.form.instructions === ''
 
       if (checkEmptyFields === true) {
-        app.error = true
+        app.$alert('Kindly fill all empty fields')
 
         return
       }
-      const l = app.$message.loading({
-        message: 'loading...',
-        align: 'center',
-      })
+      app.load = true
       const formData = app.form
 
       if (app.edit_compilation) {
         const updateQuizResource = new Resource('lms/update-quiz')
-        updateQuizResource.put(formData.id, formData) // back end route from web.php
+        updateQuizResource.update(formData.id, formData) // back end route from web.php
 
           .then(response => {
-            l.close()
-            app.subject_teacher.quiz_compilations.splice(app.edit_quiz_index, 1)
-            app.subject_teacher.quiz_compilations.push(response.data.compilation)
+            app.load = false
+            app.subjectTeacher.quiz_compilations.splice(app.edit_quiz_index, 1)
+            app.subjectTeacher.quiz_compilations.push(response.compilation)
             // app.form = app.empty_form
-            app.notifyMe('Quiz Updated', 'Successful', 'success')
+            app.$message('Quiz Updated')
           })
       } else {
         const setQuizResource = new Resource('lms/set-quiz')
-        setQuizResource.post(formData) // back end route from web.php
+        setQuizResource.store(formData) // back end route from web.php
           .then(response => {
-            l.close()
-            app.subject_teacher.quiz_compilations.push(response.data.compilation)
-            // app.subject_teacher.quiz_compilations = response.data.quiz_compilations;
+            app.load = false
+            app.subjectTeacher.quiz_compilations.push(response.compilation)
+            // app.subjectTeacher.quiz_compilations = response.data.quiz_compilations;
             app.form = app.empty_form
-            app.notifyMe('Quiz Compiled', 'Successful', 'success')
+            app.$message('Quiz Compiled')
           })
       }
     },
     viewResponses(compiledQuiz) {
       const app = this
-      app.handleCenterLoading()
       app.view_students_responses = true
       app.quiz_attempts = compiledQuiz.quiz_attempts
       app.compiledQuiz = compiledQuiz
-    },
-    handleCenterLoading() {
-      const l = this.$message.loading({
-        message: 'loading...',
-        align: 'center',
-
-      })
-      setTimeout(() => {
-        l.close()
-      }, 500)
     },
     // recordScore() {
     //   const app = this

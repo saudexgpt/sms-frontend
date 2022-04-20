@@ -1,7 +1,17 @@
 <template>
   <div v-loading="loader">
-    <div class="mb-1">
+    <div
+      v-if="!wardOnly"
+      class="mb-1"
+    >
       <b-button
+        variant="gradient-danger"
+        class="btn-icon"
+        @click="$router.go(-1)"
+      >
+        Back
+      </b-button>
+      <!-- <b-button
         variant="gradient-danger"
         class="btn-icon"
       >
@@ -11,11 +21,11 @@
         >
           Back
         </router-link>
-      </b-button>
+      </b-button> -->
     </div>
     <template v-if="guardian">
       <!-- First Row -->
-      <b-row>
+      <b-row v-if="!wardOnly">
         <b-col
           cols="12"
           xl="9"
@@ -36,30 +46,26 @@
           </b-card>
         </b-col>
       </b-row>
+      <el-card>
 
-      <b-row>
-        <b-col cols="12">
-
+        <div slot="header">
           <h1>Wards</h1>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col
-          v-for="(guardian_student, index) in guardian.guardian_students"
-          :key="index"
-          lg="4"
-          md="6"
-        >
-          <router-link
-            :to="{name: 'studentDetails', params: {id: guardian_student.student.id}}"
+        </div>
+        <b-row>
+          <b-col
+            v-for="(guardian_student, index) in guardian.guardian_students"
+            :key="index"
+            lg="4"
+            md="6"
           >
+
             <b-card
               class="card-profile"
             >
               <div class="profile-image-wrapper">
                 <div class="profile-image p-0">
                   <b-avatar
-                    size="114"
+                    size="100"
                     variant="light-danger"
                     :src="baseServerUrl + 'storage/'+ guardian_student.student.user.photo"
                     :text="avatarText(guardian_student.student.user.last_name +' ' + guardian_student.student.user.first_name)"
@@ -71,16 +77,38 @@
                 {{ guardian_student.student.my_classes[0].class_teacher.c_class.name }}
               </h6>
               <hr class="mb-2">
+              <router-link
+                :to="{name: 'studentDetails', params: {id: guardian_student.student_id}}"
+              >
+                <el-button
+                  type="primary"
+                  round
+                  size="small"
+                >
+                  BioData
+                </el-button>
+              </router-link>
+              <router-link
+                :to="{name: 'MyWardResult', params: {student_id: guardian_student.student_id}}"
+              >
+                <el-button
+                  type="success"
+                  round
+                  size="small"
+                >
+                  Check Result
+                </el-button>
+              </router-link>
             </b-card>
-          </router-link>
-        </b-col>
+          </b-col>
         <!-- <b-col
           cols="12"
           lg="6"
         >
           <user-view-user-permissions-card />
         </b-col> -->
-      </b-row>
+        </b-row>
+      </el-card>
     </template>
 
   </div>
@@ -109,6 +137,10 @@ export default {
     guardianId: {
       type: Number,
       default: () => (null),
+    },
+    wardOnly: {
+      type: Boolean,
+      default: () => (false),
     },
   },
   data() {

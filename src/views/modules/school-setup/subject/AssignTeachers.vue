@@ -181,7 +181,7 @@
             <label for="class">Class</label>
             <el-select
               v-model="selected_class"
-              placeholder="Select PC Teacher"
+              placeholder="Select Class"
               filterable
               style="width: 100%"
             >

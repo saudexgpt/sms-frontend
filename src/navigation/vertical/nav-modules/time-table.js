@@ -11,13 +11,18 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     // acl: {
-    //   roles: ['admin'],
+    //   except: ['super', 'parent', 'librarian'],
     // },
+    acl: {
+      modules: ['timetable'],
+      roles: ['admin', 'teacher', 'student'],
+    },
     children: [
       {
         title: 'Manage',
         route: 'ManageTimeTable',
         acl: {
+          modules: ['timetable'],
           permissions: ['can manage time-table'],
         },
       },
@@ -29,6 +34,7 @@ export default [
         title: 'Class Routine',
         route: 'StudentRoutine',
         acl: {
+          modules: ['timetable'],
           roles: ['student'],
         },
       },
@@ -36,6 +42,7 @@ export default [
         title: 'My Routine',
         route: 'TeacherRoutine',
         acl: {
+          modules: ['timetable'],
           roles: ['teacher'],
         },
       },

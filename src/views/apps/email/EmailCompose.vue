@@ -39,30 +39,25 @@
     <template #modal-footer>
       <!-- Footer: Left Content -->
       <div>
-        <b-dropdown
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        <el-button
+          type="primary"
           split
-          text="Send"
-          variant="primary"
           right
-          @click="sendEmail"
-        >
-          <b-dropdown-item>
-            Schedule Send
-          </b-dropdown-item>
-        </b-dropdown>
-        <feather-icon
+          @click="sendMessage()"
+        >Send
+        </el-button>
+        <!-- <feather-icon
           icon="PaperclipIcon"
           size="17"
           class="ml-2 cursor-pointer"
-        />
+        /> -->
       </div>
 
       <!-- Footer: Right Content -->
       <div>
 
         <!-- Dropdown: More Actions -->
-        <b-dropdown
+        <!-- <b-dropdown
           variant="link"
           no-caret
           toggle-class="p-0"
@@ -92,7 +87,7 @@
           <b-dropdown-item>
             Check Spelling
           </b-dropdown-item>
-        </b-dropdown>
+        </b-dropdown> -->
 
         <!-- Discard Compose -->
         <feather-icon
@@ -113,46 +108,51 @@
           for="email-to"
           class="form-label"
         >To: </label>
-        <v-select
-          v-model="composeData.to"
-          :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-          multiple
-          label="name"
-          class="flex-grow-1 email-to-selector"
-          :close-on-select="false"
-          :options="emailToOptions"
-          input-id="email-to"
+        <el-select
+          v-model="selected_option"
+          style="width: 100%"
+          placeholder="Select Recipients' Category"
+          @input="setRecipients()"
         >
-
-          <template #option="{ avatar, name }">
-            <b-avatar
-              size="sm"
-              :src="avatar"
-            />
-            <span class="ml-50"> {{ name }}</span>
-          </template>
-
-          <template #selected-option="{ avatar, name }">
-            <b-avatar
-              size="sm"
-              class="border border-white"
-              :src="avatar"
-            />
-            <span class="ml-50"> {{ name }}</span>
-          </template>
-        </v-select>
-        <span
-          class="cursor-pointer"
-          @click="showCcField=!showCcField"
-        >Cc</span>
-        <span
-          class="ml-1 cursor-pointer"
-          @click="showBccField=!showBccField"
-        >Bcc</span>
+          <el-option
+            v-for="(option, index) in options"
+            :key="index"
+            :label="option.toUpperCase()"
+            :value="option"
+          />
+        </el-select>
+        &nbsp;
+        <el-switch
+          v-if="selected_option !== ''"
+          v-model="select_all"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value="all"
+          inactive-value="none"
+          active-text="All"
+          inactive-text="None"
+          @change="selectAll()"
+        />
+        <br>&nbsp;
+        <el-select
+          v-model="form.new_recipients"
+          style="width: 100%"
+          placeholder="Select Recipients"
+          filterable
+          multiple
+          collapse-tags
+        >
+          <el-option
+            v-for="(recipient, index) in selected_recipients"
+            :key="index"
+            :label="(recipient.user) ? recipient.user.first_name + ' ' + recipient.user.last_name + ' (' + recipient.user.username +')' : ''"
+            :value="recipient.user_id"
+          />
+        </el-select>
       </div>
 
       <!-- Field: Cc (Hidden Initially) -->
-      <div
+      <!-- <div
         v-show="showCcField"
         class="compose-mail-form-field"
       >
@@ -185,10 +185,10 @@
             <span class="ml-50"> {{ name }}</span>
           </template>
         </v-select>
-      </div>
+      </div> -->
 
       <!-- Field: Bcc (Hidden Initially) -->
-      <div
+      <!-- <div
         v-show="showBccField"
         class="compose-mail-form-field"
       >
@@ -221,14 +221,14 @@
             <span class="ml-50"> {{ name }}</span>
           </template>
         </v-select>
-      </div>
+      </div> -->
 
       <!-- Field: Subject -->
       <div class="compose-mail-form-field">
         <label for="email-subject">Subject: </label>
         <b-form-input
           id="email-subject"
-          v-model="composeData.subject"
+          v-model="form.subject"
         />
       </div>
 
@@ -236,7 +236,7 @@
       <div class="message-editor">
         <quill-editor
           id="quil-content"
-          v-model="composeData.message"
+          v-model="form.message"
           :options="editorOption"
         />
         <div
@@ -258,12 +258,13 @@
 
 <script>
 import {
-  BDropdown, BDropdownItem, BForm, BFormInput, BAvatar, BDropdownDivider,
+  /* BDropdown, BDropdownItem, BDropdownDivider */BForm, BFormInput,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { ref } from '@vue/composition-api'
 import { quillEditor } from 'vue-quill-editor'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
+import Resource from '@/api/resource'
 
 export default {
   directives: {
@@ -272,16 +273,14 @@ export default {
   components: {
 
     // BSV
-    BDropdown,
-    BDropdownItem,
+    // BDropdown,
+    // BDropdownItem,
     BForm,
     BFormInput,
-    BAvatar,
-    BDropdownDivider,
+    // BDropdownDivider,
 
     // 3rd Party
     quillEditor,
-    vSelect,
   },
   model: {
     prop: 'shallShowEmailComposeModal',
@@ -290,6 +289,14 @@ export default {
   props: {
     shallShowEmailComposeModal: {
       type: Boolean,
+      required: true,
+    },
+    options: {
+      type: Array,
+      required: true,
+    },
+    recipients: {
+      type: Object,
       required: true,
     },
   },
@@ -339,6 +346,55 @@ export default {
       sendEmail,
       discardEmail,
     }
+  },
+  data() {
+    return {
+      handleReply: false,
+      handleForward: false,
+      replied_message: '',
+      selected_option: '',
+      selected_recipients: [],
+      selectedMessage: null,
+      select_all: 'all',
+      form: {
+        subject: '',
+        message: '',
+        new_recipients: [],
+      },
+    }
+  },
+  methods: {
+    sendMessage() {
+      const app = this
+      const param = app.form
+      const updateMessageResource = new Resource('messages/send-message')
+      updateMessageResource.store(param)
+        .then(() => {
+          app.$emit('update:shall-show-email-compose-modal', false)
+        })
+        .catch(() => {
+
+        })
+    },
+    setRecipients() {
+      const app = this
+      app.selected_recipients = app.recipients[app.selected_option]
+      app.selectAll()
+    },
+    selectAll() {
+      const app = this
+      const value = app.select_all
+      if (value === 'all') {
+        const newRecipients = []
+        app.selected_recipients.forEach(recipient => {
+          console.log(recipient.user_id)
+          newRecipients.push(recipient.user_id)
+        })
+        app.form.new_recipients = newRecipients
+      } else {
+        app.form.new_recipients = []
+      }
+    },
   },
 }
 </script>

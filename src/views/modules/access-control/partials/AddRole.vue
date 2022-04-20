@@ -39,20 +39,44 @@
               >
                 <b-form-input
                   v-model="form.name"
-                  placeholder="Eg: Librarian"
+                  placeholder="Enter role..."
                 />
               </b-form-group>
             </b-col>
             <!-- Abbrev -->
             <b-col cols="12">
               <b-form-group
-                label="Role Abbreviation"
+                label="Role Description"
                 label-for="v-role"
               >
                 <b-form-input
                   v-model="form.description"
-                  placeholder="Eg: The Librarian of the school"
+                  placeholder="Briefly describe role..."
                 />
+              </b-form-group>
+            </b-col>
+            <b-col
+              v-if="curriculum_level_groups.length > 0"
+              cols="12"
+            >
+              <b-form-group
+                label="Select Level Group"
+                label-for="v-curriculum"
+              >
+                <el-select
+                  v-model="form.level_groups"
+                  multiple
+                  collapse-tags
+                  style="width: 100%;"
+                  placeholder="Select Level Group"
+                >
+                  <el-option
+                    v-for="(curriculum_level_group, index) in curriculum_level_groups"
+                    :key="index"
+                    :label="curriculum_level_group.name"
+                    :value="curriculum_level_group.id"
+                  />
+                </el-select>
               </b-form-group>
             </b-col>
             <!-- submit and reset -->
@@ -122,13 +146,26 @@ export default {
       form: {
         name: '',
         description: '',
+        level_groups: [],
       },
       loading: false,
       error: false,
       error_message: '',
+      curriculum_level_groups: [],
     }
   },
+  created() {
+    this.fetchCurriculumLevels()
+  },
   methods: {
+    fetchCurriculumLevels() {
+      const app = this
+      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-level-groups')
+      fetchCurriculumSetupResource.list()
+        .then(response => {
+          app.curriculum_level_groups = response.curriculum_level_groups
+        })
+    },
     submit() {
       const app = this
       app.loading = true

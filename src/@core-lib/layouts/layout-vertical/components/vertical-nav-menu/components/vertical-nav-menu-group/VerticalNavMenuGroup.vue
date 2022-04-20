@@ -50,6 +50,9 @@ import VerticalNavMenuLink from '../vertical-nav-menu-link/VerticalNavMenuLink.v
 // Composition Function
 import useVerticalNavMenuGroup from './useVerticalNavMenuGroup'
 import mixinVerticalNavMenuGroup from './mixinVerticalNavMenuGroup'
+import Helper from '@/api/helper'
+
+const loadHelper = new Helper()
 
 export default {
   name: 'VerticalNavMenuGroup',
@@ -65,6 +68,11 @@ export default {
     item: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    school() {
+      return this.$store.getters.userData.school
     },
   },
   setup(props) {
@@ -95,28 +103,7 @@ export default {
   methods: {
     // ACL
     canViewVerticalNavMenuGroup(item) {
-      let hasRole = true
-      let hasPermission = true
-      const { roles, permissions } = this.$store.getters.userData
-      if (item.acl) {
-        if (item.acl.roles || item.acl.permissions) {
-          // If it has meta.roles or meta.permissions, accessible = hasRole || permission
-          hasRole = false
-          hasPermission = false
-          if (item.acl.roles) {
-            hasRole = roles.some(role => item.acl.roles.includes(role))
-          }
-
-          if (item.acl.permissions) {
-            hasPermission = permissions.some(permission => item.acl.permissions.includes(permission))
-          }
-        }
-
-        return hasRole || hasPermission
-      }
-
-      // If no meta.roles/meta.permissions inputted - the route should be accessible
-      return true
+      return loadHelper.canAccessLink(item, this.$store.getters.userData)
     },
   },
 }

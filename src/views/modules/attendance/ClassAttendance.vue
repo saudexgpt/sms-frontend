@@ -3,7 +3,7 @@
     v-loading="load"
     class=""
   >
-    <aside>
+    <aside v-if="checkPermission(['can view class attendance'])">
       <legend>Make Selection</legend>
       <el-row
         :gutter="10"
@@ -67,7 +67,7 @@
       type="border-card"
     >
       <el-tab-pane
-        v-if="checkPermission(['can view class attendance'])"
+        v-if="checkPermission(['can take class attendance'])"
         label="Take Attendance"
       >
         <legend>{{ date_in_words }}</legend>
@@ -118,7 +118,10 @@
         </div>
 
       </el-tab-pane>
-      <el-tab-pane label="View Attendance">
+      <el-tab-pane
+        v-if="checkPermission(['can view class attendance'])"
+        label="View Attendance"
+      >
         <legend>{{ month_and_year }}</legend>
         <div class="table-responsive">
           <table

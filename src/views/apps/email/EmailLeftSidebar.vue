@@ -24,7 +24,7 @@
                 :key="filter.title + $route.path"
                 :to="filter.route"
                 :active="isDynamicRouteActive(filter.route)"
-                @click="$emit('close-left-sidebar')"
+                @click="$emit('close-left-sidebar'); $emit('reload-page')"
               >
                 <feather-icon
                   :icon="filter.icon"
@@ -44,7 +44,7 @@
             </b-list-group>
 
             <!-- Labels -->
-            <h6 class="section-label mt-3 mb-1 px-2">
+            <!-- <h6 class="section-label mt-3 mb-1 px-2">
               Labels
             </h6>
 
@@ -62,7 +62,7 @@
                 />
                 <span>{{ label.title }}</span>
               </b-list-group-item>
-            </b-list-group>
+            </b-list-group> -->
 
           </vue-perfect-scrollbar>
         </div>
@@ -112,10 +112,10 @@ export default {
     const emailFilters = [
       { title: 'Inbox', icon: 'MailIcon', route: { name: 'apps-email' } },
       { title: 'Sent', icon: 'SendIcon', route: { name: 'apps-email-folder', params: { folder: 'sent' } } },
-      { title: 'Draft', icon: 'Edit2Icon', route: { name: 'apps-email-folder', params: { folder: 'draft' } } },
-      { title: 'Starred', icon: 'StarIcon', route: { name: 'apps-email-folder', params: { folder: 'starred' } } },
-      { title: 'Spam', icon: 'InfoIcon', route: { name: 'apps-email-folder', params: { folder: 'spam' } } },
-      { title: 'Trash', icon: 'TrashIcon', route: { name: 'apps-email-folder', params: { folder: 'trash' } } },
+      // { title: 'Draft', icon: 'Edit2Icon', route: { name: 'apps-email-folder', params: { folder: 'draft' } } },
+      // { title: 'Starred', icon: 'StarIcon', route: { name: 'apps-email-folder', params: { folder: 'starred' } } },
+      // { title: 'Spam', icon: 'InfoIcon', route: { name: 'apps-email-folder', params: { folder: 'spam' } } },
+      // { title: 'Trash', icon: 'TrashIcon', route: { name: 'apps-email-folder', params: { folder: 'trash' } } },
     ]
 
     const emailLabel = [

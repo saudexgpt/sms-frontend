@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <el-card v-loading="load">
     <div
       v-if="showform"
       class="box primary"
@@ -107,11 +107,11 @@
                 align="center"
               >
                 <a
-                  :href="'/storage/' + material.file_link"
+                  :href="baseServerUrl + 'storage/' + material.file_link"
                   target="_blank"
                 >
                   <img
-                    :src="'/storage/' + material.file_link"
+                    :src="baseServerUrl + 'storage/' + material.file_link"
                     alt
                     style="
                       width: 150px;
@@ -150,7 +150,7 @@
                 align="center"
               >
                 <a
-                  :href="'/storage/' + material.file_link"
+                  :href="baseServerUrl + 'storage/' + material.file_link"
                   target="_blank"
                 >
                   <h4 v-if="material.file_name.split('.')[1] == 'pdf'">
@@ -232,7 +232,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </el-card>
 </template>
 <script>
 import Resource from '@/api/resource'
@@ -273,27 +273,16 @@ export default {
         title: '',
         description: '',
       },
+      load: false,
     }
   },
-  methods: {
-    notifyMe(message, title, type) {
-      if (type === 'success') {
-        this.$toast.success({
-          title,
-          message,
-        })
-      } else if (type === 'warning') {
-        this.$toast.warning({
-          title,
-          message,
-        })
-      } else {
-        this.$toast.error({
-          title,
-          message,
-        })
-      }
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
     },
+
+  },
+  methods: {
     saveDocument() {
       const app = this
       const param = app.media_form
@@ -305,16 +294,13 @@ export default {
         formData.append('media', param.media)
         formData.append('daily_classroom_id', param.daily_classroom_id)
         formData.append('class_note', param.class_note)
-        const l = app.$message.loading({
-          message: 'uploading materials for the online class...',
-          align: 'center',
-        })
+        app.load = true
         const uploadMaterialResource = new Resource('lms/upload-online-class-materials')
         uploadMaterialResource
           .store(formData) // back end route from web.php
           .then(response => {
-            l.close()
-            app.notifyMe('Materials Uploaded', 'Successful', 'success')
+            app.load = false
+            app.$message('Materials Uploaded')
             app.dailyClassroom.materials.push(response.material)
             app.media_form = app.empty_form
           })
@@ -330,18 +316,15 @@ export default {
         //   formData.append("daily_classroom_id", param.daily_classroom_id);
         //   formData.append("link", param.link);
         //   formData.append("description", param.description);
-        const l = app.$message.loading({
-          message: 'uploading video link for the online class...',
-          align: 'center',
-        })
+        app.load = true
         const uploadMaterialResource = new Resource('lms/upload-online-class-video')
         uploadMaterialResource
           .store(param) // back end route from web.php
           .then(response => {
-            l.close()
-            app.notifyMe('Video Uploaded', 'Successful', 'success')
+            app.load = false
+            app.$message('Video Uploaded')
             app.dailyClassroom.videos.push(
-              response.data.daily_class_room_video,
+              response.daily_class_room_video,
             )
             app.video_form = app.empty_form
           })
@@ -370,17 +353,14 @@ export default {
       // eslint-disable-next-line no-alert
       if (window.confirm('Confirm Delete Action. This cannot be undone')) {
         const app = this
-        const l = app.$message.loading({
-          message: 'deleting material...',
-          align: 'center',
-        })
+        app.load = true
         const deleteMaterialResource = new Resource('lms/delete-onlineclass-material')
         deleteMaterialResource
           .destroy(id) // back end route from web.php
           .then(() => {
-            l.close()
+            app.load = false
             app.dailyClassroom.materials.splice(index, 1)
-            app.notifyMe('Deleted', 'Successful', 'success')
+            app.$message('Deleted')
           })
       }
     },
@@ -388,17 +368,14 @@ export default {
       // eslint-disable-next-line no-alert
       if (window.confirm('Confirm Delete Action. This cannot be undone')) {
         const app = this
-        const l = app.$message.loading({
-          message: 'deleting video...',
-          align: 'center',
-        })
+        app.load = true
         const deleteMaterialResource = new Resource('lms/delete-onlineclass-video')
         deleteMaterialResource
           .destroy(id) // back end route from web.php
           .then(() => {
-            l.close()
+            app.load = false
             app.dailyClassroom.videos.splice(index, 1)
-            app.notifyMe('Deleted', 'Successful', 'success')
+            app.$message('Deleted')
           })
       }
     },

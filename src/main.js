@@ -17,6 +17,7 @@ import highchartsMore from 'highcharts/highcharts-more'
 import solidGauge from 'highcharts/modules/solid-gauge'
 import stockInit from 'highcharts/modules/stock'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
 import i18n from '@/libs/i18n'
 import lang from '@/lang'
 import router from './router'
@@ -42,7 +43,7 @@ import '@/@fake-db/db'
 Vue.use(ElementUI, {
   i18n: (key, value) => lang.t(key, value),
 })
-// Vue.use(ClientTable)
+Vue.use(CKEditor)
 Vue.use(ClientTable, {
   perPage: 10,
   texts: {

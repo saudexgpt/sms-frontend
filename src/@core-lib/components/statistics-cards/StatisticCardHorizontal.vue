@@ -1,11 +1,17 @@
 <template>
-  <b-card no-body>
+  <b-card
+    no-body
+    :bg-variant="bg"
+  >
     <b-card-body class="d-flex justify-content-between align-items-center">
       <div class="truncate">
-        <h2 class="mb-25 font-weight-bolder">
+        <h2
+          class="mb-25 font-weight-bolder"
+          :style="'color: ' + color"
+        >
           {{ statistic }}
         </h2>
-        <span>{{ statisticTitle }}</span>
+        <span :style="'color: ' + color">{{ statisticTitle }}</span>
       </div>
       <b-avatar
         :variant="`light-${color}`"
@@ -44,7 +50,11 @@ export default {
     },
     color: {
       type: String,
-      default: 'primary',
+      default: 'dark',
+    },
+    bg: {
+      type: String,
+      default: 'white',
     },
   },
 }

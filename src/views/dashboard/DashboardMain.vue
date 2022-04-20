@@ -37,7 +37,7 @@ export default {
       this.currentRole = 'StudentDashboard'
     } else if (this.userData.roles.includes('parent')) {
       this.currentRole = 'ParentDashboard'
-    } else if (this.userData.roles.includes('super_admin')) {
+    } else if (this.userData.roles.includes('super')) {
       this.currentRole = 'SuperAdminDashboard'
     }
   },

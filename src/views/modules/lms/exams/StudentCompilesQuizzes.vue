@@ -32,10 +32,10 @@
 
         <div v-if="take_quiz">
           <br>
-          <button
+          <!-- <button
             class="btn btn-info"
             @click="take_quiz=false"
-          >Take Another Exam</button>
+          >Take Another Exam</button> -->
 
           <take-obj-quiz
             v-if="option == 'take_obj_quiz'"

@@ -94,8 +94,18 @@
                 <td>
                   {{ student_in_class.student.registration_no }}
                 </td>
-
                 <td
+                  v-for="(result_detail, result_index) in student_in_class.student_result.result_details_array"
+                  :key="result_index"
+                  :style="'background:'+result_detail['color']+'; color: #000;'"
+                >
+                  <span v-if="result_detail['total']">
+                    {{ result_detail['total'] }}
+                  </span>
+                  <span v-else>-</span>
+
+                </td>
+                <!-- <td
                   v-for="(result_detail, result_index) in student_in_class.student_result.result_details"
                   :key="result_index"
                   :style="'background:'+result_detail.color+'; color: #000;'"
@@ -106,7 +116,7 @@
                   </span>
                   <span v-else>-</span>
 
-                </td>
+                </td> -->
                 <td class="noExport">
                   {{ student_in_class.student_result.average }}
                 </td>

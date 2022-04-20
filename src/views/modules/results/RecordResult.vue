@@ -150,6 +150,12 @@
     </b-sidebar>
     <!--SIDEBAR MODAL-->
     <div v-if="show_table">
+      <el-button
+        v-if="studentData"
+        @click="normalizeResult()"
+      >
+        Normalize
+      </el-button>
       <subject-students-table
         :student-data="studentData"
         :form="form"
@@ -214,17 +220,42 @@ export default {
   methods: {
     setSelectionOptions() {
       const app = this
+      app.load = true
       selectionOptions.list()
         .then(response => {
+          app.load = false
           app.sessions = response.sessions
           app.terms = response.terms
           app.subject_teachers = response.subject_teachers
         })
         .catch(error => {
+          app.load = false
           console.log(error)
         })
     },
 
+    normalizeResult() {
+      const app = this
+      const { subject_teacher_id } = app.studentData
+      const { sess_id } = app.form
+      const { term_id } = app.form
+      const { sub_term } = app.form
+      const params = {
+        subject_teacher_id, sess_id, term_id, sub_term,
+      }
+      // eslint-disable-next-line no-alert
+      if (window.confirm('This will normalize the entries based on Result Settings. Click OK to continue')) {
+        const normalizeStudentResult = new Resource('result/normalize-result')
+        normalizeStudentResult.store(params)
+          .then(() => {
+            // alert('saved')
+            app.recordResultData()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+    },
     recordResultData() {
       const app = this
       const param = app.form
@@ -237,6 +268,7 @@ export default {
           app.load = false
         })
         .catch(error => {
+          app.load = false
           console.log(error)
         })
     },

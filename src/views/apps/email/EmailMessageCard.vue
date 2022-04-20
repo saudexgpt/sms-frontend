@@ -6,46 +6,43 @@
     >
       <div class="user-details d-flex justify-content-between align-items-center flex-wrap">
         <b-avatar
-          size="48"
-          :src="message.from.avatar"
+          size="25"
+          :src="message.from.photo"
           class="mr-75"
         />
         <div class="mail-items">
-          <h5 class="mb-0">
-            {{ message.from.name }}
-          </h5>
+          <strong class="mb-0">
+            {{ message.from.first_name }} {{ message.from.last_name }}
+          </strong>
           <b-dropdown
+            v-if="message.from && message.to"
             variant="link"
             no-caret
             toggle-class="p-0"
             class="email-info-dropup"
           >
             <template #button-content>
-              <span class="font-small-3 text-muted mr-25">{{ message.from.email }}</span>
+              <span class="font-small-3 text-muted mr-25">{{ message.from.username }}</span>
               <feather-icon
                 icon="ChevronDownIcon"
                 size="10"
               />
             </template>
-            <table class="table table-sm table-borderless font-small-3">
+            <table
+              class="table table-sm table-borderless font-small-3"
+            >
               <tbody>
                 <tr>
                   <td class="text-right text-muted align-top">
                     From:
                   </td>
-                  <td>{{ message.from.email }}</td>
+                  <td>{{ message.from.username }}</td>
                 </tr>
                 <tr>
                   <td class="text-right text-muted align-top">
                     To:
                   </td>
-                  <td>{{ message.to.map(receiver => receiver.email).join(', ') }}</td>
-                </tr>
-                <tr>
-                  <td class="text-right text-muted align-top">
-                    Date:
-                  </td>
-                  <td>4:25 AM 13 Jan 2018</td>
+                  <td>{{ message.copied_recipients.map(receiver => receiver.username + ' (' +receiver.first_name + ')').join(', ') }}</td>
                 </tr>
               </tbody>
             </table>
@@ -53,9 +50,9 @@
         </div>
       </div>
       <div class="mail-meta-item d-flex align-items-center">
-        <small class="mail-date-time text-muted">{{ formatDate(message.time) }}</small>
+        <small class="mail-date-time text-muted">{{ formatDate(message.created_at) }}</small>
         <!-- Mail Action DD -->
-        <b-dropdown
+        <!-- <b-dropdown
           variant="link"
           no-caret
           toggle-class="p-0"
@@ -69,12 +66,12 @@
             />
           </template>
 
-          <b-dropdown-item>
+          <b-dropdown-item @click="handleReply = true">
             <feather-icon icon="CornerUpLeftIcon" />
             <span class="align-middle ml-50">Reply</span>
           </b-dropdown-item>
 
-          <b-dropdown-item>
+          <b-dropdown-item @click="handleForward = true">
             <feather-icon icon="CornerUpRightIcon" />
             <span class="align-middle ml-50">Forward</span>
           </b-dropdown-item>
@@ -83,7 +80,7 @@
             <feather-icon icon="TrashIcon" />
             <span class="align-middle ml-50">Delete</span>
           </b-dropdown-item>
-        </b-dropdown>
+        </b-dropdown> -->
       </div>
     </b-card-header>
 
@@ -93,10 +90,8 @@
         class="mail-message"
         v-html="message.message"
       />
-      <!-- eslint-enable -->
     </b-card-body>
-
-    <b-card-footer v-if="message.attachments && message.attachments.length">
+    <!-- <b-card-footer v-if="message.attachments && message.attachments.length">
       <div class="mail-attachments">
         <div class="d-flex align-items-center mb-1">
           <feather-icon
@@ -126,19 +121,19 @@
           </b-link>
         </div>
       </div>
-    </b-card-footer>
+    </b-card-footer> -->
   </b-card>
 </template>
 
 <script>
 import {
-  BDropdown, BDropdownItem, BCard, BCardHeader, BCardBody, BCardFooter, BAvatar, BLink, BImg,
+  BDropdown, BCard, BCardHeader, BCardBody, BAvatar, /* BCardFooter, BLink, BImg, */
 } from 'bootstrap-vue'
 import { formatDate } from '@core/utils/filter'
 
 export default {
   components: {
-    BDropdown, BDropdownItem, BCard, BCardHeader, BCardBody, BCardFooter, BAvatar, BLink, BImg,
+    BDropdown, BCard, BCardHeader, BCardBody, BAvatar, /* BCardFooter, BLink, BImg, */
   },
   props: {
     message: {

@@ -1,6 +1,6 @@
 <template>
   <div v-if="studentData.students">
-    <label>Percentage Completion</label>
+    <!-- <label>Percentage Completion</label>
     <b-progress
       :value="percentageProgress"
       max="100"
@@ -10,14 +10,13 @@
       <b-progress-bar :value="percentageProgress">
         <strong>{{ percentageProgress+'%' }}</strong>
       </b-progress-bar>
-    </b-progress>
-
+    </b-progress> -->
     <v-client-table
       :data="studentData.students"
       :columns="columns"
       :options="options"
     >
-      <template
+      <!-- <template
         slot="name"
         slot-scope="props"
         aria-sort="ascending"
@@ -41,23 +40,35 @@
         slot-scope="props"
       >
         {{ props.row.registration_no }}
-      </template>
+      </template> -->
       <template
-        slot="mid_term"
+        slot="student"
         slot-scope="props"
+        aria-sort="ascending"
       >
-        {{ props.row.result_detail.mid_term / 10 }}
-
+        <div align="center">
+          <b-avatar
+            :src="baseServerUrl +'storage/'+props.row.user.photo"
+            variant="light-primary"
+            :text="avatarText(props.row.user.first_name +' ' + props.row.user.last_name)"
+            size="30px"
+            rounded
+          />
+          <br>
+          <small>{{ props.row.user.first_name + ' ' + props.row.user.last_name }}</small>
+          <br>
+          <small>{{ props.row.registration_no }}</small>
+        </div>
       </template>
       <template
         slot="ca1"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_ca1">
+        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 1">
           <select
             v-model="props.row.result_detail.ca1"
 
-            @change="recordResult('ca1',props.row.result_detail.ca1, props.row.id,'ca1')"
+            @change="recordResult('ca1',props.row.result_detail.ca1, props.row.id,'test')"
           >
             <option
               value=""
@@ -66,8 +77,9 @@
               Select Score
             </option>
             <option
-              v-for="grade in over_10"
+              v-for="grade in setScoreRange(studentData.result_settings.ca1)"
               :key="grade"
+              :value="grade"
             >
               {{ grade }}
             </option>
@@ -81,11 +93,11 @@
         slot="ca2"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_ca2">
+        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 2">
           <select
             v-model="props.row.result_detail.ca2"
 
-            @change="recordResult('ca2',props.row.result_detail.ca2, props.row.id,'ca2')"
+            @change="recordResult('ca2',props.row.result_detail.ca2, props.row.id,'test')"
           >
             <option
               value=""
@@ -94,8 +106,9 @@
               Select Score
             </option>
             <option
-              v-for="grade in over_10"
+              v-for="grade in setScoreRange(studentData.result_settings.ca2)"
               :key="grade"
+              :value="grade"
             >
               {{ grade }}
             </option>
@@ -109,11 +122,11 @@
         slot="ca3"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_ca3">
+        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 3">
           <select
             v-model="props.row.result_detail.ca3"
 
-            @change="recordResult('ca3',props.row.result_detail.ca3, props.row.id,'ca3')"
+            @change="recordResult('ca3',props.row.result_detail.ca3, props.row.id,'test')"
           >
             <option
               value=""
@@ -122,8 +135,9 @@
               Select Score
             </option>
             <option
-              v-for="grade in over_10"
+              v-for="grade in setScoreRange(studentData.result_settings.ca3)"
               :key="grade"
+              :value="grade"
             >
               {{ grade }}
             </option>
@@ -131,6 +145,64 @@
         </div>
         <div v-else>
           {{ props.row.result_detail.ca3 }}
+        </div>
+      </template>
+      <template
+        slot="ca4"
+        slot-scope="props"
+      >
+        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 4">
+          <select
+            v-model="props.row.result_detail.ca4"
+
+            @change="recordResult('ca4',props.row.result_detail.ca4, props.row.id,'test')"
+          >
+            <option
+              value=""
+              disabled
+            >
+              Select Score
+            </option>
+            <option
+              v-for="grade in setScoreRange(studentData.result_settings.ca4)"
+              :key="grade"
+              :value="grade"
+            >
+              {{ grade }}
+            </option>
+          </select>
+        </div>
+        <div v-else>
+          {{ props.row.result_detail.ca4 }}
+        </div>
+      </template>
+      <template
+        slot="ca5"
+        slot-scope="props"
+      >
+        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 5">
+          <select
+            v-model="props.row.result_detail.ca5"
+
+            @change="recordResult('ca5',props.row.result_detail.ca5, props.row.id,'test')"
+          >
+            <option
+              value=""
+              disabled
+            >
+              Select Score
+            </option>
+            <option
+              v-for="grade in setScoreRange(studentData.result_settings.ca5)"
+              :key="grade"
+              :value="grade"
+            >
+              {{ grade }}
+            </option>
+          </select>
+        </div>
+        <div v-else>
+          {{ props.row.result_detail.ca5 }}
         </div>
       </template>
       <template
@@ -150,7 +222,7 @@
               Select Score
             </option>
             <option
-              v-for="grade in over_60"
+              v-for="grade in setScoreRange((studentData.result_settings.display_exam_score_only_for_full_term === 'no') ? studentData.result_settings.exam : 100)"
               :key="grade"
             >
               {{ grade }}
@@ -190,16 +262,14 @@
   </div>
 </template>
 <script>
-import {
-  BProgress, BProgressBar, BAvatar,
-} from 'bootstrap-vue'
+import { BAvatar } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { avatarText } from '@core/utils/filter'
 import Resource from '@/api/resource'
 
 const recordStudentResult = new Resource('result/record-result')
 export default {
-  components: { BProgress, BProgressBar, BAvatar },
+  components: { BAvatar },
   directives: {
     Ripple,
   },
@@ -215,17 +285,23 @@ export default {
   },
   data() {
     return {
-      columns: ['photo', 'id', 'name', 'mid_term', 'ca1', 'ca2', 'ca3', 'exam', 'total', 'comments'],
+      columns: ['student'],
       options: {
         headings: {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
-          mid_term: '1st C.A (10%)',
-          ca1: '2nd C.A (10%)',
-          ca2: '3rd C.A (10%)',
-          ca3: '4th C.A (10%)',
-          exam: 'Exam (60%)',
+          // ca1: `1st C.A (${this.studentData.result_settings.ca1}%)`,
+          // ca2: `2nd C.A (${this.studentData.result_settings.ca2}%)`,
+          // ca3: `3rd C.A (${this.studentData.result_settings.ca3}%)`,
+          // ca4: `4th C.A (${this.studentData.result_settings.ca4}%)`,
+          // ca5: `5th C.A (${this.studentData.result_settings.ca5}%)`,
+          ca1: `C.A 1 (${this.studentData.result_settings.ca1}%)`,
+          ca2: `C.A 2 (${this.studentData.result_settings.ca2}%)`,
+          ca3: `C.A 3 (${this.studentData.result_settings.ca3}%)`,
+          ca4: `C.A 4 (${this.studentData.result_settings.ca4}%)`,
+          ca5: `C.A 5 (${this.studentData.result_settings.ca5}%)`,
+          exam: `Exam (${(this.studentData.result_settings.display_exam_score_only_for_full_term === 'no') ? this.studentData.result_settings.exam : 100}%)`,
           total: 'Total (100%)',
           comments: 'Remark',
         },
@@ -249,24 +325,10 @@ export default {
     const app = this
     app.setScoreRange()
     app.calculateProgress(app.studentData)
+    app.setFullTermAssessmentFields()
   },
   methods: {
     avatarText,
-    setScoreRange() {
-      // eslint-disable-next-line no-plusplus
-      for (let index = 0; index <= 10; index++) {
-        this.over_10.unshift(index)
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let index = 0; index <= 20; index++) {
-        this.over_20.unshift(index)
-      }
-
-      // eslint-disable-next-line no-plusplus
-      for (let index = 0; index <= 60; index++) {
-        this.over_60.unshift(index)
-      }
-    },
     recordResult(assessment, score, studentId, action) {
       const app = this
       const { subject_teacher_id } = app.studentData
@@ -310,6 +372,30 @@ export default {
         app.status = 'success'
       }
       app.percentageProgress = Number(percentageProgress.toFixed(2))
+    },
+    setScoreRange(value) {
+      const scoreRange = []
+
+      // eslint-disable-next-line no-plusplus
+      for (let index = 0; index <= value; index++) {
+        scoreRange.unshift(index)
+      }
+      return scoreRange
+    },
+    setFullTermAssessmentFields() {
+      const app = this
+      const { result_settings } = app.studentData
+      const displayExamScorOnlyForFullTerm = result_settings.display_exam_score_only_for_full_term
+      const noOfCa = result_settings.no_of_ca
+      // eslint-disable-next-line no-plusplus
+      for (let index = 1; index <= noOfCa; index++) {
+        if (displayExamScorOnlyForFullTerm === 'no') {
+          app.columns.push(`ca${index}`)
+        }
+      }
+      app.columns.push('exam')
+      app.columns.push('total')
+      // app.columns.push('comments')
     },
 
   },

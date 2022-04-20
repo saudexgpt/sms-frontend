@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="load">
     <div
       v-if="staffId === null"
       class="mb-1"
@@ -7,13 +7,9 @@
       <b-button
         variant="gradient-danger"
         class="btn-icon"
+        @click="$router.go(-1)"
       >
-        <router-link
-          :to="{name: 'manage-staff'}"
-          style="color: #fff;"
-        >
-          Back
-        </router-link>
+        Back
       </b-button>
     </div>
     <template v-if="staff">
@@ -129,6 +125,7 @@ export default {
   data() {
     return {
       staff: '',
+      load: false,
     }
   },
   created() {
@@ -141,10 +138,15 @@ export default {
     }
   },
   methods: {
-    async getStaff(id) {
-      const response = await staffResource.get(id)
-      this.staff = response.staff
-      this.can_edit = response.can_edit
+    getStaff(id) {
+      const app = this
+      app.load = true
+      staffResource.get(id)
+        .then(response => {
+          app.staff = response.staff
+          app.can_edit = response.can_edit
+          app.load = false
+        })
     },
 
   },

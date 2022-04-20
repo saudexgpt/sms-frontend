@@ -1,6 +1,6 @@
 <template>
   <img
-    src="/images/logo/logo2.png"
+    src="/images/logo/logo.png"
     width="200"
     alt=""
   >

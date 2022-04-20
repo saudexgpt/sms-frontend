@@ -2,6 +2,10 @@
 <template>
   <div>
     <el-card>
+      <aside>
+        <legend>Assignment details</legend>
+        <span v-html="assignmentDetails" />
+      </aside>
       <h4>Click on the + sign to view students' response</h4>
       <v-client-table
         v-model="studentAssignments"
@@ -14,7 +18,7 @@
           slot-scope="{row}"
         >
           <aside>
-            <legend>Student Answer</legend>
+            <legend>{{ row.student.user.first_name + "'s" }} Answer</legend>
             <span v-html="row.student_answer" />
           </aside>
 
@@ -34,6 +38,7 @@
           slot-scope="props"
         >
           <el-select
+            v-if="canScore"
             v-model="props.row.score"
             @change="setScore(props.index, props.row, $event, props.row.remark)"
           >
@@ -44,20 +49,23 @@
               :label="value"
             />
           </el-select>
+          <span v-else>{{ props.row.score }}</span>
         </div>
         <div
           slot="remark"
           slot-scope="props"
         >
           <el-input
+            v-if="canScore"
             v-model="props.row.remark"
             type="textarea"
             placeholder="Type Remark Here..."
-            maxlength="60"
+            maxlength="70"
             show-word-limit
             @input="setRemark(props.index, $event)"
             @change="setScore(props.index, props.row, props.row.score, $event)"
           />
+          <span v-else>{{ props.row.remark }}</span>
         </div>
       </v-client-table>
     </el-card>
@@ -72,6 +80,14 @@ export default {
     studentAssignments: {
       type: Array,
       default: () => ([]),
+    },
+    assignmentDetails: {
+      type: String,
+      default: () => (''),
+    },
+    canScore: {
+      type: Boolean,
+      default: () => false,
     },
   },
   data() {

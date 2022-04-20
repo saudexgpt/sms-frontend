@@ -28,7 +28,9 @@
             </b-button>
           </div>
         </div>
-        <div class="justify-content-between align-items-center px-2 py-1">
+        <div
+          class="justify-content-between align-items-center px-2 py-1"
+        >
           <b-row v-loading="loading">
 
             <!-- Role Name -->
@@ -39,7 +41,7 @@
               >
                 <b-form-input
                   v-model="form.name"
-                  placeholder="Eg: Librarian"
+                  placeholder="Enter role..."
                 />
               </b-form-group>
             </b-col>
@@ -51,8 +53,32 @@
               >
                 <b-form-input
                   v-model="form.description"
-                  placeholder="Eg: The Librarian of the school"
+                  placeholder="Briefly describe role..."
                 />
+              </b-form-group>
+            </b-col>
+            <b-col
+              v-if="curriculum_level_groups.length > 0"
+              cols="12"
+            >
+              <b-form-group
+                label="Select Level Group"
+                label-for="v-curriculum"
+              >
+                <el-select
+                  v-model="form.level_groups"
+                  multiple
+                  collapse-tags
+                  style="width: 100%;"
+                  placeholder="Select Level Group"
+                >
+                  <el-option
+                    v-for="(curriculum_level_group, index) in curriculum_level_groups"
+                    :key="index"
+                    :label="curriculum_level_group.name"
+                    :value="curriculum_level_group.id"
+                  />
+                </el-select>
               </b-form-group>
             </b-col>
             <!-- submit and reset -->
@@ -110,16 +136,32 @@ export default {
   data() {
     return {
       form: {
+        id: '',
         name: '',
         description: '',
+        level_groups: [],
       },
       loading: false,
+      curriculum_level_groups: [],
     }
   },
   created() {
-    this.form = this.selectedRole
+    this.form.id = this.selectedRole.id
+    this.form.name = this.selectedRole.name
+    this.form.description = this.selectedRole.description
+    this.fetchCurriculumLevels()
   },
   methods: {
+    fetchCurriculumLevels() {
+      const app = this
+      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-level-groups')
+      fetchCurriculumSetupResource.list()
+        .then(response => {
+          app.curriculum_level_groups = response.curriculum_level_groups
+
+          app.form.level_groups = (app.selectedRole.curriculum_level_group_ids) ? app.selectedRole.curriculum_level_group_ids.split('~').map(item => parseInt(item, 10)) : []
+        })
+    },
     update() {
       const app = this
       app.loading = true

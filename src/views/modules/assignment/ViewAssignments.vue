@@ -70,7 +70,11 @@
       >
         Go Back
       </button>
-      <mark-assignment :student-assignments="selected_student_assignments" />
+      <mark-assignment
+        :student-assignments="selected_student_assignments"
+        :assignment-details="assignment_details"
+        :can-score="true"
+      />
     </div>
   </div>
 </template>
@@ -107,6 +111,7 @@ export default {
       },
       load: false,
       selected_student_assignments: [],
+      assignment_details: '',
       mark_assignment: false,
     }
   },
@@ -117,6 +122,7 @@ export default {
     moment,
     viewStudentResponses(row) {
       this.selected_student_assignments = row.student_assignments
+      this.assignment_details = row.assignment_details
       this.mark_assignment = true
     },
     fetchSubjects() {

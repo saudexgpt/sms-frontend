@@ -1,33 +1,35 @@
 <template>
-  <div>
+  <div v-loading="load">
     <div
-      class="box primary"
       v-if="!show_upload_form && create_new && !view_students"
+      class="box primary"
     >
       <div class="box-header bg-blue">
         <h4 class="box-title">
-          Set Online Classroom on {{ subject_teacher.subject.name }} ({{
-            subject_teacher.class_teacher.c_class.name
-          }}) for {{ day_in_words }}
+          Set Online Classroom on {{ subjectTeacher.subject.name }} ({{
+            subjectTeacher.class_teacher.c_class.name
+          }}) for {{ dayInWords }}
         </h4>
 
-        <span class="pull-right"
-          ><a @click="create_new = false" class="btn btn-warning fa fa-eye">
-            View All Classes</a
-          ></span
+        <span
+          class="pull-right"
+        ><a
+          class="btn btn-warning fa fa-eye"
+          @click="create_new = false"
         >
+          View All Classes</a></span>
       </div>
       <div class="box-body">
-        <form v-on:submit.prevent="saveClass()">
+        <form @submit.prevent="saveClass()">
           <div class="col-md-12">
             <label for="">Topic for this class</label>
             <input
-              type="text"
               v-model="form.topic"
+              type="text"
               class="form-control"
               placeholder="Example: Introduction of Computer"
               required
-            />
+            >
           </div>
           <div class="col-md-12">
             <label for="">Brief description of topic</label>
@@ -38,218 +40,224 @@
               rows="3"
               class="form-control"
               required
-            ></textarea>
+            />
           </div>
           <div class="col-md-12">
             <label for="">Date of class</label>
-            <input
-              type="date"
+            <el-date-picker
               v-model="form.date"
+              :picker-options="pickerOptions"
+              type="date"
+              format="yyyy/MM/dd"
+              value-format="yyyy-MM-dd"
+              placeholder="Pick a day"
+            />
+            <!-- <input
+              v-model="form.date"
+              type="date"
               class="form-control"
               required
-            />
+            > -->
           </div>
 
           <div class="col-md-6">
-            <p></p>
-            <button type="submit" class="btn btn-success">
-              <i class="fa fa-save"></i> Create E-Classroom
+            <p />
+            <button
+              type="submit"
+              class="btn btn-success"
+            >
+              <i class="fa fa-save" /> Create E-Classroom
             </button>
           </div>
         </form>
       </div>
     </div>
     <div
-      class="box primary"
       v-if="!show_upload_form && !create_new && !view_students"
+      class="box primary"
     >
       <div class="box-header">
         <h4 class="box-title">
-          Created Online Classes on {{ subject_teacher.subject.name }} ({{
-            subject_teacher.class_teacher.c_class.name
+          Created Online Classes on {{ subjectTeacher.subject.name }} ({{
+            subjectTeacher.class_teacher.c_class.name
           }})
         </h4>
-        <span class="pull-right"
-          ><a @click="create_new = true" class="btn btn-success fa fa-plus">
-            New Online Class</a
-          ></span
+        <span
+          class="pull-right"
+        ><a
+          class="btn btn-success fa fa-plus"
+          @click="create_new = true"
         >
+          New Online Class</a></span>
       </div>
       <div class="box-body">
         <v-client-table
-          :data="subject_teacher.daily_classrooms"
+          :data="subjectTeacher.daily_classrooms"
           :columns="columns"
           :options="options"
         >
-          <template slot="action" slot-scope="props">
-            <a @click="uploadResources(props.row)" class="btn btn-primary"
-              ><i class="fa fa-upload"></i> Upload Resources</a
-            >
-            <a @click="viewStudents(props.row)" class="btn btn-success"
-              ><i class="fa fa-users"></i> Join Online Class</a
-            >
+          <template
+            slot="action"
+            slot-scope="props"
+          >
             <a
-              @click="deleteClass(props.index, props.row.id)"
+              class="btn btn-primary"
+              @click="uploadResources(props.row)"
+            ><i class="fa fa-upload" /> Upload Resources</a>
+            <a
+              class="btn btn-success"
+              @click="viewStudents(props.row)"
+            ><i class="fa fa-users" /> Join Online Class</a>
+            <a
               class="btn btn-danger"
-              ><i class="fa fa-trash"></i> Delete</a
-            >
+              @click="deleteClass(props.index, props.row.id)"
+            ><i class="fa fa-trash" /> Delete</a>
           </template>
         </v-client-table>
       </div>
     </div>
     <div v-if="show_upload_form && !view_students">
-      <a @click="show_upload_form = false" class="btn btn-default pull-right">
-        Cancel</a
+      <a
+        class="btn btn-default pull-right"
+        @click="show_upload_form = false"
       >
+        Cancel</a>
       <upload-learning-resources
-        :daily_classroom="daily_classroom"
+        :daily-classroom="daily_classroom"
         :showform="true"
       />
     </div>
 
     <div v-if="view_students">
       <div class="col-md-12">
-        <a @click="view_students = false" class="btn btn-default pull-right">
-          Cancel</a
+        <a
+          class="btn btn-default pull-right"
+          @click="view_students = false"
         >
+          Cancel</a>
       </div>
       <view-online-students
-        :daily_classroom="daily_classroom"
+        :daily-classroom="daily_classroom"
         :query-string="query_string"
       />
     </div>
   </div>
 </template>
 <script>
-import UploadLearningResources from "./UploadLearningResources-new";
-import ViewOnlineStudents from "./ViewOnlineStudents";
+import UploadLearningResources from './UploadLearningResources-new.vue'
+import ViewOnlineStudents from './ViewOnlineStudents.vue'
+import Resource from '@/api/resource'
+
 export default {
   components: { UploadLearningResources, ViewOnlineStudents },
   props: {
-    subject_teacher: {
+    subjectTeacher: {
       type: Object,
-      default: () => [],
+      default: () => ({}),
     },
     day: {
       type: String,
-      dafault: () => "",
+      default: () => (''),
     },
-    day_in_words: {
+    dayInWords: {
       type: String,
-      dafault: () => "",
+      default: () => '',
     },
   },
   data() {
     return {
-      columns: ["topic", "date", "duration", "start", "end", "action"],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now()
+        },
+      },
+      columns: ['topic', 'date', 'duration', 'start', 'end', 'action'],
       options: {
         headings: {
-          topic: "Topic",
-          duration: "Duration (in minutes)",
+          topic: 'Topic',
+          duration: 'Duration (in minutes)',
 
-          date: "Date of Class",
-          action: "Action",
+          date: 'Date of Class',
+          action: 'Action',
         },
-        sortable: ["topic", "date"],
-        filterable: ["topic", "date"],
+        sortable: ['topic', 'date'],
+        filterable: ['topic', 'date'],
       },
       form: {
-        topic: "",
-        description: "",
-        date: "",
-        subject_teacher_id: this.subject_teacher.id,
-        class_teacher_id: this.subject_teacher.class_teacher_id,
+        topic: '',
+        description: '',
+        date: '',
+        subject_teacher_id: this.subjectTeacher.id,
+        class_teacher_id: this.subjectTeacher.class_teacher_id,
         day: this.day,
       },
       empty_form: {
-        topic: "",
-        description: "",
-        date: "",
-        subject_teacher_id: this.subject_teacher.id,
-        class_teacher_id: this.subject_teacher.class_teacher_id,
+        topic: '',
+        description: '',
+        date: '',
+        subject_teacher_id: this.subjectTeacher.id,
+        class_teacher_id: this.subjectTeacher.class_teacher_id,
         day: this.day,
       },
-      daily_classroom: "",
+      daily_classroom: '',
       show_upload_form: false,
       create_new: false,
       view_students: false,
-      query_string: "",
-    };
+      query_string: '',
+      load: false,
+    }
   },
   methods: {
-    notifyMe(message, title, type) {
-      if (type == "success") {
-        this.$toast.success({
-          title: title,
-          message: message,
-        });
-      } else if (type == "warning") {
-        this.$toast.warning({
-          title: title,
-          message: message,
-        });
-      } else {
-        this.$toast.error({
-          title: title,
-          message: message,
-        });
-      }
-    },
     saveClass() {
-      let app = this;
-      let param = app.form;
-      let l = app.$message.loading({
-        message: "creating online class...",
-        align: "center",
-      });
-
-      axios
-        .post("/lms/create-online-class", param) //back end route from web.php
-        .then((response) => {
-          l.close();
-          app.notifyMe("Class Created", "Successful", "success");
-          app.subject_teacher.daily_classrooms.push(
-            response.data.daily_classroom
-          );
-          app.form = app.empty_form;
-          app.create_new = false;
-        });
+      const app = this
+      const param = app.form
+      const createOnlineClassResource = new Resource('lms/create-online-class')
+      app.load = true
+      createOnlineClassResource
+        .store(param) // back end route from web.php
+        .then(response => {
+          app.load = false
+          app.$message('Class Created')
+          app.subjectTeacher.daily_classrooms.push(
+            response.daily_classroom,
+          )
+          app.form = app.empty_form
+          app.create_new = false
+        })
     },
-    uploadResources(daily_classroom) {
-      let app = this;
-      app.daily_classroom = daily_classroom;
-      app.show_upload_form = true;
+    uploadResources(dailyClassroom) {
+      const app = this
+      app.daily_classroom = dailyClassroom
+      app.show_upload_form = true
     },
-    viewStudents(daily_classroom) {
-      let app = this;
-      app.daily_classroom = daily_classroom;
-      const name = "Teacher";
-      app.query_string =
-        "?open=true&sessionid=" +
-        daily_classroom.subject_teacher_id +
-        "&publicRoomIdentifier=dashboard&userFullName=" +
-        name;
-      app.view_students = true;
+    viewStudents(dailyClassroom) {
+      const app = this
+      app.daily_classroom = dailyClassroom
+      const name = 'Teacher'
+      app.query_string = `?open=true&sessionid=${
+        dailyClassroom.subject_teacher_id
+      }&publicRoomIdentifier=dashboard&userFullName=${
+        name}`
+      app.view_students = true
     },
 
     deleteClass(index, id) {
-      var message = "Are you sure you want to delete this class?";
+      const message = 'Are you sure you want to delete this class?'
 
-      if (confirm(message)) {
-        let app = this;
-        let l = app.$message.loading({
-          message: "deleting online class...",
-          align: "center",
-        });
-        axios
-          .post("/lms/delete-onlineclass/" + id) //back end route from web.php
-          .then((response) => {
-            l.close();
-            app.subject_teacher.daily_classrooms.splice(index - 1, 1);
-            app.notifyMe("Deleted", "Successful", "success");
-          });
+      // eslint-disable-next-line no-alert
+      if (window.confirm(message)) {
+        const app = this
+        app.load = true
+        const deleteOnlineClassResource = new Resource('lms/delete-onlineclass')
+        deleteOnlineClassResource
+          .destroy(id) // back end route from web.php
+          .then(() => {
+            app.load = false
+            app.subjectTeacher.daily_classrooms.splice(index - 1, 1)
+            app.$message('Class Deleted Successfully')
+          })
       }
     },
   },
-};
+}
 </script>

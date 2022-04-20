@@ -31,10 +31,9 @@ export default {
         headerToolbar: {
           // left: 'prev,next',
           // center: 'title',
-          // right: 'timeGridWeek,timeGridDay,listWeek',
+          right: 'timeGridWeek,timeGridDay,listWeek',
           left: '',
           center: '',
-          right: '',
         },
         initialView: 'listWeek',
         // dateClick: this.handleDateClick,

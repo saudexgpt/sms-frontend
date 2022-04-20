@@ -1,9 +1,17 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-var */
+/* eslint-disable vars-on-top */
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable func-names */
 Math.easeInOutQuad = function (t, b, c, d) {
   t /= d / 2
   if (t < 1) {
+    // eslint-disable-next-line no-mixed-operators
     return c / 2 * t * t + b
   }
+  // eslint-disable-next-line no-plusplus
   t--
+  // eslint-disable-next-line no-mixed-operators
   return (-c / 2 * (t * (t - 2) - 1)) + b
 }
 
@@ -30,6 +38,7 @@ export function scrollTo(to, duration, callback) {
   const change = to - start
   const increment = 20
   let currentTime = 0
+  // eslint-disable-next-line no-param-reassign
   duration = (typeof (duration) === 'undefined') ? 500 : duration
   var animateScroll = function () {
     // increment the time

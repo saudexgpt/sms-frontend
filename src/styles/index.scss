@@ -130,7 +130,7 @@ aside {
 // .VueTables__limit-field {
 //   display: flex !important;
 // }
-.table:not(.table-dark):not(.table-light) thead:not(.thead-dark) th, [dir] .table:not(.table-dark):not(.table-light) tfoot:not(.thead-dark) th {
+.table:not(.table-dark):not(.table-light) thead:not(.thead-dark) th, [dir] .table:not(.table-dark):not(.table-light) tfoot:not(.thead-dark) th{
   background-color: transparent !important;
 }
 .row {
@@ -183,4 +183,42 @@ border: 1px solid #f0f0f0!important;
 .callout-danger {
   background: rgb(231, 39, 39);
   color: #ffffff;
+}
+
+.resultTable {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.resultTable th,.resultTable td{
+  padding:8px;
+  line-height:20px;
+  text-align:left;
+  vertical-align:top;
+  border-top:1px solid #ddd
+}
+.resultTable th{
+  font-weight:bold
+}
+.resultTable thead th{
+  vertical-align:bottom
+}
+
+.demo-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.demo-bg {
+  opacity: 0.05;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 90%;
+  
+}
+
+
+.demo-content {
+  position: relative;
 }

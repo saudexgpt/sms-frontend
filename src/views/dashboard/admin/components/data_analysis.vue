@@ -11,7 +11,8 @@
         :xl="2"
       >
         <statistic-card-horizontal
-          color="primary"
+          color="white"
+          bg="primary"
           icon="UserPlusIcon"
           :statistic="dashboardData.active_students"
           statistic-title="Active Students"
@@ -25,7 +26,8 @@
         :xl="2"
       >
         <statistic-card-horizontal
-          color="warning"
+          color="white"
+          bg="warning"
           icon="UserMinusIcon"
           :statistic="dashboardData.suspended_students"
           statistic-title="Suspended Students"
@@ -39,7 +41,8 @@
         :xl="2"
       >
         <statistic-card-horizontal
-          color="success"
+          color="white"
+          bg="success"
           icon="UserCheckIcon"
           :statistic="dashboardData.alumni"
           statistic-title="Graduated Student"
@@ -53,6 +56,23 @@
         :xl="2"
       >
         <statistic-card-horizontal
+          color="white"
+          bg="danger"
+          icon="UserXIcon"
+          :statistic="dashboardData.withdrawn_students"
+          statistic-title="Withdrawn Students"
+        />
+      </el-col>
+      <el-col
+        :xs="12"
+        :sm="8"
+        :md="8"
+        :lg="4"
+        :xl="2"
+      >
+        <statistic-card-horizontal
+          color="white"
+          bg="secondary"
           icon="UsersIcon"
           :statistic="dashboardData.totalStaff"
           statistic-title="Active Personnels"
@@ -66,24 +86,11 @@
         :xl="2"
       >
         <statistic-card-horizontal
-          color="info"
+          color="white"
+          bg="dark"
           icon="UsersIcon"
           :statistic="dashboardData.totalGuardian"
           statistic-title="Total Guardians"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
-      >
-        <statistic-card-horizontal
-          color="danger"
-          icon="UserXIcon"
-          :statistic="dashboardData.withdrawn_students"
-          statistic-title="Withdrawn Students"
         />
       </el-col>
     </el-row>

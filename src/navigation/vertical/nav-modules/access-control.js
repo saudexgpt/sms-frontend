@@ -11,14 +11,14 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      roles: ['super', 'admin'],
+      permissions: ['can manage roles'],
     },
     children: [
       {
         title: 'Manage Roles',
         route: 'manage-roles',
         acl: {
-          roles: ['admin'],
+          permissions: ['can manage roles'],
         },
       },
       // {

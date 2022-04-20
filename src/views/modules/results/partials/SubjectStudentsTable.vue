@@ -5,7 +5,7 @@
   >
     <header class="box-header">
       <h4 class="box-title">
-        <div v-if="(studentData.active_assessment == 'half' && (studentData.edit_midterm) ) || (studentData.active_assessment == 'full' && (studentData.edit_ca1 || studentData.edit_ca2 || studentData.edit_ca3 || studentData.edit_exam))">
+        <div v-if="(studentData.active_assessment == 'half' && (studentData.edit_midterm)) || (studentData.active_assessment == 'full' && (studentData.edit_exam))">
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="gradient-success"
@@ -18,26 +18,43 @@
             <span class="align-middle">Submit</span>
           </b-button>
         </div>
-        <div v-else>
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="secondary"
-          >
-            <feather-icon
-              icon="SaveIcon"
-              class="mr-50"
-            />
-            <span class="align-middle">Submit</span>
-          </b-button>
+        <div
+          v-else
+          class="alert alert-primary"
+          align="center"
+        >
+          Result Status: {{ (studentData.active_assessment == 'half') ? studentData.result_action_array[2].toUpperCase() : studentData.result_action_array[3].toUpperCase() }}
         </div>
       </h4>
 
     </header>
     <div class="box-body">
+      <el-row :gutter="5">
+        <el-col
+          :xs="24"
+          :sm="18"
+          :md="18"
+        >
 
-      <p align="center">
-        {{ toUpperCase(studentData.active_assessment) }} Term Report Entry for {{ studentData.class.name }} {{ studentData.subject_teacher.subject.name }}
-      </p>
+          <p align="center">
+            {{ toUpperCase(studentData.active_assessment) }} Term Report Entry for {{ studentData.class.name }} {{ studentData.subject_teacher.subject.name }} {{ studentData.term.name + ' term, ' + studentData.session.name + ' session' }}
+          </p>
+        </el-col>
+        <el-col
+          :xs="24"
+          :sm="6"
+          :md="4"
+        >
+
+          <router-link :to="{name: 'SubjectStudents', params: {id: studentData.subject_teacher_id}}">
+            <el-button
+              type="warning"
+            >
+              <span class="align-middle">Manage Elective Students</span>
+            </el-button>
+          </router-link>
+        </el-col>
+      </el-row>
 
       <!--Modal-->
       <div
@@ -173,9 +190,12 @@ export default {
         .then(response => {
           app.closeModal()
           app.studentData.result_action_array = response.result_action_array
+          app.studentData.edit_midterm = response.edit_midterm
           app.studentData.edit_ca1 = response.edit_ca1
           app.studentData.edit_ca2 = response.edit_ca2
           app.studentData.edit_ca3 = response.edit_ca3
+          app.studentData.edit_ca4 = response.edit_ca4
+          app.studentData.edit_ca5 = response.edit_ca5
           app.studentData.edit_exam = response.edit_exam
           this.$message('Result submission successful!!!')
         })

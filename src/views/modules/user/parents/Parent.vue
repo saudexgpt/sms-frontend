@@ -65,6 +65,14 @@
               class="btn-icon rounded-circle"
               @click="resetPassword(props.row.user)"
             >
+              <feather-icon icon="UnlockIcon" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
+              variant="dark"
+              class="btn-icon rounded-circle"
+              @click="loginAsUser(props.row.user)"
+            >
               <feather-icon icon="KeyIcon" />
             </b-button>
           </span>
@@ -175,10 +183,10 @@ export default {
     }
   },
   created() {
-    this.fetchStudents()
+    this.fetchGuardians()
   },
   methods: {
-    fetchStudents() {
+    fetchGuardians() {
       const app = this
       app.loading = true
       const fetchGuardianResource = new Resource('user-setup/guardians')
@@ -187,6 +195,11 @@ export default {
           app.guardians = response.guardians
           app.loading = false
         })
+    },
+    async loginAsUser(user) {
+      await this.$store.dispatch('user/loginAsUser', { user_id: user.id })
+      // this.$router.push('/login').catch(() => {})
+      window.location = '/'
     },
     resetPassword(user) {
       const app = this

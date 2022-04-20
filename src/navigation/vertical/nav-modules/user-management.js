@@ -11,9 +11,16 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      permissions: ['can manage staff', 'can manage student'],
+      permissions: ['can company manage staff', 'can manage staff', 'can manage student'],
     },
     children: [
+      {
+        title: 'Company Staff',
+        route: 'manage-company-staff',
+        acl: {
+          permissions: ['can company manage staff'],
+        },
+      },
       {
         title: 'Manage Student',
         route: 'manage-student',
