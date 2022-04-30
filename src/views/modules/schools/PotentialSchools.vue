@@ -11,7 +11,7 @@
         variant="primary"
       >
         <router-link
-          to="/register"
+          to="/schools/register"
           style="color: #fff;"
         >
           Register New
@@ -43,7 +43,7 @@
         slot="action"
         slot-scope="props"
       >
-        <span>
+        <span v-if="checkRole(['super'])">
           <!-- <b-button
             v-b-tooltip.hover.right="'View Details'"
             variant="primary"

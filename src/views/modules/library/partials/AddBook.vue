@@ -37,18 +37,25 @@
                 label="Select Book Category"
               >
                 <el-select
-                  v-model="form.library_book_category_id"
+                  v-model="selected_category_index"
                   placeholder="Select Category"
                   clearable
                   style="width: 100%"
                   class="filter-item"
+                  @input="setCategory()"
                 >
                   <el-option
-                    v-for="category in categories"
-                    :key="category.id"
+                    v-for="(category, index) in categories"
+                    :key="index"
                     :label="category.name"
-                    :value="category.id"
-                  />
+                    :value="index"
+                  >
+                    <span style="float: left">{{ category.name }}</span>
+                    <span
+                      style="float: right; color: #8492a6; font-size: 13px"
+                    >&nbsp;({{ (category.level_group) ? category.level_group.name : 'No specific level' }})</span>
+
+                  </el-option>
                 </el-select>
               </b-form-group>
             </b-col>
@@ -203,6 +210,7 @@ export default {
     return {
       form: {
         library_book_category_id: '',
+        curriculum_level_group_id: null,
         ISBN: '',
         title: '',
         authors: '',
@@ -211,11 +219,18 @@ export default {
         quantity: 1,
         description: '',
       },
+      selected_category_index: '',
       loading: false,
       error: false,
     }
   },
   methods: {
+    setCategory() {
+      const app = this
+      const category = app.categories[app.selected_category_index]
+      app.form.library_book_category_id = category.id
+      app.form.curriculum_level_group_id = category.curriculum_level_group_id
+    },
     submit() {
       const app = this
       const saveBookResource = new Resource('library/books/store')

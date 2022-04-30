@@ -1,5 +1,5 @@
 <template>
-  <div v-if="details !== null">
+  <div v-loading="load">
     <div
       v-if="schoolId === null"
       class="mb-1"
@@ -14,7 +14,6 @@
     </div>
     <!-- Data Analysis-->
     <el-row
-      v-if="details !== null"
       :gutter="8"
     >
       <el-col
@@ -129,6 +128,7 @@
                   v-model="details.school.nursery"
                   value="1"
                   class="custom-control-danger"
+                  :disabled="!checkPermission(['can manage schools'])"
                   @change="setArm(details.school.id, 'nursery', $event)"
                 >
                   Nursery
@@ -137,6 +137,7 @@
                   v-model="details.school.pry"
                   value="1"
                   class="custom-control-primary"
+                  :disabled="!checkPermission(['can manage schools'])"
                   @change="setArm(details.school.id, 'pry', $event)"
                 >
                   Primary
@@ -145,6 +146,7 @@
                   v-model="details.school.secondary"
                   value="1"
                   class="custom-control-success"
+                  :disabled="!checkPermission(['can manage schools'])"
                   @change="setArm(details.school.id, 'secondary', $event)"
                 >
                   Secondary
@@ -236,6 +238,7 @@ import StatisticCardHorizontal from '@core/components/statistics-cards/Statistic
 import Resource from '@/api/resource'
 import StudentsList from './partials/StudentsList.vue'
 import StaffList from './partials/StaffList.vue'
+import checkPermission from '@/utils/permission'
 
 const schoolResource = new Resource('schools/show')
 export default {
@@ -265,7 +268,17 @@ export default {
       activeActivity: 'first',
       school: {},
       can_edit: false,
-      details: null,
+      details: {
+        active_students: 0,
+        suspended_students: 0,
+        withdrawn_students: 0,
+        alumni: 0,
+        totalGuardian: 0,
+        totalStaff: 0,
+        school: {},
+
+      },
+      load: false,
     }
   },
   computed: {
@@ -286,9 +299,14 @@ export default {
     }
   },
   methods: {
-    async getSchool(id) {
-      const response = await schoolResource.get(id)
-      this.details = response
+    checkPermission,
+    getSchool(id) {
+      const app = this
+      app.load = true
+      schoolResource.get(id).then(response => {
+        this.details = response
+        app.load = false
+      })
     },
     async setArm(id, arm, event) {
       let value = '1'

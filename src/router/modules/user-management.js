@@ -20,7 +20,7 @@ export default [
     name: 'manage-company-staff',
     component: () => import('@/views/modules/user/staff/Partners.vue'),
     meta: {
-      permissions: ['can company manage staff'],
+      permissions: ['can manage company staff'],
     },
   },
   {

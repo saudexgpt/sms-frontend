@@ -36,6 +36,7 @@
             >
           </div>
           <div
+            v-if="checkRole(['super'])"
             slot="suspended_for_nonpayment"
             slot-scope="props"
           >
@@ -77,7 +78,7 @@
               </b-button>
             </span>
             <!-- <span
-          v-if="checkRole(['super'])"
+          v-if="checkPermission(['can manage schools'])"
         >
           <b-button
             v-b-tooltip.hover.right="'Reset Password'"
@@ -89,7 +90,7 @@
           </b-button>
         </span> -->
             <span
-              v-if="checkRole(['super'])"
+              v-if="checkPermission(['can manage schools'])"
             >
               <b-button
                 v-b-tooltip.hover.right="'Login as admin of ' + props.row.name"
@@ -123,6 +124,7 @@
             >
           </div>
           <div
+            v-if="checkRole(['super'])"
             slot="suspended_for_nonpayment"
             slot-scope="props"
           >
@@ -164,7 +166,7 @@
               </b-button>
             </span>
             <!-- <span
-          v-if="checkRole(['super'])"
+          v-if="checkPermission(['can manage schools'])"
         >
           <b-button
             v-b-tooltip.hover.right="'Reset Password'"
@@ -176,7 +178,7 @@
           </b-button>
         </span> -->
             <span
-              v-if="checkRole(['super'])"
+              v-if="checkPermission(['can manage schools'])"
             >
               <b-button
                 v-b-tooltip.hover.right="'Login as admin of ' + props.row.name"
@@ -200,6 +202,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import moment from 'moment'
 import { avatarText } from '@core/utils/filter'
+import checkPermission from '@/utils/permission'
 import checkRole from '@/utils/role'
 import Resource from '@/api/resource'
 
@@ -259,6 +262,7 @@ export default {
   },
   methods: {
     moment,
+    checkPermission,
     checkRole,
     avatarText,
     fetchSchools() {

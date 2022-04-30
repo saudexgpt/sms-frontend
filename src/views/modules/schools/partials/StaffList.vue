@@ -36,6 +36,7 @@
               ><feather-icon icon="EyeIcon" /></router-link>
             </b-button>
             <b-button
+              v-if="checkRole(['super'])"
               v-b-tooltip.hover.right="'Reset Password'"
               variant="gradient-warning"
               class="btn-icon rounded-circle"
@@ -44,6 +45,7 @@
               <feather-icon icon="UnlockIcon" />
             </b-button>
             <b-button
+              v-if="checkRole(['super'])"
               v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
               variant="dark"
               class="btn-icon rounded-circle"
@@ -67,6 +69,7 @@ import {
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
+import checkRole from '@/utils/role'
 
 export default {
   components: {
@@ -167,6 +170,7 @@ export default {
     }
   },
   methods: {
+    checkRole,
     async loginAsUser(user) {
       await this.$store.dispatch('user/loginAsUser', { user_id: user.id })
       // this.$router.push('/login').catch(() => {})

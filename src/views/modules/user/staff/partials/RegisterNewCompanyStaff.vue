@@ -387,7 +387,8 @@ export default {
               variant: 'success',
             },
           })
-          app.$router.push({ path: 'login' })
+          // app.$router.push({ path: 'login' })
+          app.$emit('update')
           // send mail
         })
         .catch(error => {

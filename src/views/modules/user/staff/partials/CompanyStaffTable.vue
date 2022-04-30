@@ -26,13 +26,8 @@
               v-b-tooltip.hover.right="'View Details'"
               variant="gradient-primary"
               class="btn-icon rounded-circle"
-            >
-              <router-link
-                :to="{ name: 'staffDetails', params: { id: props.row.id } }"
-                style="color: #fff;"
-              ><feather-icon
-                icon="EyeIcon"
-              /></router-link>
+              @click="viewStaffDetails(props.row)"
+            ><feather-icon icon="EyeIcon" />
             </b-button>
             <b-button
               v-b-tooltip.hover.right="
@@ -72,8 +67,12 @@
       </v-client-table>
     </div>
     <div v-else>
-      <b-button @click="selectedStaff = null">
-        Go Back
+      <b-button
+        variant="gradient-danger"
+        class="btn-icon"
+        @click="selectedStaff = null"
+      >
+        Back
       </b-button>
       <edit-staff
         v-if="edit_staff"
@@ -82,7 +81,7 @@
       />
       <staff-details
         v-if="view_details"
-        :selected-staff="selectedStaff"
+        :staff="selectedStaff"
         @update="reloadTable()"
       />
     </div>

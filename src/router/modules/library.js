@@ -23,4 +23,12 @@ export default [
       roles: ['librarian', 'staff', 'student'],
     },
   },
+  {
+    path: '/library/available-books',
+    name: 'AvailableBooks',
+    component: () => import('@/views/modules/library/AvailableBooks.vue'),
+    meta: {
+      roles: ['librarian', 'staff', 'student'],
+    },
+  },
 ]

@@ -32,6 +32,14 @@ export default [
       //   },
       // },
       {
+        title: 'Available Books',
+        route: 'AvailableBooks',
+        acl: {
+          modules: ['library'],
+          except: ['super', 'parent', 'librarian'],
+        },
+      },
+      {
         title: 'Borrowed Books',
         route: 'BorrowedBooks',
         acl: {

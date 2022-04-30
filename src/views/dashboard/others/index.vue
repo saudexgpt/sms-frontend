@@ -9,10 +9,11 @@
 import { mapGetters } from 'vuex'
 import LibrarianDashboard from '@/views/modules/library/index.vue'
 import UserDashboard from '@/views/modules/user/Profile.vue'
+import CompanyStaffDashboard from './partials/CompanyStaff.vue'
 
 export default {
   components: {
-    LibrarianDashboard, UserDashboard,
+    LibrarianDashboard, UserDashboard, CompanyStaffDashboard,
   },
   data() {
     return {
@@ -27,6 +28,9 @@ export default {
   created() {
     if (this.userData.roles.includes('librarian')) {
       this.currentRole = 'LibrarianDashboard'
+    }
+    if (this.userData.roles.includes('company-staff')) {
+      this.currentRole = 'CompanyStaffDashboard'
     }
   },
 }

@@ -79,12 +79,13 @@ export default {
     return {
       categories: [],
       columns: [
-        'name', 'description', 'action',
+        'name', 'level_group.name', 'description', 'action',
       ],
 
       options: {
         headings: {
           action: '',
+          'level_group.name': 'Level Group',
         },
         pagination: {
           dropdown: true,
@@ -96,8 +97,8 @@ export default {
         //   filter: 'Search:',
         // },
         // editableColumns:['name', 'category.name', 'sku'],
-        sortable: ['name'],
-        filterable: ['name'],
+        sortable: ['name', 'level_group.name'],
+        filterable: ['name', 'level_group.name'],
       },
       total: 0,
       load_table: false,

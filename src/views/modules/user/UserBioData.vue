@@ -28,8 +28,11 @@
             </div>
           </div>
         </div>
-
-        <div class="demo-inline-spacing">
+        <!-- We want to make sure only the owner of the data can modify it-->
+        <div
+          v-if="userData.id === user.id"
+          class="demo-inline-spacing"
+        >
           <b-button
             v-if="user.role !== 'student'"
             size="sm"
@@ -184,6 +187,7 @@
 import {
   BButton, BCard, BAvatar, BRow, BCol,
 } from 'bootstrap-vue'
+import { mapGetters } from 'vuex'
 import { avatarText } from '@core/utils/filter'
 import UploadPhoto from '@/views/modules/user/UploadPhoto.vue'
 import Resource from '@/api/resource'
@@ -223,6 +227,9 @@ export default {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
+    ...mapGetters([
+      'userData',
+    ]),
   },
   methods: {
     updatePassword() {

@@ -32,6 +32,26 @@
           <b-row v-loading="loading">
             <b-col cols="12">
               <b-form-group
+                label="Select Level Group"
+                label-for="v-curriculum"
+              >
+                <el-select
+                  v-model="form.curriculum_level_group_id"
+                  placeholder="Select Level Group"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(curriculum_level_group, index) in curriculum_level_groups"
+                    :key="index"
+                    :value="curriculum_level_group.id"
+                    :label="curriculum_level_group.name"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
+
+            <b-col cols="12">
+              <b-form-group
                 label="Category Name"
                 label-for="v-name"
               >
@@ -108,17 +128,28 @@ export default {
   data() {
     return {
       form: {
+        curriculum_level_group_id: '',
         name: '',
         description: '',
       },
+      curriculum_level_groups: [],
       loading: false,
       error: false,
     }
   },
   created() {
-    this.form = this.selectedCategory
+    this.fetchCurriculumLevels()
   },
   methods: {
+    fetchCurriculumLevels() {
+      const app = this
+      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-level-groups')
+      fetchCurriculumSetupResource.list()
+        .then(response => {
+          app.curriculum_level_groups = response.curriculum_level_groups
+          app.form = app.selectedCategory
+        })
+    },
     update() {
       const app = this
       const updateCategoryResource = new Resource('library/books/update-category')

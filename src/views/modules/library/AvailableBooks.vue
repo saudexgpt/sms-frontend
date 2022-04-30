@@ -9,16 +9,7 @@
         slot="header"
         class="clearfix"
       >
-        <span>List of Library Books</span>
-        <span class="pull-right">
-          <el-button
-            class="filter-item"
-            type="success"
-            icon="el-icon-plus"
-            @click="isCreateBookSidebarActive = true"
-          >Add New Book
-          </el-button>
-        </span>
+        <span>List of Available Books</span>
       </div>
       <div class="filter-container">
         <el-row :gutter="20">
@@ -55,6 +46,7 @@
               </el-option>
             </el-select>
             <el-select
+              v-if="!checkRole(['student'])"
               v-model="query.curriculum_level_group_id"
               placeholder="Filter By Level Group"
               clearable
@@ -71,66 +63,12 @@
 
           </el-col>
         </el-row>
-        <strong>Click on the <code>+</code> sign to view borrowers</strong>
       </div>
       <v-client-table
         v-model="books"
         :columns="columns"
         :options="options"
       >
-        <div
-          slot="child_row"
-          slot-scope="props"
-        >
-          <aside>
-            <legend>Borrowers of <strong>{{ props.row.title }}</strong></legend>
-
-            <v-client-table
-              v-model="props.row.borrowed_books"
-              :columns="borrowedColumns"
-              :options="borrowedOptions"
-            >
-
-              <template
-                slot="borrower"
-                slot-scope="{ row }"
-              >
-                {{ (row.borrower) ? row.borrower.first_name + ' ' + row.borrower.last_name : '' }}
-              </template>
-              <template
-                slot="processor"
-                slot-scope="{ row }"
-              >
-                {{ (row.processor) ? row.processor.first_name + ' ' + row.processor.last_name : '' }}
-              </template>
-              <template
-                slot="receiver"
-                slot-scope="{ row }"
-              >
-                {{ (row.receiver) ? row.receiver.first_name + ' ' + row.receiver.last_name : '' }}
-              </template>
-              <template
-                slot="action"
-                slot-scope="{ row }"
-              >
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  content="Return Book"
-                  placement="bottom-start"
-                >
-                  <el-button
-                    round
-                    type="primary"
-                    size="small"
-                    icon="el-icon-check"
-                    @click="returnBook(row)"
-                  />
-                </el-tooltip>
-              </template>
-            </v-client-table>
-          </aside>
-        </div>
         <template
           slot="available"
           slot-scope="{row}"
@@ -149,45 +87,6 @@
         >
           {{ (row.recorded_by) ? row.recorded_by.first_name + ' ' + row.recorded_by.last_name : '' }}
         </template>
-        <template
-          slot="action"
-          slot-scope="{row}"
-        >
-          <span>
-
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="Edit"
-              placement="top-start"
-            >
-              <el-button
-                round
-                type="primary"
-                size="small"
-                icon="el-icon-edit"
-                @click="editRow(row)"
-              />
-            </el-tooltip>
-            <br>
-            <el-tooltip
-              v-if="availableQuantity(row) > 0"
-              class="item"
-              effect="dark"
-              content="Lend Book"
-              placement="bottom-start"
-            >
-              <el-button
-                v-if="availableQuantity(row) > 0"
-                round
-                type="danger"
-                size="small"
-                icon="el-icon-notebook-1"
-                @click="lendBook(row)"
-              />
-            </el-tooltip>
-          </span>
-        </template>
       </v-client-table>
       <el-row :gutter="20">
         <pagination
@@ -198,26 +97,6 @@
           @pagination="getList"
         />
       </el-row>
-      <add-book
-        v-if="isCreateBookSidebarActive"
-        v-model="isCreateBookSidebarActive"
-        :categories="categories"
-        @save="getList"
-      />
-      <edit-book
-        v-if="isEditBookSidebarActive"
-        v-model="isEditBookSidebarActive"
-        :categories="categories"
-        :selected-book="selected_book"
-        @update="getList"
-      />
-      <lend-book
-        v-if="isBorrowBookSidebarActive"
-        v-model="isBorrowBookSidebarActive"
-        :users="users"
-        :selected-book="selected_book"
-        @save="getList"
-      />
     </el-card>
   </div>
 </template>
@@ -226,14 +105,12 @@
 import moment from 'moment'
 import Pagination from '@/views/components/Pagination-main/index.vue' // Secondary package based on el-pagination
 import Resource from '@/api/resource'
-import AddBook from './partials/AddBook.vue'
-import EditBook from './partials/EditBook.vue'
-import LendBook from './partials/LendBook.vue'
+import checkRole from '@/utils/role'
 
 export default {
   name: 'Books',
   components: {
-    Pagination, AddBook, EditBook, LendBook,
+    Pagination,
   },
   // directives: { permission },
   props: {
@@ -248,7 +125,7 @@ export default {
       categories: [],
       users: [],
       columns: [
-        'action', 'title', 'quantity', 'available', 'level_group.name', 'category.name', 'ISBN', 'authors', 'serial_no', 'publisher', 'copyright_year', 'recorded_by',
+        'title', 'available', 'level_group.name', 'category.name', 'ISBN', 'authors', 'serial_no', 'publisher', 'copyright_year', 'recorded_by',
       ],
 
       options: {
@@ -256,7 +133,6 @@ export default {
           'category.name': 'Category',
           'level_group.name': 'Level Group',
           recorded_by: 'Recorded By',
-          quantity: 'Stocked Quantity',
           available: 'Available Quantity',
         },
         pagination: {
@@ -272,27 +148,6 @@ export default {
         sortable: ['ISBN', 'title', 'authors', 'copyright_year'],
         filterable: [/* 'ISBN', 'title', 'authors', 'copyright_year' */],
       },
-      borrowedColumns: ['action', 'borrower', 'date_borrowed', 'due_date', 'date_returned', 'is_returned', 'processor', 'receiver'],
-      borrowedOptions: {
-        headings: {
-          date_borrowed: 'Date',
-          processor: 'Lender',
-          is_returned: 'Is Returned',
-          action: '',
-        },
-        rowAttributesCallback(row) {
-          const todayDate = new Date()
-          const dueDate = new Date(row.due_date)
-          if (dueDate < todayDate) {
-            return { style: 'background: #d83b3beb; color: #000000' }
-          }
-          // if (row.student.studentship_status === 'graduated') {
-          //   return { style: 'background: #6610f2; color: #ffffff' }
-          // }
-          return { style: 'background: #36c15ecf; color: #000000' }
-        },
-        sortable: ['date_borrowed'],
-      },
       total: 0,
       loading: false,
       load_table: false,
@@ -303,21 +158,18 @@ export default {
         category_id: '',
         curriculum_level_group_id: '',
       },
-      isCreateBookSidebarActive: false,
-      isEditBookSidebarActive: false,
-      isBorrowBookSidebarActive: false,
       selected_book: '',
       curriculum_level_groups: [],
     }
   },
   created() {
-    this.fetchUsers()
     this.getList(true)
     this.fetchCategories()
     this.fetchCurriculumLevels()
   },
   methods: {
     moment,
+    checkRole,
     fetchCurriculumLevels() {
       const app = this
       const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-level-groups')
@@ -325,14 +177,6 @@ export default {
         .then(response => {
           app.curriculum_level_groups = response.curriculum_level_groups
         })
-    },
-    fetchUsers() {
-      const app = this
-
-      const usersResource = new Resource('schools/fetch-commumity')
-      usersResource.list().then(response => {
-        app.users = response.users
-      })
     },
     fetchCategories() {
       const app = this
@@ -369,14 +213,6 @@ export default {
       this.query.page = 1
       this.getList(false)
     },
-    editRow(row) {
-      this.selected_book = row
-      this.isEditBookSidebarActive = true
-    },
-    lendBook(row) {
-      this.selected_book = row
-      this.isBorrowBookSidebarActive = true
-    },
     availableQuantity(row) {
       const { quantity } = row
       const { borrowed_books } = row
@@ -389,24 +225,6 @@ export default {
       })
       const available = quantity - quantityBorrowed
       return available
-    },
-    returnBook(row) {
-      this.$confirm('Click OK to confirm return', 'Confirm Return', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: 'success',
-      }).then(() => {
-        const returnBookResources = new Resource('library/borrow/return-book')
-        returnBookResources
-          .update(row.id)
-          .then(() => {
-            this.getList()
-            this.$message({
-              type: 'success',
-              message: 'Book is returned successfully',
-            })
-          })
-      })
     },
   },
 }

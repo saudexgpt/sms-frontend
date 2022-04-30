@@ -23,10 +23,16 @@ const state = {
     notifications: [],
     password_status: '',
     unreadNotificationCount: null,
+    suspended_for_nonpayment: 0,
     school: {
-      current_session: '',
-      current_term: '',
+      current_session: {
+        name: '',
+      },
+      current_term: {
+        name: '',
+      },
     },
+    student: '',
     whatsapp_no: '2347044449412',
   },
 }

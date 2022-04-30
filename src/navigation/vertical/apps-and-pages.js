@@ -7,7 +7,7 @@ export default [
     route: 'apps-email',
     icon: 'MailIcon',
     acl: {
-      except: ['super'],
+      roles: ['parent', 'student', 'staff'],
     },
   },
   // {

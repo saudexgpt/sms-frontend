@@ -11,14 +11,14 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      permissions: ['can company manage staff', 'can manage staff', 'can manage student'],
+      permissions: ['can manage company staff', 'can manage staff', 'can manage student'],
     },
     children: [
       {
         title: 'Company Staff',
         route: 'manage-company-staff',
         acl: {
-          permissions: ['can company manage staff'],
+          permissions: ['can manage company staff'],
         },
       },
       {

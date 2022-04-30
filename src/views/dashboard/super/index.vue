@@ -2,19 +2,19 @@
   <div v-loading="load">
     <data-analysis :dashboard-data="dashboardData" />
 
-    <!-- <admin-chart /> -->
+    <schools />
 
   </div>
 </template>
 <script>
 import DataAnalysis from './components/data_analysis.vue'
-// import AdminChart from './components/admin_report_chart.vue'
+import Schools from '@/views/modules/schools/index.vue'
 
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    DataAnalysis,
+    DataAnalysis, Schools,
   },
   data() {
     return {

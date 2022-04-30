@@ -125,19 +125,11 @@
                   label="School Website"
                   label-for="website"
                 >
-                  <validation-provider
-                    #default="{ errors }"
-                    name="School Website"
-                    rules="required"
-                  >
-                    <b-form-input
-                      id="website"
-                      v-model="form.website"
-                      :state="errors.length > 0 ? false:null"
-                      placeholder="Enter School Website"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
+                  <b-form-input
+                    id="website"
+                    v-model="form.website"
+                    placeholder="Enter School Website"
+                  />
                 </b-form-group>
               </b-col>
               <b-col md="6">
@@ -532,7 +524,8 @@ export default {
       empty_form: {
         name: '',
         slug: '',
-        email: '',
+        estimated_no_of_students: '0-100',
+        email,
         website: '',
         phone: '',
         address: '',
