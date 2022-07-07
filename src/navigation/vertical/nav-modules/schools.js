@@ -10,14 +10,14 @@ export default [
     icon: 'TrelloIcon',
     route: 'schools',
     acl: {
-      permissions: ['can manage schools', 'can register schools'],
+      permissions: ['can view all schools', 'can manage schools', 'can register schools'],
     },
     children: [
       {
-        title: 'Manage Schools',
+        title: 'All Schools',
         route: 'schools',
         acl: {
-          permissions: ['can manage schools'],
+          permissions: ['can view all schools', 'can manage schools'],
         },
       },
       {

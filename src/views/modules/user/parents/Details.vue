@@ -74,7 +74,7 @@
               </div>
               <h3>{{ guardian_student.student.user.last_name +', ' + guardian_student.student.user.first_name }}</h3>
               <h6 class="text-muted">
-                {{ guardian_student.student.my_classes[0].class_teacher.c_class.name }}
+                {{ (guardian_student.student.my_classes.length > 0) ? guardian_student.student.my_classes[0].class_teacher.c_class.name : '' }}
               </h6>
               <hr class="mb-2">
               <router-link

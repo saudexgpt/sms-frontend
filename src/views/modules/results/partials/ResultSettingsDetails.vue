@@ -4,7 +4,7 @@
       <tbody>
         <tr>
           <th>
-            Allow only Exams Score for Full Term Result?
+            Full Term Result Score Presentation
           </th>
           <th>
             <el-tooltip
@@ -41,6 +41,100 @@
                 :label="ca"
               />
             </el-select>
+          </th>
+        </tr>
+        <tr>
+          <th>
+            No. of Continuous Assessment for a Half Term <code>Max: 2</code>
+          </th>
+          <th>
+            <el-select
+              v-model="resultSettingForm.no_of_ca_for_midterm"
+              :disabled="resultSettingForm.display_exam_score_only_for_full_term === 'yes' || resultSettingForm.display_exam_score_only_for_full_term === '1'"
+            >
+              <el-option
+                v-for="(ca, index) in 2"
+                :key="index"
+                :value="ca"
+                :label="ca"
+              />
+            </el-select>
+          </th>
+        </tr>
+        <tr>
+          <th>
+            Add Half Term Score to Full Term Result?
+          </th>
+          <th>
+            <el-tooltip
+              :content="'Current Value: ' + resultSettingForm.add_midterm_score_to_full_result"
+              placement="top"
+            >
+              <el-switch
+                v-model="resultSettingForm.add_midterm_score_to_full_result"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-value="yes"
+                inactive-value="no"
+                active-text="Yes"
+                inactive-text="No"
+                :disabled="resultSettingForm.display_exam_score_only_for_full_term === 'yes' || resultSettingForm.display_exam_score_only_for_full_term === '1'"
+                @change="resultSettingForm.midterm_score_limit = 0; setExamLimit();"
+              />
+            </el-tooltip>
+          </th>
+        </tr>
+        <tr v-if="resultSettingForm.add_midterm_score_to_full_result === 'yes'">
+          <th>
+            Half Term Score limit (<code>if to be added to full term result</code>)
+          </th>
+          <th>
+            <el-input-number
+              v-model="resultSettingForm.midterm_score_limit"
+              :min="0"
+              :max="100"
+              :disabled="resultSettingForm.add_midterm_score_to_full_result === 'no' || resultSettingForm.display_exam_score_only_for_full_term === 'yes' ||
+                resultSettingForm.display_exam_score_only_for_full_term === '1'"
+              @input="setExamLimit()"
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            Add Attendance Score to Full Term Result?
+          </th>
+          <th>
+            <el-tooltip
+              :content="'Current Value: ' + resultSettingForm.add_attendance_to_ca"
+              placement="top"
+            >
+              <el-switch
+                v-model="resultSettingForm.add_attendance_to_ca"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-value="yes"
+                inactive-value="no"
+                active-text="Yes"
+                inactive-text="No"
+                :disabled="resultSettingForm.display_exam_score_only_for_full_term === 'yes' || resultSettingForm.display_exam_score_only_for_full_term === '1'"
+                @change="resultSettingForm.attendance_score_limit = 0; setExamLimit();"
+              />
+            </el-tooltip>
+          </th>
+        </tr>
+        <tr v-if="resultSettingForm.add_attendance_to_ca === 'yes'">
+          <th>
+            Attendance Score limit (<code>if to be added to full term result</code>)
+          </th>
+          <th>
+            <el-input-number
+              v-model="resultSettingForm.attendance_score_limit"
+              :min="0"
+              :max="100"
+              :disabled="resultSettingForm.add_attendance_to_ca === 'no' || resultSettingForm.display_exam_score_only_for_full_term === 'yes' ||
+                resultSettingForm.display_exam_score_only_for_full_term === '1'"
+              @input="setExamLimit()"
+            />
           </th>
         </tr>
         <tr
@@ -106,24 +200,7 @@
             />
           </th>
         </tr>
-        <tr>
-          <th>
-            No. of Continuous Assessment for a Half Term
-          </th>
-          <th>
-            <el-select
-              v-model="resultSettingForm.no_of_ca_for_midterm"
-              :disabled="resultSettingForm.display_exam_score_only_for_full_term === 'yes' || resultSettingForm.display_exam_score_only_for_full_term === '1'"
-            >
-              <el-option
-                v-for="(ca, index) in resultSettingForm.no_of_ca"
-                :key="index"
-                :value="ca"
-                :label="ca"
-              />
-            </el-select>
-          </th>
-        </tr>
+
         <tr>
           <th>
             Display Students' Class Position on Result Sheet?
@@ -460,6 +537,12 @@ export default {
       for (let index = 1; index <= noOfCA; index++) {
         const ca = `ca${index}`
         totalCA += app.resultSettingForm[ca]
+      }
+      if (app.resultSettingForm.add_midterm_score_to_full_result) {
+        totalCA += app.resultSettingForm.midterm_score_limit
+      }
+      if (app.resultSettingForm.add_attendance_to_ca) {
+        totalCA += app.resultSettingForm.attendance_score_limit
       }
 
       app.resultSettingForm.exam = 100 - totalCA

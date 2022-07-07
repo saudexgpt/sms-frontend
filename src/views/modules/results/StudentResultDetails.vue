@@ -83,10 +83,10 @@
 
             </tr>
             <tr>
-              <td colspan="3">
+              <td colspan="4">
                 <strong>NAME: </strong> {{ fetched_data.student_in_class.student.user.last_name +', '+fetched_data.student_in_class.student.user.first_name }}
               </td>
-              <td colspan="4">
+              <td colspan="3">
                 <strong>ID: </strong>{{ fetched_data.student_in_class.student.registration_no }}
               </td>
               <td colspan="3">
@@ -94,11 +94,10 @@
               </td>
             </tr>
             <tr>
-              <td colspan="2">
+              <td>
                 <strong>CLASS: </strong> {{ fetched_data.student_in_class.class_teacher.c_class.name }}
               </td>
-
-              <td>
+              <td colspan="2">
                 <strong>NO. IN CLASS: </strong>{{ fetched_data.no_in_class }}
               </td>
               <td colspan="4">
@@ -201,9 +200,9 @@ export default {
     publishedResults() {
       // return this.fetched_data.student_results
       if (this.fetched_data.term_spec === 'half') {
-        return this.fetched_data.student_results.filter(i => (i.midterm_status === 'published'))
+        return this.fetched_data.student_results.filter(i => (i.midterm_status === 'published' && i.subject_teacher !== null))
       }
-      return this.fetched_data.student_results.filter(i => (i.fullterm_status === 'published'))
+      return this.fetched_data.student_results.filter(i => (i.fullterm_status === 'published' && i.subject_teacher !== null))
     },
 
   },

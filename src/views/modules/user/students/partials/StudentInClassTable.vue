@@ -1,10 +1,18 @@
 <template>
-  <div v-if="filteredStudents.length > 0">
+  <div>
     <div v-if="selectedStudent === null">
       <el-tabs>
         <el-tab-pane
           label="Active"
         >
+          <el-button
+            v-if="activefilteredStudents.length > 0"
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="document"
+            @click="handleDownload('List of Active Students', activefilteredStudents)"
+          >Export Excel</el-button>
 
           <v-client-table
             v-model="activefilteredStudents"
@@ -136,6 +144,14 @@
         <el-tab-pane
           label="Suspended"
         >
+          <el-button
+            v-if="suspendedfilteredStudents.length > 0"
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="document"
+            @click="handleDownload('List of Suspended Students', suspendedfilteredStudents)"
+          >Export Excel</el-button>
           <v-client-table
             v-model="suspendedfilteredStudents"
             v-loading="loading"
@@ -266,6 +282,14 @@
         <el-tab-pane
           label="Withdrawn"
         >
+          <el-button
+            v-if="withdrawnfilteredStudents.length > 0"
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="document"
+            @click="handleDownload('List of Withdrawn Students', withdrawnfilteredStudents)"
+          >Export Excel</el-button>
           <v-client-table
             v-model="withdrawnfilteredStudents"
             v-loading="loading"
@@ -457,6 +481,7 @@ export default {
         { label: 'WITHDRAWN', value: 'left' },
       ],
       loading: false,
+      downloadLoading: false,
       columns: [
         'action',
         'studentship_status',
@@ -626,6 +651,88 @@ export default {
       changeStudentStatus.update(studentId, param).then(response => {
         this.$emit('reload', response)
       })
+    },
+    handleDownload(tableTitle, studentList) {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const multiHeader = [[tableTitle, '', '', '', '', '', '', '', '', '', '']]
+        const tHeader = [
+          // 'STUDENTSHIP STATUS',
+          'ADMISSION NO',
+          'SURNAME',
+          'OTHER NAMES',
+          'GENDER',
+          'DOB',
+          'CURRENT CLASS',
+          'ADMISSION YR',
+          'PARENT/GUARDIAN NAME',
+          'PARENT/GUARDIAN PHONE',
+          'PARENT/GUARDIAN EMAIL',
+        ]
+        const filterVal = [
+          // 'studentship_status',
+          'student.registration_no',
+          'student.user.last_name',
+          'student.user.first_name',
+          'student.user.gender',
+          'student.user.dob',
+          'class_teacher.c_class.name',
+          'student.admission_year',
+          'parent_name',
+          'parent_phone',
+          'parent_email',
+        ]
+        const list = studentList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          multiHeader,
+          header: tHeader,
+          data,
+          filename: tableTitle,
+          autoWidth: true,
+          bookType: 'csv',
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        // if (j === 'studentship_status') {
+        //   return (v.student.studentship_status === 'left') ? 'WITHDRAWN' : v.student.studentship_status.toUpperCase()
+        // }
+        if (j === 'student.registration_no') {
+          return v.student.registration_no
+        }
+        if (j === 'student.user.last_name') {
+          return v.student.user.last_name
+        }
+        if (j === 'student.user.first_name') {
+          return v.student.user.first_name
+        }
+        if (j === 'student.user.gender') {
+          return v.student.user.gender
+        }
+        if (j === 'student.user.dob') {
+          return v.student.user.dob
+        }
+        if (j === 'class_teacher.c_class.name') {
+          return v.class_teacher.c_class.name
+        }
+        if (j === 'student.admission_year') {
+          return v.student.admission_year
+        }
+        if (j === 'parent_name') {
+          return (v.student.student_guardian.guardian.user) ? `${v.student.student_guardian.guardian.user.first_name} ${v.student.student_guardian.guardian.user.last_name}` : ''
+        }
+        if (j === 'parent_phone') {
+          return (v.student.student_guardian.guardian.user) ? `${v.student.student_guardian.guardian.user.phone1}, ${v.student.student_guardian.guardian.user.phone2}` : ''
+        }
+        if (j === 'parent_email') {
+          return (v.student.student_guardian.guardian.user) ? `${v.student.student_guardian.guardian.user.email}` : ''
+        }
+
+        return v[j]
+      }))
     },
   },
 }

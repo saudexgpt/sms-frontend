@@ -1,3 +1,4 @@
+<!--eslint-disable vue/no-v-html-->
 <template>
   <div v-loading="load">
     <el-card>
@@ -38,7 +39,22 @@
         <el-row :gutter="10">
           <el-col :xs="24">
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-html="description" />
+            <el-link
+              v-if="curriculum.curriculum !== null"
+              :href="baseServerUrl +'storage/'+curriculum.curriculum"
+              target="_blank"
+            >
+              <img
+                :src="baseServerUrl +'images/doc.png'"
+                alt="File"
+                class="img-polaroid"
+                width="80"
+              >
+            </el-link>
+            <div
+              v-if="curriculum.description !== null"
+              v-html="curriculum.description"
+            />
           </el-col>
         </el-row>
       </div>
@@ -80,7 +96,7 @@ export default {
       load: false,
       selected_subject_index: '',
       selected_subject: '',
-      description: '',
+      curriculum: '',
       show_curriculum: false,
 
     }
@@ -103,12 +119,29 @@ export default {
           console.log(error)
         })
     },
+    // showCurriculum() {
+    //   const app = this
+    //   app.show_curriculum = false
+    //   app.selected_subject = app.subject_teachers[app.selected_subject_index]
+    //   app.description = (app.selected_subject.curriculum) ? app.selected_subject.curriculum.description : 'No Curriculum was set for this subject. Kindly inform your subject teacher'
+    //   app.show_curriculum = true
+    // },
     showCurriculum() {
       const app = this
       app.show_curriculum = false
       app.selected_subject = app.subject_teachers[app.selected_subject_index]
-      app.description = (app.selected_subject.curriculum) ? app.selected_subject.curriculum.description : 'No Curriculum was set for this subject. Kindly inform your subject teacher'
-      app.show_curriculum = true
+      app.load = true
+      const subjectMaterials = new Resource('materials/subject-curriculum')
+      subjectMaterials.get(app.selected_subject.id)
+        .then(response => {
+          app.curriculum = response.curriculum
+          app.load = false
+          app.show_curriculum = true
+        })
+        .catch(error => {
+          app.load = false
+          console.log(error)
+        })
     },
   },
 }

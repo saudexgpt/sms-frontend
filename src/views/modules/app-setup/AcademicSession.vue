@@ -5,7 +5,7 @@
         <b-col
           cols="6"
         >
-          <h4>Session</h4>
+          <h4>Manage Term & Session</h4>
         </b-col>
         <!-- <b-col
           cols="6"
@@ -26,7 +26,49 @@
         </b-col> -->
       </b-row>
     </div>
-    <!-- table -->
+    <el-row :gutter="10">
+      <el-col
+        :md="24"
+        :sm="24"
+        :xs="24"
+      >
+        <v-client-table
+          v-model="terms"
+          v-loading="loading"
+          :columns="columns"
+          :options="options"
+        >
+          <div
+            slot="is_active"
+            slot-scope="{row}"
+          >
+            {{ (row.is_active === '1') ? 'Active' : 'Inactive' }}
+          </div>
+          <div
+            slot="action"
+            slot-scope="{row}"
+          >
+
+            <!-- <b-form-checkbox
+              v-model="selected"
+              :checked="(row.is_active === '1') ? true : false"
+              class="custom-control-secondary"
+              name="check-button"
+              switch
+            /> -->
+            <el-switch
+              v-model="row.is_active"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-value="1"
+              inactive-value="0"
+              :disabled="row.is_active == '1'"
+              @change="toggleTermActivation(row.id, $event)"
+            />
+          </div>
+        </v-client-table>
+      </el-col>
+    </el-row>
     <el-row :gutter="10">
       <el-col
         :md="6"
@@ -169,6 +211,7 @@ export default {
         ],
       },
       sessions: [],
+      terms: [],
       session_name: '',
       editable_row: '',
       selected_row_index: '',
@@ -176,6 +219,7 @@ export default {
   },
   created() {
     this.fetchSessions()
+    this.fetchTerms()
   },
   methods: {
     fetchSessions() {
@@ -186,6 +230,14 @@ export default {
         .then(response => {
           app.sessions = response.sessions
           app.loading = false
+        })
+    },
+    fetchTerms() {
+      const app = this
+      const fetchTermResource = new Resource('school-setup/term/index')
+      fetchTermResource.list()
+        .then(response => {
+          app.terms = response.terms
         })
     },
     createSession() {
@@ -207,6 +259,15 @@ export default {
       activateSessionResource.update(id, param)
         .then(response => {
           app.sessions = response.sessions
+        })
+    },
+    toggleTermActivation(id, event) {
+      const app = this
+      const param = { status: event }
+      const activateTermResource = new Resource('school-setup/toggle-term-activation')
+      activateTermResource.update(id, param)
+        .then(response => {
+          app.terms = response.terms
         })
     },
   },

@@ -61,10 +61,26 @@
         </div>
       </template>
       <template
+        slot="midterm_to_ca"
+        slot-scope="props"
+      >
+        <div>
+          {{ props.row.result_detail.midterm_to_ca }}
+        </div>
+      </template>
+      <template
+        slot="attendance_score"
+        slot-scope="props"
+      >
+        <div>
+          {{ props.row.result_detail.attendance_score }}
+        </div>
+      </template>
+      <template
         slot="ca1"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 1">
+        <div v-if="studentData.edit_exam">
           <select
             v-model="props.row.result_detail.ca1"
 
@@ -93,7 +109,7 @@
         slot="ca2"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 2">
+        <div v-if="studentData.edit_exam">
           <select
             v-model="props.row.result_detail.ca2"
 
@@ -122,7 +138,7 @@
         slot="ca3"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 3">
+        <div v-if="studentData.edit_exam">
           <select
             v-model="props.row.result_detail.ca3"
 
@@ -151,7 +167,7 @@
         slot="ca4"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 4">
+        <div v-if="studentData.edit_exam">
           <select
             v-model="props.row.result_detail.ca4"
 
@@ -180,7 +196,7 @@
         slot="ca5"
         slot-scope="props"
       >
-        <div v-if="studentData.edit_exam && studentData.result_settings.no_of_ca_for_midterm < 5">
+        <div v-if="studentData.edit_exam">
           <select
             v-model="props.row.result_detail.ca5"
 
@@ -296,6 +312,8 @@ export default {
           // ca3: `3rd C.A (${this.studentData.result_settings.ca3}%)`,
           // ca4: `4th C.A (${this.studentData.result_settings.ca4}%)`,
           // ca5: `5th C.A (${this.studentData.result_settings.ca5}%)`,
+          midterm_to_ca: `Midterm (${this.studentData.result_settings.midterm_score_limit}%)`,
+          attendance_score: `Attendance (${this.studentData.result_settings.attendance_score_limit}%)`,
           ca1: `C.A 1 (${this.studentData.result_settings.ca1}%)`,
           ca2: `C.A 2 (${this.studentData.result_settings.ca2}%)`,
           ca3: `C.A 3 (${this.studentData.result_settings.ca3}%)`,
@@ -347,9 +365,9 @@ export default {
 
           const resultId = response.student_result_detail.id
           const { total } = response.student_result_detail
-          const comment = response.student_result_detail.comments
+          // const comment = response.student_result_detail.comments
           document.getElementById(resultId).innerHTML = total
-          document.getElementById(`comment_text_${resultId}`).innerHTML = comment
+          // document.getElementById(`comment_text_${resultId}`).innerHTML = comment
         })
         .catch(error => {
           console.log(error)
@@ -387,6 +405,12 @@ export default {
       const { result_settings } = app.studentData
       const displayExamScorOnlyForFullTerm = result_settings.display_exam_score_only_for_full_term
       const noOfCa = result_settings.no_of_ca
+      if (result_settings.add_midterm_score_to_full_result === 'yes') {
+        app.columns.push('midterm_to_ca')
+      }
+      if (result_settings.add_attendance_to_ca === 'yes') {
+        app.columns.push('attendance_score')
+      }
       // eslint-disable-next-line no-plusplus
       for (let index = 1; index <= noOfCa; index++) {
         if (displayExamScorOnlyForFullTerm === 'no') {

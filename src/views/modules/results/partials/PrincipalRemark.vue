@@ -6,7 +6,7 @@
     <div class="box">
       <div class="box-header">
         <h4 class="box-title">
-          Principal's Remark/Comment ({{ broadSheetData.sub_term.toUpperCase() }} Term)
+          Principal's Remark/Comment for {{ broadSheetData.class_name }} ({{ broadSheetData.sub_term.toUpperCase() }} Term)
         </h4>
 
       </div>

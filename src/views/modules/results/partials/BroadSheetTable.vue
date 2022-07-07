@@ -8,7 +8,7 @@
     >
       <div class="box-header">
         <h4 class="box-title">
-          Result BroadSheet ({{ (broadSheetData) ? broadSheetData.sub_term.toUpperCase() : '-' }} Term)
+          Result BroadSheet for {{ broadSheetData.class_name }} ({{ (broadSheetData) ? broadSheetData.sub_term.toUpperCase() : '-' }} Term)
         </h4>
 
       </div>

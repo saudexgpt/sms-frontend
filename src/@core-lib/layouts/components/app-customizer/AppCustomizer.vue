@@ -32,7 +32,10 @@
       />
     </div>
     <!-- Header -->
-
+    <div class="customizer-section">
+      Used Disk Space: {{ userData.used_space }} of {{ school.disk_space }}GB
+      <el-progress :percentage="userData.percentage_used_space" />
+    </div>
     <vue-perfect-scrollbar
       :settings="perfectScrollbarSettings"
       class="ps-customizer-area scroll-area"
@@ -365,6 +368,9 @@ export default {
     }
   },
   computed: {
+    userData() {
+      return this.$store.getters.userData
+    },
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },

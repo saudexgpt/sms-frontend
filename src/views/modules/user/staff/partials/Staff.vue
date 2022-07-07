@@ -13,6 +13,14 @@
       <hr>
     </div>
     <div v-if="selectedStaff === null">
+      <el-button
+        v-if="staff.length > 0"
+        :loading="downloadLoading"
+        style="margin:0 0 20px 20px;"
+        type="primary"
+        icon="document"
+        @click="handleDownload('List of Staff', staff)"
+      >Export Excel</el-button>
       <v-client-table
         v-model="staff"
         v-loading="loading"
@@ -256,6 +264,65 @@ export default {
         //   message: 'Delete canceled',
         // })
       })
+    },
+    handleDownload(tableTitle, staffList) {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const multiHeader = [[tableTitle, '', '', '', '', '', '']]
+        const tHeader = [
+          // 'STUDENTSHIP STATUS',
+          'STAFF ID',
+          'SURNAME',
+          'OTHER NAMES',
+          'EMAIL',
+          'PHONE',
+          'GENDER',
+        ]
+        const filterVal = [
+          // 'studentship_status',
+          'user.username',
+          'user.last_name',
+          'user.first_name',
+          'user.email',
+          'user.phone1',
+          'user.gender',
+        ]
+        const list = staffList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          multiHeader,
+          header: tHeader,
+          data,
+          filename: tableTitle,
+          autoWidth: true,
+          bookType: 'csv',
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'user.username') {
+          return v.user.username
+        }
+        if (j === 'user.last_name') {
+          return v.user.last_name
+        }
+        if (j === 'user.first_name') {
+          return v.user.first_name
+        }
+        if (j === 'user.email') {
+          return v.user.email
+        }
+        if (j === 'user.phone1') {
+          return v.user.phone1
+        }
+        if (j === 'user.gender') {
+          return v.user.gender
+        }
+
+        return v[j]
+      }))
     },
   },
 }

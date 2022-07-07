@@ -45,7 +45,6 @@
     <!-- /Vertical Nav Menu Overlay -->
 
     <!-- Content -->
-
     <!-- CONTENT TYPE: Left -->
     <transition
       :name="routerTransition"
@@ -55,6 +54,7 @@
         :is="layoutContentRenderer"
         :key="layoutContentRenderer === 'layout-content-renderer-left' ? $route.meta.navActiveLink || $route.name : null"
       >
+
         <template
           v-for="(index, name) in $scopedSlots"
           v-slot:[name]="data"

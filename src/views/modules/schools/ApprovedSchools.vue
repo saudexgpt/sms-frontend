@@ -36,24 +36,31 @@
             >
           </div>
           <div
-            v-if="checkRole(['super'])"
             slot="suspended_for_nonpayment"
             slot-scope="props"
           >
-            <el-select
-              v-model="props.row.suspended_for_nonpayment"
-              style="width: 100%"
-              @input="toggleSuspensionStatus(props, $event)"
+            <div
+              v-if="checkRole(['super'])"
             >
-              <el-option
-                label="Active"
-                :value="0"
-              />
-              <el-option
-                label="Suspended"
-                :value="1"
-              />
-            </el-select>
+
+              <el-select
+                v-model="props.row.suspended_for_nonpayment"
+                style="width: 100%"
+                @input="toggleSuspensionStatus(props, $event)"
+              >
+                <el-option
+                  label="Active"
+                  :value="0"
+                />
+                <el-option
+                  label="Suspended"
+                  :value="1"
+                />
+              </el-select>
+            </div>
+            <div v-else>
+              {{ (props.row.suspended_for_nonpayment === 0) ? 'Active' : 'Suspended' }}
+            </div>
           </div>
           <div
             slot="created_at"
@@ -124,24 +131,31 @@
             >
           </div>
           <div
-            v-if="checkRole(['super'])"
             slot="suspended_for_nonpayment"
             slot-scope="props"
           >
-            <el-select
-              v-model="props.row.suspended_for_nonpayment"
-              style="width: 100%"
-              @input="toggleSuspensionStatus(props, $event)"
+            <div
+              v-if="checkRole(['super'])"
             >
-              <el-option
-                label="Active"
-                :value="0"
-              />
-              <el-option
-                label="Suspended"
-                :value="1"
-              />
-            </el-select>
+
+              <el-select
+                v-model="props.row.suspended_for_nonpayment"
+                style="width: 100%"
+                @input="toggleSuspensionStatus(props, $event)"
+              >
+                <el-option
+                  label="Active"
+                  :value="0"
+                />
+                <el-option
+                  label="Suspended"
+                  :value="1"
+                />
+              </el-select>
+            </div>
+            <div v-else>
+              {{ (props.row.suspended_for_nonpayment === 0) ? 'Active' : 'Suspended' }}
+            </div>
           </div>
           <div
             slot="created_at"
@@ -212,6 +226,12 @@ export default {
     'b-tooltip': VBTooltip,
     Ripple,
   },
+  props: {
+    role: {
+      type: String,
+      default: 'admin',
+    },
+  },
   data() {
     return {
       schools: [],
@@ -268,7 +288,10 @@ export default {
     fetchSchools() {
       const app = this
       app.load = true
-      const fetchSchoolsResource = new Resource('schools')
+      let fetchSchoolsResource = new Resource('schools')
+      if (app.role === 'partner') {
+        fetchSchoolsResource = new Resource('schools/partner-schools')
+      }
       fetchSchoolsResource.list()
         .then(response => {
           app.schools = response.schools

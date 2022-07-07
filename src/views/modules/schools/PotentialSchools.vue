@@ -84,6 +84,12 @@ export default {
     'b-tooltip': VBTooltip,
     Ripple,
   },
+  props: {
+    role: {
+      type: String,
+      default: 'admin',
+    },
+  },
   data() {
     return {
       schools: [],
@@ -131,7 +137,10 @@ export default {
     fetchSchools() {
       const app = this
       app.load = true
-      const fetchSchoolsResource = new Resource('schools/potential')
+      let fetchSchoolsResource = new Resource('schools/potential')
+      if (app.role === 'partner') {
+        fetchSchoolsResource = new Resource('schools/partner-potential-schools')
+      }
       fetchSchoolsResource.list()
         .then(response => {
           app.schools = response.potential_schools

@@ -51,6 +51,22 @@
         </div>
       </template>
       <template
+        slot="midterm_to_ca"
+        slot-scope="props"
+      >
+        <div>
+          {{ props.row.result_detail.midterm_to_ca }}
+        </div>
+      </template>
+      <template
+        slot="attendance_score"
+        slot-scope="props"
+      >
+        <div>
+          {{ props.row.result_detail.attendance_score }}
+        </div>
+      </template>
+      <template
         slot="ca1"
         slot-scope="props"
       >
@@ -140,6 +156,8 @@ export default {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
+          midterm_to_ca: `Midterm (${this.resultSettings.midterm_score_limit}%)`,
+          attendance_score: `Attendance (${this.resultSettings.attendance_score_limit}%)`,
           ca1: `C.A 1 (${this.resultSettings.ca1}%)`,
           ca2: `C.A 2 (${this.resultSettings.ca2}%)`,
           ca3: `C.A 3 (${this.resultSettings.ca3}%)`,
@@ -172,18 +190,40 @@ export default {
     avatarText,
     setFullTermAssessmentFields() {
       const app = this
-      // const noOfMidtermCa = result_settings.no_of_ca_for_midterm
-      const noOfCa = app.resultSettings.no_of_ca
+      const { resultSettings } = app
+      const displayExamScorOnlyForFullTerm = resultSettings.display_exam_score_only_for_full_term
+      const noOfCa = resultSettings.no_of_ca
+      if (resultSettings.add_midterm_score_to_full_result === 'yes') {
+        app.columns.push('midterm_to_ca')
+      }
+      if (resultSettings.add_attendance_to_ca === 'yes') {
+        app.columns.push('attendance_score')
+      }
       // eslint-disable-next-line no-plusplus
       for (let index = 1; index <= noOfCa; index++) {
-        // if (index > noOfMidtermCa) {
-        app.columns.push(`ca${index}`)
-        // }
+        if (displayExamScorOnlyForFullTerm === 'no') {
+          app.columns.push(`ca${index}`)
+        }
       }
       app.columns.push('exam')
       app.columns.push('total')
       app.columns.push('comments')
+      // app.columns.push('comments')
     },
+    // setFullTermAssessmentFields() {
+    //   const app = this
+    //   // const noOfMidtermCa = result_settings.no_of_ca_for_midterm
+    //   const noOfCa = app.resultSettings.no_of_ca
+    //   // eslint-disable-next-line no-plusplus
+    //   for (let index = 1; index <= noOfCa; index++) {
+    //     // if (index > noOfMidtermCa) {
+    //     app.columns.push(`ca${index}`)
+    //     // }
+    //   }
+    //   app.columns.push('exam')
+    //   app.columns.push('total')
+    //   app.columns.push('comments')
+    // },
   },
 
 }

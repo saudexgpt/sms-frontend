@@ -24,6 +24,8 @@ const state = {
     password_status: '',
     unreadNotificationCount: null,
     suspended_for_nonpayment: 0,
+    system_set_session: null,
+    system_set_term: null,
     school: {
       current_session: {
         name: '',

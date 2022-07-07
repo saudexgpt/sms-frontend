@@ -4,7 +4,7 @@ export default [
     title: 'News & Event',
     route: 'news-and-event',
     acl: {
-      roles: ['admin', 'teacher', 'student', 'parent'],
+      roles: ['staff', 'student', 'parent'],
     },
   },
 ]

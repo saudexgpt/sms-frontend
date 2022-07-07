@@ -51,6 +51,22 @@
         </div>
       </template>
       <template
+        slot="mid_term1"
+        slot-scope="props"
+      >
+        <div>
+          {{ props.row.result_detail.mid_term1 }}
+        </div>
+      </template>
+      <template
+        slot="mid_term2"
+        slot-scope="props"
+      >
+        <div>
+          {{ props.row.result_detail.mid_term2 }}
+        </div>
+      </template>
+      <!-- <template
         slot="ca1"
         slot-scope="props"
       >
@@ -89,12 +105,12 @@
         <div>
           {{ props.row.result_detail.ca5 }}
         </div>
-      </template>
+      </template> -->
       <template
-        slot="mid_term"
+        slot="total"
         slot-scope="props"
       >
-        {{ props.row.result_detail.mid_term }}
+        {{ parseInt(props.row.result_detail.mid_term1) + parseInt(props.row.result_detail.mid_term2) }}
 
       </template>
       <!-- <template
@@ -153,12 +169,9 @@ export default {
           photo: 'Photo',
           id: 'ID',
           name: 'Name',
-          mid_term: 'Total (100%)',
-          ca1: `C.A 1 (${this.resultSettings.ca1}%)`,
-          ca2: `C.A 2 (${this.resultSettings.ca2}%)`,
-          ca3: `C.A 3 (${this.resultSettings.ca3}%)`,
-          ca4: `C.A 4 (${this.resultSettings.ca4}%)`,
-          ca5: `C.A 5 (${this.resultSettings.ca5}%)`,
+          mid_term1: `Midterm Score (${100 / this.resultSettings.no_of_ca_for_midterm}%)`,
+          mid_term2: `Midterm Score 2 (${100 / this.resultSettings.no_of_ca_for_midterm}%)`,
+          total: 'Total (100%)',
           effort: 'Academic Effort',
           behavior: 'Class Behavior',
 
@@ -203,14 +216,30 @@ export default {
       }
       return null
     },
+    // setMidTermAssessmentFields() {
+    //   const app = this
+    //   // const noOfMidtermCa = app.resultSettings.no_of_ca_for_midterm
+    //   // // eslint-disable-next-line no-plusplus
+    //   // for (let index = 1; index <= noOfMidtermCa; index++) {
+    //   //   app.columns.push(`ca${index}`)
+    //   // }
+    //   app.columns.push('mid_term')
+    //   app.columns.push('effort')
+    //   app.columns.push('behavior')
+    // },
     setMidTermAssessmentFields() {
       const app = this
-      // const noOfMidtermCa = app.resultSettings.no_of_ca_for_midterm
-      // // eslint-disable-next-line no-plusplus
-      // for (let index = 1; index <= noOfMidtermCa; index++) {
-      //   app.columns.push(`ca${index}`)
-      // }
-      app.columns.push('mid_term')
+      const { resultSettings } = app
+      const noOfMidtermCa = resultSettings.no_of_ca_for_midterm
+      if (noOfMidtermCa > 1) {
+        // eslint-disable-next-line no-plusplus
+        for (let index = 1; index <= noOfMidtermCa; index++) {
+          app.columns.push(`mid_term${index}`)
+        }
+        app.columns.push('total')
+      } else {
+        app.columns.push('mid_term1')
+      }
       app.columns.push('effort')
       app.columns.push('behavior')
     },

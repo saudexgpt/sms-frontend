@@ -145,6 +145,16 @@
             </template>
           </tr>
           <tr>
+            <th>Class Attendance</th>
+            <th colspan="9">
+              <el-progress
+                :text-inside="true"
+                :stroke-width="20"
+                :percentage="fetchData.student_in_class.class_attendance"
+              />
+            </th>
+          </tr>
+          <tr>
             <th>Class Teacher's Remark:</th>
             <th colspan="9">
               <div v-if="fetchData.student_remark">
@@ -177,7 +187,6 @@
         </tbody>
 
       </table>
-
       <el-row :gutter="5">
 
         <el-col

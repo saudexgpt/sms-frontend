@@ -5,6 +5,7 @@
   >
     <div class="content-overlay" />
     <div class="header-navbar-shadow" />
+
     <transition
       :name="routerTransition"
       mode="out-in"
@@ -15,6 +16,7 @@
       >
         <slot name="breadcrumb">
           <app-breadcrumb />
+
         </slot>
         <portal-target
           name="content-renderer-sidebar-left"

@@ -4,13 +4,13 @@ export default [
     name: 'schools',
     component: () => import('@/views/modules/schools/index.vue'),
     meta: {
-      permissions: ['can manage schools'],
+      permissions: ['can manage schools', 'can view all schools'],
     },
   },
   {
     path: '/schools/my-schools',
     name: 'my-schools',
-    component: () => import('@/views/modules/schools/index.vue'),
+    component: () => import('@/views/modules/schools/MySchool.vue'),
     meta: {
       permissions: ['can register schools'],
     },

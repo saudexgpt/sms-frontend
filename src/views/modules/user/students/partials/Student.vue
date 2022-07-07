@@ -6,7 +6,7 @@
           cols="6"
         >
           <h4 v-if="level !== null">
-            Students in {{ (level !== null) ? level.level : '' }}
+            Students in {{ (level) ? level.level : ' all levels' }}
           </h4>
         </b-col>
         <b-col
@@ -46,6 +46,10 @@
               filterable
               @input="setLevel()"
             >
+              <el-option
+                label="All Levels"
+                value="all"
+              />
               <el-option
                 v-for="(each_level, index) in levels"
                 :key="index"
@@ -183,8 +187,8 @@ export default {
       sessions: [],
       sess_id: '',
       staff: [],
-      level_index: 0,
-      level: null,
+      level_index: '',
+      level: '',
       loading: false,
       editable_row: '',
       selected_row_index: '',
@@ -198,7 +202,7 @@ export default {
     fetchStudents() {
       const app = this
       const param = {
-        level_id: (app.level) ? app.level.id : '',
+        level_id: (app.level !== '') ? app.level.id : '',
         sess_id: app.sess_id,
       }
       app.loading = true
@@ -208,7 +212,6 @@ export default {
         .then(response => {
           app.students_in_class = response.students_in_class
           app.levels = response.levels
-          app.level = response.level
           app.sessions = response.sessions
           // eslint-disable-next-line radix
           app.sess_id = parseInt(response.sess_id)
@@ -217,7 +220,11 @@ export default {
     },
     setLevel() {
       const app = this
-      app.level = app.levels[app.level_index]
+      if (app.level_index !== 'all') {
+        app.level = app.levels[app.level_index]
+      } else {
+        app.level = { id: 'all', level: ' all levels' }
+      }
       this.fetchStudents()
     },
   },
