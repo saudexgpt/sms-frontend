@@ -26,25 +26,6 @@
         </tr>
         <tr>
           <th>
-            No. of Continuous Assessment for a Full Term
-          </th>
-          <th>
-            <el-select
-              v-model="resultSettingForm.no_of_ca"
-              :disabled="resultSettingForm.display_exam_score_only_for_full_term === 'yes' || resultSettingForm.display_exam_score_only_for_full_term === '1'"
-              @input="resultSettingForm.no_of_ca_for_midterm = 1; setExamLimit()"
-            >
-              <el-option
-                v-for="(ca, index) in 5"
-                :key="index"
-                :value="ca"
-                :label="ca"
-              />
-            </el-select>
-          </th>
-        </tr>
-        <tr>
-          <th>
             No. of Continuous Assessment for a Half Term <code>Max: 2</code>
           </th>
           <th>
@@ -54,6 +35,25 @@
             >
               <el-option
                 v-for="(ca, index) in 2"
+                :key="index"
+                :value="ca"
+                :label="ca"
+              />
+            </el-select>
+          </th>
+        </tr>
+        <tr>
+          <th>
+            No. of Continuous Assessment for a Full Term <code>After Half Term</code>
+          </th>
+          <th>
+            <el-select
+              v-model="resultSettingForm.no_of_ca"
+              :disabled="resultSettingForm.display_exam_score_only_for_full_term === 'yes' || resultSettingForm.display_exam_score_only_for_full_term === '1'"
+              @input="resultSettingForm.no_of_ca_for_midterm = 1; setExamLimit()"
+            >
+              <el-option
+                v-for="(ca, index) in 5"
                 :key="index"
                 :value="ca"
                 :label="ca"

@@ -88,13 +88,13 @@
               >
                 <feather-icon icon="EditIcon" />
               </b-button>
-              <!-- <b-button
-                  variant="gradient-danger"
-                  class="btn-icon rounded-circle"
-                  @click="confirmDelete(props.row)"
-                >
-                  <feather-icon icon="TrashIcon" />
-                </b-button> -->
+              <b-button
+                variant="gradient-danger"
+                class="btn-icon rounded-circle"
+                @click="confirmDelete(props.row)"
+              >
+                <feather-icon icon="TrashIcon" />
+              </b-button>
             </div>
           </v-client-table>
         </div>
@@ -245,9 +245,9 @@ export default {
           // console.log(response)
         })
     },
-    updateTable(levelGroups) {
+    updateTable(subjects) {
       const app = this
-      app.level_groups = levelGroups
+      app.selected_level_group.subjects = subjects
     },
     updateEditedRow(subject) {
       const app = this
@@ -264,13 +264,13 @@ export default {
     },
     confirmDelete(subject) {
       const app = this
-      const message = `You are about to delete ${subject.class}. It might affect any student in that class. Click Yes to confirm.`
+      const message = `You are about to delete ${subject.name}. All entries related to this subject will be deleted (Results, Assignments and Attendance).`
       app.$bvModal
         .msgBoxConfirm(message, {
-          title: 'Confirm Delete Action',
+          title: 'Confirm Delete Action (Irreversible)',
           size: 'sm',
           okVariant: 'danger',
-          okTitle: 'Yes',
+          okTitle: 'Yes, Delete',
           cancelTitle: 'No',
           cancelVariant: 'outline-secondary',
           hideHeaderClose: false,
@@ -284,9 +284,11 @@ export default {
     },
     deleteSubject(subject) {
       const app = this
-      const deleteCurriculumSetupResource = new Resource('school-setup/class/destroy')
+      app.loading = true
+      const deleteCurriculumSetupResource = new Resource('school-setup/subject/destroy')
       deleteCurriculumSetupResource.destroy(subject.id)
         .then(response => {
+          app.loading = false
           app.updateTable(response.subjects)
         })
     },
