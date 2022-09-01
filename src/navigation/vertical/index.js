@@ -32,6 +32,7 @@ tagVariant
 */
 import dashboard from './nav-modules/dashboard'
 import appsAndPages from './apps-and-pages'
+import account from './nav-modules/account'
 import assignment from './nav-modules/assignment'
 import attendance from './nav-modules/attendance'
 import results from './nav-modules/result'
@@ -53,7 +54,7 @@ import newsEvent from './nav-modules/news-event'
 // import formAndTable from './forms-and-table'
 
 // Array of sections
-export default [...dashboard, ...appsAndPages, ...adminSettings, ...userManagement, ...appSetup, ...classes, ...subjects, ...assignment, ...attendance, ...results, ...materials, ...timeTable, ...newsEvent, ...eLearning, ...library, ...schools, ...packages, ...accessControl]
+export default [...dashboard, ...appsAndPages, ...account, ...adminSettings, ...userManagement, ...appSetup, ...classes, ...subjects, ...assignment, ...attendance, ...results, ...materials, ...timeTable, ...newsEvent, ...eLearning, ...library, ...schools, ...packages, ...accessControl]
 
 // import store from '@/store'
 

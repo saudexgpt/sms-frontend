@@ -1,31 +1,80 @@
 <template>
   <div v-loading="load">
-    <data-analysis :dashboard-data="dashboardData" />
+    <data-analysis
+      v-if="dashboardData !== null"
+      :dashboard-data="dashboardData"
+    />
+    <b-row class="match-height">
+      <b-col lg="12">
+        <admin-chart
+          :sessions="sessions"
+          :terms="terms"
+        />
+      </b-col>
+    </b-row>
+    <!-- <b-row class="match-height">
+      <b-col lg="8">
 
-    <admin-chart />
+        <revenue
+          v-if="sessions.length > 0"
+          :sessions="sessions"
+        />
+      </b-col>
+      <b-col lg="4">
+        <debtors
+          v-if="sessions.length > 0"
+          :sessions="sessions"
+          :terms="terms"
+        />
+      </b-col>
+    </b-row> -->
 
   </div>
 </template>
 <script>
+import {
+  BRow, BCol,
+} from 'bootstrap-vue'
 import DataAnalysis from './components/data_analysis.vue'
 import AdminChart from './components/admin_report_chart.vue'
+// import Revenue from './components/charts/Revenue.vue'
+// import Debtors from './components/charts/Debtors.vue'
 
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    DataAnalysis, AdminChart,
+    BRow,
+    BCol,
+    DataAnalysis,
+    AdminChart,
+    // Revenue,
+    // Debtors,
   },
   data() {
     return {
       dashboardData: null,
       load: false,
+      terms: [],
+      sessions: [],
     }
   },
   created() {
+    this.fetchTermAndSession()
     this.fetchData()
   },
   methods: {
+    fetchTermAndSession() {
+      const app = this
+      const fetchSession = new Resource('school-setup/fetch-session-and-term')
+      fetchSession.list().then(response => {
+        app.sessions = response.sessions
+        app.terms = response.terms
+      }).catch(error => {
+        console.log(error)
+        app.load = false
+      })
+    },
     fetchData() {
       const app = this
       app.load = true

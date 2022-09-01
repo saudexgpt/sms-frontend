@@ -1,6 +1,5 @@
 <template>
   <div class="">
-
     <el-tabs
       v-model="activeName"
       style="margin-top:15px;"
@@ -23,13 +22,48 @@
       </el-tab-pane>
       <el-tab-pane
         key="Academic"
-        label="Academic Performance"
+        label="Academic Performance Chart"
         name="Academic"
       >
         <keep-alive>
           <academic-performance
             v-if="activeName=='Academic'"
             type="Academic"
+          />
+        </keep-alive>
+
+      </el-tab-pane>
+      <el-tab-pane
+        v-if="modules.includes('account')"
+        key="Revenue"
+        label="Revenue Chart"
+        name="Revenue"
+      >
+        <keep-alive>
+          <!-- <academic-performance
+            v-if="activeName=='Academic'"
+            type="Academic"
+          /> -->
+          <revenue
+            v-if="sessions.length > 0 && activeName=='Revenue'"
+            type="Revenue"
+            :sessions="sessions"
+          />
+        </keep-alive>
+
+      </el-tab-pane>
+      <el-tab-pane
+        v-if="modules.includes('account')"
+        key="Debtors"
+        label="Debtors Chart"
+        name="Debtors"
+      >
+        <keep-alive>
+          <debtors
+            v-if="sessions.length > 0 && activeName=='Debtors'"
+            type="Debtors"
+            :sessions="sessions"
+            :terms="terms"
           />
         </keep-alive>
 
@@ -55,10 +89,25 @@
 import AdmissionChart from './charts/AdmissionChart.vue'
 // import AttendanceChart from '../../../attendance/index'
 import AcademicPerformance from './charts/AcademicPerformance.vue'
+import Revenue from './charts/Revenue.vue'
+import Debtors from './charts/Debtors.vue'
 
 export default {
   components: {
-    AdmissionChart, AcademicPerformance,
+    AdmissionChart,
+    AcademicPerformance,
+    Revenue,
+    Debtors,
+  },
+  props: {
+    sessions: {
+      type: Array,
+      required: true,
+    },
+    terms: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -67,6 +116,11 @@ export default {
       activeName: 'Admission',
 
     }
+  },
+  computed: {
+    modules() {
+      return this.$store.getters.userData.modules
+    },
   },
 
 }

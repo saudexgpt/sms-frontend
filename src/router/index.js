@@ -37,6 +37,7 @@ import dashboard from './modules/dashboard'
 // import chartsMaps from './modules/charts-maps'
 // import formsTable from './modules/forms-tables'
 // import others from './modules/others'
+import account from './modules/account'
 import assignment from './modules/assignment'
 import attendance from './modules/attendance'
 import result from './modules/result'
@@ -148,6 +149,7 @@ export const asyncRoutes = [
   { path: '/', redirect: { name: 'dashboard' } },
   ...apps,
   ...dashboard,
+  ...account,
   ...assignment,
   ...attendance,
   ...result,

@@ -9,13 +9,6 @@
         </template>
         <students-table />
       </b-tab>
-      <b-tab>
-        <template #title>
-          <feather-icon icon="UsersIcon" />
-          <span>Duplicate Students</span>
-        </template>
-        <duplicate-students />
-      </b-tab>
       <!-- This tabs content will not be mounted until the tab is shown -->
       <!-- and will be un-mounted when hidden -->
       <b-tab>
@@ -32,18 +25,29 @@
         </template>
         <register-bulk-students />
       </b-tab>
-      <!-- <b-tab lazy>
+      <b-tab lazy>
         <template #title>
           <feather-icon icon="CornerRightUpIcon" />
           <span>Promote Students</span>
         </template>
-        Coming Soon
+        <promote-students />
       </b-tab>
       <b-tab
         title="Alumni"
         lazy
       >
-        Coming Soon
+        <template #title>
+          <feather-icon icon="UserCheckIcon" />
+          <span>Alumni</span>
+        </template>
+        <alumni />
+      </b-tab>
+      <!-- <b-tab>
+        <template #title>
+          <feather-icon icon="UsersIcon" />
+          <span>Duplicate Students</span>
+        </template>
+        <duplicate-students />
       </b-tab> -->
     </b-tabs>
   </el-card>
@@ -54,18 +58,22 @@ import {
   BTabs, BTab,
 } from 'bootstrap-vue'
 import StudentsTable from './partials/Student.vue'
-import DuplicateStudents from './partials/DuplicateStudents.vue'
+// import DuplicateStudents from './partials/DuplicateStudents.vue'
 import RegisterNewStudent from './partials/RegisterNewStudents.vue'
 import RegisterBulkStudents from './partials/RegisterBulkStudents.vue'
+import PromoteStudents from './partials/PromoteStudents.vue'
+import Alumni from './partials/Alumni.vue'
 
 export default {
   components: {
     BTabs,
     BTab,
     StudentsTable,
-    DuplicateStudents,
+    // DuplicateStudents,
     RegisterNewStudent,
     RegisterBulkStudents,
+    PromoteStudents,
+    Alumni,
   },
 }
 </script>

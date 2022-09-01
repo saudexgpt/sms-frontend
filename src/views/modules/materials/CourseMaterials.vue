@@ -78,7 +78,7 @@
                   size="76"
                 />
                 <p>
-                  <strong>{{ material.title }}</strong><br>
+                  <strong><small>{{ material.title }}</small></strong><br>
                   <small>{{ material.subject_teacher.subject.name }}</small><br>
                   <small>{{ material.subject_teacher.class_teacher.c_class.name }}</small><br>
                 </p>

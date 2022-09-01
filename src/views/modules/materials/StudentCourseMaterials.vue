@@ -49,21 +49,29 @@
 
             align="center"
           >
-            <el-link
-              :href="baseServerUrl +'storage/'+material.material"
-              target="_blank"
-            >
-              <img
-                :src="baseServerUrl +'images/doc.png'"
-                alt="File"
-                class="img-polaroid"
-                width="80"
+            <el-card>
+              <el-link
+                :href="baseServerUrl +'storage/'+material.material"
+                target="_blank"
               >
-              <p>
-                <strong>{{ material.title }}</strong><br>
-                <small>{{ material.subject_teacher.subject.code + ' (' + material.subject_teacher.class_teacher.c_class.name + ')' }}</small>
-              </p>
-            </el-link>
+                <!-- <img
+                  :src="baseServerUrl +'images/doc.png'"
+                  alt="File"
+                  class="img-polaroid"
+                  width="80"
+                > -->
+                <feather-icon
+                  icon="FileTextIcon"
+                  :style="'font-size: 76px; color: ' + material.subject_teacher.subject.color_code"
+                  size="76"
+                />
+                <p>
+                  <strong><small>{{ material.title }}</small></strong><br>
+                  <small>{{ material.subject_teacher.subject.name }}</small><br>
+                  <small>{{ material.subject_teacher.class_teacher.c_class.name }}</small>
+                </p>
+              </el-link>
+            </el-card>
           </el-col>
         </el-row>
         <el-row v-else>
