@@ -34,8 +34,23 @@
             <!-- first name -->
             <b-col cols="12">
               <b-form-group
-                label="Select Level Group"
+                label="Select Curriculum"
                 label-for="v-curriculum"
+              >
+                <v-select
+                  v-model="selected_curriculum_category"
+                  placeholder="Select Curriculum"
+                  :options="curriculum_categories"
+                  label="name"
+                  value="id"
+                  @input="setCurriculumLevelGroups()"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Select Level Group"
+                label-for="v-curriculum_level_group"
               >
                 <v-select
                   v-model="selected_curriculum_group"
@@ -128,6 +143,8 @@ export default {
         levels: [],
         curriculum_level_group_id: '',
       },
+      curriculum_categories: [],
+      selected_curriculum_category: '',
       curriculum_level_groups: [],
       selected_curriculum_group: '',
       curriculumLevels: [],
@@ -141,15 +158,20 @@ export default {
   methods: {
     fetchCurriculumLevels() {
       const app = this
-      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-level-groups')
+      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-curriculum-categories')
       fetchCurriculumSetupResource.list()
         .then(response => {
-          app.curriculum_level_groups = response.curriculum_level_groups
+          app.curriculum_categories = response.curriculum_categories
         })
     },
     setLevelNames() {
       const app = this
       app.form.levels = app.selectedCurriculumLevels
+    },
+    setCurriculumLevelGroups() {
+      const app = this
+      app.curriculum_level_groups = app.selected_curriculum_category.curriculum_level_groups
+      app.form.curriculum_level_group_id = ''
     },
     setCurriculumLevel() {
       const app = this

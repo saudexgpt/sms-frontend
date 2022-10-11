@@ -64,4 +64,12 @@ export default [
       permissions: ['can manage settings'],
     },
   },
+  {
+    path: '/registration-pins',
+    name: 'registration-pins',
+    component: () => import('@/views/modules/school-setup/registration-pins/index.vue'),
+    meta: {
+      permissions: ['can manage registration pins'],
+    },
+  },
 ]

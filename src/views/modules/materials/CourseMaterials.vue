@@ -54,10 +54,10 @@
           <el-col
             v-for="(material, index2) in materials"
             :key="index2"
-            :xs="8"
-            :sm="6"
-            :md="4"
-            :lg="4"
+            :xs="12"
+            :sm="8"
+            :md="6"
+            :lg="6"
 
             align="center"
           >
@@ -83,6 +83,22 @@
                   <small>{{ material.subject_teacher.class_teacher.c_class.name }}</small><br>
                 </p>
               </el-link>
+              <el-button
+                v-if="material.status === 'active'"
+                type="warning"
+                size="small"
+                @click="changeStatus(material.id, 'inactive')"
+              >
+                Deactivate
+              </el-button>
+              <el-button
+                v-else
+                type="success"
+                size="small"
+                @click="changeStatus(material.id, 'active')"
+              >
+                Activate
+              </el-button>
               <el-button
                 type="danger"
                 size="small"
@@ -205,14 +221,36 @@ export default {
     },
     destroy(id) {
       const app = this
-      const deleteMaterial = new Resource('materials/delete')
-      deleteMaterial.destroy(id)
-        .then(() => {
-          app.showMaterials()
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      const message = 'Click OK to confirm delete action'
+      // eslint-disable-next-line no-alert
+      if (window.confirm(message)) {
+        const deleteMaterial = new Resource('materials/delete')
+        deleteMaterial.destroy(id)
+          .then(() => {
+            app.showMaterials()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+    },
+    changeStatus(materialId, status) {
+      const app = this
+      let message = 'Students will NOT be able to access this resource. Click OK to confirm'
+      if (status === 'active') {
+        message = 'Students will be able to access this resource. Click OK to confirm'
+      }
+      // eslint-disable-next-line no-alert
+      if (window.confirm(message)) {
+        const deleteMaterial = new Resource('materials/change-status')
+        deleteMaterial.update(materialId, { status })
+          .then(() => {
+            app.showMaterials()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     },
 
   },

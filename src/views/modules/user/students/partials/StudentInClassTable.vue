@@ -3,7 +3,7 @@
     <div v-if="selectedStudent === null">
       <el-tabs>
         <el-tab-pane
-          label="Active"
+          :label="`Active (${activefilteredStudents.length})`"
         >
           <el-button
             v-if="activefilteredStudents.length > 0"
@@ -142,7 +142,7 @@
           </v-client-table>
         </el-tab-pane>
         <el-tab-pane
-          label="Suspended"
+          :label="`Suspended (${suspendedfilteredStudents.length})`"
         >
           <el-button
             v-if="suspendedfilteredStudents.length > 0"
@@ -280,7 +280,7 @@
           </v-client-table>
         </el-tab-pane>
         <el-tab-pane
-          label="Withdrawn"
+          :label="`Withdrawn (${withdrawnfilteredStudents.length})`"
         >
           <el-button
             v-if="withdrawnfilteredStudents.length > 0"
@@ -417,6 +417,132 @@
             </div>
           </v-client-table>
         </el-tab-pane>
+        <el-tab-pane
+          :label="`Pending Activation (${unapprovedStudents.length})`"
+        >
+          <el-button
+            v-if="unapprovedStudents.length > 0"
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="document"
+            @click="handleDownload('List of Registered Students awaiting activation', unapprovedStudents)"
+          >Export Excel</el-button>
+          <v-client-table
+            v-model="unapprovedStudents"
+            v-loading="loading"
+            :columns="columns"
+            :options="options"
+          >
+            <template
+              slot="student.registration_no"
+              slot-scope="props"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="Click to change photo"
+                placement="bottom-start"
+              >
+                <div
+                  align="center"
+                  @click="changePhoto(props.index, props.row.student.user)"
+                >
+                  <img
+                    align="center"
+                    :src="baseServerUrl +'storage/'+ props.row.student.user.photo"
+                    alt="Photo"
+                    width="70"
+                  >
+                  <p>{{ props.row.student.registration_no }}</p>
+                </div>
+              </el-tooltip>
+            </template>
+            <div
+              slot="studentship_status"
+            >
+              <!-- <el-select
+                v-if="checkPermission(['can manage student'])"
+                v-model="props.row.student.studentship_status"
+                style="width: 100%"
+                @input="toggleStudentshipStatus($event, props.row.student_id, props.index)"
+              >
+                <el-option
+                  v-for="(status, index) in statuses"
+                  :key="index"
+                  :label="status.label"
+                  :value="status.value"
+                />
+              </el-select>
+              <span v-else>
+                {{ (props.row.student.studentship_status === 'left') ? 'WITHDRAWN' : props.row.student.studentship_status.toUpperCase() }}</span> -->
+              Pending Activation
+            </div>
+            <div
+              slot="parent_name"
+              slot-scope="{row}"
+            >
+              <div v-if="row.student.student_guardian !== null">
+                {{ (row.student.student_guardian.guardian.user) ? row.student.student_guardian.guardian.user.first_name + ' ' + row.student.student_guardian.guardian.user.last_name : '' }}
+              </div>
+            </div>
+            <div
+              slot="parent_phone"
+              slot-scope="{row}"
+            >
+              <div v-if="row.student.student_guardian !== null">
+                {{ (row.student.student_guardian.guardian.user) ? row.student.student_guardian.guardian.user.phone1 + ', ' + row.student.student_guardian.guardian.user.phone2 : '' }}
+              </div>
+            </div>
+            <div
+              slot="parent_email"
+              slot-scope="{row}"
+            >
+              <div v-if="row.student.student_guardian !== null">
+                {{ (row.student.student_guardian.guardian.user) ? row.student.student_guardian.guardian.user.email : '' }}
+              </div>
+            </div>
+            <div
+              slot="action"
+              slot-scope="props"
+            >
+              <span>
+                <b-button
+                  v-b-tooltip.hover.right="'View Details'"
+                  variant="primary"
+                  class="btn-icon rounded-circle"
+                >
+
+                  <router-link
+                    :to="{name: 'studentDetails', params: {id: props.row.student.id}}"
+                    style="color: #fff;"
+                  ><feather-icon icon="EyeIcon" /></router-link>
+                </b-button>
+              </span>
+              <span v-if="checkPermission(['can manage student'])">
+                <b-button
+                  v-b-tooltip.hover.right="'Edit ' + props.row.student.user.first_name +' data'"
+                  variant="info"
+                  class="btn-icon rounded-circle"
+                  @click="editStudent(props.row)"
+                ><feather-icon icon="Edit2Icon" />
+                </b-button>
+              </span>
+              <span
+                v-if="checkPermission(['can manage student'])"
+              >
+                <b-button
+                  v-b-tooltip.hover.right="'Activate account for ' + props.row.student.user.first_name"
+                  variant="dark"
+                  class="btn-icon rounded-circle"
+                  @click="approve(props.row.student.user)"
+                >
+                  <feather-icon icon="ThumbsUpIcon" />
+                </b-button>
+              </span>
+            </div>
+          </v-client-table>
+        </el-tab-pane>
       </el-tabs>
       <upload-photo
         v-if="isUploadPhotoSidebarActive"
@@ -475,6 +601,7 @@ export default {
       activefilteredStudents: [],
       suspendedfilteredStudents: [],
       withdrawnfilteredStudents: [],
+      unapprovedStudents: [],
       statuses: [
         { label: 'ACTIVE', value: 'active' },
         { label: 'SUSPENDED', value: 'suspended' },
@@ -577,9 +704,13 @@ export default {
       app.withdrawnfilteredStudents = []
       app.suspendedfilteredStudents = []
       app.activefilteredStudents = []
+      app.unapprovedStudents = []
       app.studentsInClass.forEach(element => {
         if (element.student !== null) {
           app.filteredStudents.push(element)
+          if (element.student.user.is_confirmed === '0') {
+            app.unapprovedStudents.push(element)
+          }
           if (element.student.studentship_status === 'left') {
             app.withdrawnfilteredStudents.push(element)
           }
@@ -610,6 +741,30 @@ export default {
             app.$alert(`Password for ${user.username} has been reset to: password `, 'Password Reset', {
               confirmButtonText: 'OK',
             })
+            app.loading = false
+          })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: 'Delete canceled',
+        // })
+      })
+    },
+    approve(user) {
+      const app = this
+      app.$confirm(`This will activate ${user.username}'s account. Do you want to continue?`, 'Confirm Activation', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        type: 'warning',
+      }).then(() => {
+        app.loading = true
+        const resetPasswordResource = new Resource('user-setup/approve-user')
+        resetPasswordResource.update(user.id)
+          .then(() => {
+            app.$alert('Account activation successful', 'Successful', {
+              confirmButtonText: 'OK',
+            })
+            app.$emit('reload')
             app.loading = false
           })
       }).catch(() => {

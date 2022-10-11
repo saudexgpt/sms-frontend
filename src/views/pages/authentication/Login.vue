@@ -94,6 +94,12 @@
             >
               Sign in
             </b-button>
+            <b-card-text class="text-center mt-2">
+              <span>Don't have an account? </span>
+              <b-link :to="{name:'UserRegistration'}">
+                <span>&nbsp;Sign Up</span>
+              </b-link>
+            </b-card-text>
           </b-form>
           <el-alert
             v-if="reset_password"
@@ -184,7 +190,7 @@
 /* eslint-disable global-require */
 // import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BRow, BCol, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BCardTitle, BImg, BForm, BButton, VBTooltip,
+  BRow, BCol, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BCardTitle, BImg, BForm, BButton, BCardText, BLink, VBTooltip,
 } from 'bootstrap-vue'
 // import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
@@ -202,11 +208,12 @@ export default {
   components: {
     BRow,
     BCol,
-    // BLink,
+    BLink,
     BFormGroup,
     BFormInput,
     BInputGroupAppend,
     BInputGroup,
+    BCardText,
     // BFormCheckbox,
     BCardTitle,
     BImg,

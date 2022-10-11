@@ -168,7 +168,7 @@ export default {
     return {
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() < Date.now()
+          return time.getTime() < (Date.now() - 3600 * 1000 * 24)
         },
       },
       columns: ['topic', 'date', 'duration', 'start', 'end', 'action'],

@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="studentInClass"
-    v-loading="loader"
-  >
+  <div v-loading="loader">
     <form-wizard
       color="#7367F0"
       :title="null"
@@ -274,7 +271,6 @@
                     id="registration_no"
                     v-model="form.registration_no"
                     :state="errors.length > 0 ? false:null"
-                    disabled
                   />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
@@ -319,13 +315,28 @@
                   label-for="level"
                   :state="errors.length > 0 ? false:null"
                 >
-                  <v-select
+                  <!-- <v-select
                     id="level"
-                    v-model="selected_level"
+                    v-model="selectedLevelIndex"
                     :options="levels"
                     label="level"
                     @input="setClass()"
-                  />
+                  /> -->
+                  <el-select
+                    id="level"
+                    v-model="selectedLevelIndex"
+                    style="width: 100%;"
+                    placeholder="Select Level"
+                    filterable
+                    @input="setClass()"
+                  >
+                    <el-option
+                      v-for="(level, index) in levels"
+                      :key="index"
+                      :label="level.level"
+                      :value="index"
+                    />
+                  </el-select>
                   <b-form-invalid-feedback :state="errors.length > 0 ? false:null">
                     {{ errors[0] }}
                   </b-form-invalid-feedback>
@@ -592,35 +603,35 @@
             <b-form-group label="">
               <b-form-checkbox
                 v-model="form.is_prev_cert_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Previous Class Certificate
               </b-form-checkbox>
               <b-form-checkbox
                 v-model="form.is_transfer_cert_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Transfer certificate
               </b-form-checkbox>
               <b-form-checkbox
                 v-model="form.is_academic_transcript_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Academic Transcript
               </b-form-checkbox>
               <b-form-checkbox
                 v-model="form.is_national_birth_cert_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 National Birth Certificate
               </b-form-checkbox>
               <b-form-checkbox
                 v-model="form.is_testimonial_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Testimonial
@@ -629,6 +640,94 @@
           </b-col>
         </b-row>
       </tab-content>
+      <!-- Login Credentials -->
+      <!-- <tab-content
+        title="Login Credentials"
+        :before-change="validationFormLogin"
+      >
+        <validation-observer
+          ref="loginRules"
+          tag="form"
+        >
+          <b-row>
+
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
+              <b-alert
+                variant="danger"
+                show
+              >
+                <div class="alert-body">
+                  <span><strong>Give these credentials to their respective recipients. The password can then be changed on first login. </strong></span>
+                </div>
+              </b-alert>
+              <h5 class="mb-0">
+                Student's Login Credentials
+              </h5>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Student Username"
+                label-for="student_username"
+              >
+                <b-form-input
+                  id="username"
+                  v-model="form.registration_no"
+                  readonly
+                />
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Student Password"
+                label-for="student_password"
+              >
+                <b-form-input
+                  id="student_password"
+                  v-model="form.registration_no"
+                  readonly
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
+              <h5 class="mb-0">
+                Sponsor Login Credentials
+              </h5>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Sponsor Username"
+                label-for="sponsor_username"
+              >
+                <b-form-input
+                  id="sponsor_username"
+                  v-model="form.username"
+                  readonly
+                />
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Sponsor Password"
+                label-for="sponsor_password"
+              >
+                <b-form-input
+                  id="sponsor_password"
+                  v-model="form.username"
+                  readonly
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </validation-observer>
+      </tab-content> -->
     </form-wizard>
 
   </div>
@@ -650,6 +749,7 @@ import {
   BFormInvalidFeedback,
   BFormDatepicker,
   BFormCheckbox,
+  // BAlert,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
 // import { codeIcon } from './code'
@@ -665,6 +765,7 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
+    // BAlert,
     vSelect,
     BFormInvalidFeedback,
     BFormDatepicker,
@@ -675,13 +776,13 @@ export default {
     ToastificationContent,
   },
   props: {
-    studentInClass: {
+    school: {
       type: Object,
-      default: () => null,
+      required: true,
     },
-    selectedLevel: {
-      type: Object,
-      default: () => null,
+    pin: {
+      type: Number,
+      required: true,
     },
   },
   data() {
@@ -691,8 +792,40 @@ export default {
       selectedContry: '',
       selectedLanguage: '',
       form: {
-        id: '',
-        student_id: '',
+        last_name: '',
+        first_name: '',
+        registration_no: '',
+        student_password: '',
+        dob: '',
+        gender: '',
+        country_id: '',
+        state_id: '',
+        lga_id: '',
+        disablility: '',
+        admission_sess_id: '',
+        level_id: '',
+        class_teacher_id: '',
+        photo: '',
+        parent_phone: '',
+        parent_phone2: '',
+        email,
+        lname: '',
+        fname: '',
+        sponsor_gender: '',
+        relation: '',
+        address: '',
+        occupation: '',
+        other_occupation: '',
+        username: '',
+        password: '',
+        is_prev_cert_submitted: null,
+        is_transfer_cert_submitted: null,
+        is_academic_transcript_submitted: null,
+        is_national_birth_cert_submitted: null,
+        is_testimonial_submitted: null,
+        required,
+      },
+      empty_form: {
         last_name: '',
         first_name: '',
         registration_no: '',
@@ -728,11 +861,10 @@ export default {
       },
       // codeIcon,
       levels: [],
-      selected_level: null,
+      selectedLevelIndex: '',
       classes: [],
       countries: [],
       selectedCountry: '',
-      defaultCountry: '',
       states: [],
       selectedState: '',
       lgas: [],
@@ -745,107 +877,78 @@ export default {
     }
   },
   created() {
-    this.selected_level = this.selectedLevel
-    this.setFormProperties(this.studentInClass)
     this.fetchFormDetails()
   },
   methods: {
-    setFormProperties(studentInClass) {
-      const app = this
-      const { student } = studentInClass
-      app.form.id = studentInClass.id
-      app.form.student_id = student.id
-      app.selectedCountry = student.user.country
-      app.selectedState = student.user.state
-      app.selectedLGA = student.user.lga
-      app.form.last_name = student.user.last_name
-      app.form.first_name = student.user.first_name
-      app.form.registration_no = student.registration_no
-      app.form.dob = student.user.dob
-      app.form.gender = student.user.gender
-      app.form.country_id = student.user.country_id
-      app.form.state_id = student.user.state_id
-      app.form.lga_id = student.user.lga_id
-      app.form.disablility = student.user.disablility
-      app.form.admission_sess_id = student.admission_sess_id
-      app.form.level_admitted = student.level_admitted
-      app.form.current_level = student.current_level
-      app.form.level_id = student.current_level
-      app.form.class_teacher_id = studentInClass.class_teacher_id
-      if (student.student_guardian) {
-        app.form.parent_phone = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.phone1 : ''
-        app.form.parent_phone2 = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.phone2 : ''
-        app.form.email = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.email : ''
-        app.form.lname = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.last_name : ''
-        app.form.fname = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.first_name : ''
-        app.form.sponsor_gender = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.gender : ''
-        app.form.relation = (student.student_guardian.guardian.user) ? student.student_guardian.relationship : ''
-        app.form.address = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.address : ''
-        app.form.occupation = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.occupation : ''
-      }
-      app.form.other_occupation = ''
-      app.form.is_prev_cert_submitted = student.is_prev_cert_submitted
-      app.form.is_transfer_cert_submitted = student.is_transfer_cert_submitted
-      app.form.is_academic_transcript_submitted = student.is_academic_transcript_submitted
-      app.form.is_national_birth_cert_submitted = student.is_national_birth_cert_submitted
-      app.form.is_testimonial_submitted = student.is_testimonial_submitted
-      app.form.required = ''
-    },
+    // onContext(ctx) {
+    //   // The date formatted in the locale, or the `label-no - date - selected` string
+    //   this.formatted = ctx.selectedFormatted
+    //   // The following will be an empty string until a valid date is entered
+    //   this.selected = ctx.selectedYMD
+    // },
     fetchFormDetails() {
       const app = this
-      const fetchCurriculumSetupResource = new Resource('user-setup/students/create')
-      fetchCurriculumSetupResource.list()
+      const fetchCurriculumSetupResource = new Resource('students/create')
+      fetchCurriculumSetupResource.list({ school_id: app.school.id })
         .then(response => {
           app.countries = response.countries
-          app.defaultCountry = response.selected_country
+          app.selectedCountry = response.selected_country
           app.levels = response.levels
+          app.form.registration_no = response.reg_no
           app.form.username = response.parent_username
           app.admission_sessions = response.admission_sessions
           app.setState()
-          app.setClass()
         })
     },
     setState() {
       const app = this
-      const index = app.countries.indexOf(app.selectedCountry)
       app.lgas = []
-      app.states = (index > -1) ? app.countries[index].states : app.defaultCountry.states
-      app.setLgas()
+      app.states = app.selectedCountry.states
     },
     setLgas() {
       const app = this
-      const index = app.states.indexOf(app.selectedState)
-      app.lgas = (index > -1) ? app.states[index].lgas : []
-      // app.lgas = app.selectedState.lgas
+      app.lgas = app.selectedState.lgas
     },
     setClass() {
       const app = this
-      app.classes = app.selected_level.class_teachers
+      app.classes = app.levels[app.selectedLevelIndex].class_teachers
     },
     formSubmitted() {
       const app = this
-      const saveStudentResource = new Resource('user-setup/students/update')
+      const saveStudentResource = new Resource('students/store-with-pin')
       const { form } = app
-      form.level_id = app.selected_level.id
+      form.level_id = app.levels[app.selectedLevelIndex].id
       form.country_id = app.selectedCountry.id
       form.state_id = app.selectedState.id
       form.lga_id = app.selectedLGA.id
+      form.school_id = app.school.id
+      form.pin_id = app.pin
       app.loader = true
-      saveStudentResource.update(form.id, form)
+      saveStudentResource.store(form)
         .then(() => {
+          app.form = app.empty_form
           app.loader = false
-          app.$emit('update')
+
           app.$toast({
             component: ToastificationContent,
             props: {
-              title: 'Update Successful',
+              title: 'Successful Registration',
               icon: 'EditIcon',
               variant: 'success',
             },
           })
+          app.$emit('submit')
         }).catch(error => {
           app.loader = false
-          console.log(error)
+          app.$toast({
+            component: ToastificationContent,
+            props: {
+              title: `Issues: ${error.response.data.message}`,
+              icon: 'EditIcon',
+              variant: 'danger',
+            },
+          })
+          // console.log(error)
         })
     },
     validationFormAdmission() {

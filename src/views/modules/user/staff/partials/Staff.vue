@@ -13,71 +13,138 @@
       <hr>
     </div>
     <div v-if="selectedStaff === null">
-      <el-button
-        v-if="staff.length > 0"
-        :loading="downloadLoading"
-        style="margin:0 0 20px 20px;"
-        type="primary"
-        icon="document"
-        @click="handleDownload('List of Staff', staff)"
-      >Export Excel</el-button>
-      <v-client-table
-        v-model="staff"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="action"
-          slot-scope="props"
+      <el-tabs>
+        <el-tab-pane
+          :label="`Active (${activeStaff.length})`"
         >
-          <span>
-            <b-button
-              v-b-tooltip.hover.right="'View Details'"
-              variant="gradient-primary"
-              class="btn-icon rounded-circle"
+          <el-button
+            v-if="activeStaff.length > 0"
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="document"
+            @click="handleDownload('List of Staff', activeStaff)"
+          >Export Excel</el-button>
+          <v-client-table
+            v-model="activeStaff"
+            v-loading="loading"
+            :columns="columns"
+            :options="options"
+          >
+            <div
+              slot="action"
+              slot-scope="props"
             >
+              <span>
+                <b-button
+                  v-b-tooltip.hover.right="'View Details'"
+                  variant="gradient-primary"
+                  class="btn-icon rounded-circle"
+                >
 
-              <router-link
-                :to="{name: 'staffDetails', params: {id: props.row.id}}"
-                style="color: #fff;"
-              ><feather-icon icon="EyeIcon" /></router-link>
-            </b-button>
-            <b-button
-              v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
-              variant="success"
-              class="btn-icon rounded-circle"
-              @click="editStaff(props.row)"
-            ><feather-icon icon="Edit2Icon" />
-            </b-button>
-            <b-button
-              v-b-tooltip.hover.right="'Reset Password'"
-              variant="gradient-warning"
-              class="btn-icon rounded-circle"
-              @click="resetPassword(props.row.user)"
-            >
-              <feather-icon icon="UnlockIcon" />
-            </b-button>
-            <b-button
-              v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
-              variant="dark"
-              class="btn-icon rounded-circle"
-              @click="loginAsUser(props.row.user)"
-            >
-              <feather-icon icon="KeyIcon" />
-            </b-button>
-            <b-button
-              v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"
-              variant="danger"
-              class="btn-icon rounded-circle"
-              @click="removeStaff(props.row)"
-            >
-              <feather-icon icon="TrashIcon" />
-            </b-button>
-          </span>
-        </div>
-      </v-client-table>
+                  <router-link
+                    :to="{name: 'staffDetails', params: {id: props.row.id}}"
+                    style="color: #fff;"
+                  ><feather-icon icon="EyeIcon" /></router-link>
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
+                  variant="success"
+                  class="btn-icon rounded-circle"
+                  @click="editStaff(props.row)"
+                ><feather-icon icon="Edit2Icon" />
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Reset Password'"
+                  variant="gradient-warning"
+                  class="btn-icon rounded-circle"
+                  @click="resetPassword(props.row.user)"
+                >
+                  <feather-icon icon="UnlockIcon" />
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
+                  variant="dark"
+                  class="btn-icon rounded-circle"
+                  @click="loginAsUser(props.row.user)"
+                >
+                  <feather-icon icon="KeyIcon" />
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"
+                  variant="danger"
+                  class="btn-icon rounded-circle"
+                  @click="removeStaff(props.row)"
+                >
+                  <feather-icon icon="TrashIcon" />
+                </b-button>
+              </span>
+            </div>
+          </v-client-table>
 
+        </el-tab-pane>
+        <el-tab-pane
+          :label="`Pending Activation (${deactivatedStaff.length})`"
+        >
+          <el-button
+            v-if="deactivatedStaff.length > 0"
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="document"
+            @click="handleDownload('List of Staff awaiting activation', deactivatedStaff)"
+          >Export Excel</el-button>
+          <v-client-table
+            v-model="deactivatedStaff"
+            v-loading="loading"
+            :columns="columns"
+            :options="options"
+          >
+            <div
+              slot="action"
+              slot-scope="props"
+            >
+              <span>
+                <b-button
+                  v-b-tooltip.hover.right="'View Details'"
+                  variant="gradient-primary"
+                  class="btn-icon rounded-circle"
+                >
+
+                  <router-link
+                    :to="{name: 'staffDetails', params: {id: props.row.id}}"
+                    style="color: #fff;"
+                  ><feather-icon icon="EyeIcon" /></router-link>
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
+                  variant="success"
+                  class="btn-icon rounded-circle"
+                  @click="editStaff(props.row)"
+                ><feather-icon icon="Edit2Icon" />
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Activate account for ' + props.row.user.first_name"
+                  variant="dark"
+                  class="btn-icon rounded-circle"
+                  @click="approve(props.row.user)"
+                >
+                  <feather-icon icon="ThumbsUpIcon" />
+                </b-button>
+                <b-button
+                  v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"
+                  variant="danger"
+                  class="btn-icon rounded-circle"
+                  @click="removeStaff(props.row)"
+                >
+                  <feather-icon icon="TrashIcon" />
+                </b-button>
+              </span>
+            </div>
+          </v-client-table>
+
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <div v-else>
       <edit-staff
@@ -118,6 +185,7 @@ export default {
   },
   data() {
     return {
+      downloadLoading: false,
       isCreateClassSidebarActive: false,
       isEditClassSidebarActive: false,
       pageLength: 10,
@@ -185,6 +253,8 @@ export default {
         ],
       },
       staff: [],
+      activeStaff: [],
+      deactivatedStaff: [],
       loading: false,
       selectedStaff: null,
       selected_row_index: '',
@@ -202,8 +272,24 @@ export default {
       fetchStaffResource.list()
         .then(response => {
           app.staff = response.staff
+          app.filterStaff(response.staff)
           app.loading = false
         })
+    },
+    filterStaff(staff) {
+      const app = this
+      app.activeStaff = []
+      app.deactivatedStaff = []
+      staff.forEach(element => {
+        if (element.user !== null) {
+          if (element.user.is_confirmed === '0') {
+            app.deactivatedStaff.push(element)
+          }
+          if (element.user.is_confirmed === '1') {
+            app.activeStaff.push(element)
+          }
+        }
+      })
     },
     async loginAsUser(user) {
       await this.$store.dispatch('user/loginAsUser', { user_id: user.id })
@@ -227,6 +313,30 @@ export default {
             app.$alert(`Password for ${user.username} has been reset to: password `, 'Password Reset', {
               confirmButtonText: 'OK',
             })
+            app.loading = false
+          })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: 'Delete canceled',
+        // })
+      })
+    },
+    approve(user) {
+      const app = this
+      app.$confirm(`This will activate ${user.username}'s account. Do you want to continue?`, 'Confirm Activation', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        type: 'warning',
+      }).then(() => {
+        app.loading = true
+        const resetPasswordResource = new Resource('user-setup/approve-user')
+        resetPasswordResource.update(user.id)
+          .then(() => {
+            app.$alert('Account activation successful', 'Successful', {
+              confirmButtonText: 'OK',
+            })
+            this.reloadTable()
             app.loading = false
           })
       }).catch(() => {

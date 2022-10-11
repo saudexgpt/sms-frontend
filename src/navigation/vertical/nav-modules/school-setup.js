@@ -49,6 +49,13 @@ export default [
           permissions: ['can manage settings'],
         },
       },
+      {
+        title: 'Manage PINs',
+        route: 'registration-pins',
+        acl: {
+          permissions: ['can manage registration pins'],
+        },
+      },
     ],
   },
 ]

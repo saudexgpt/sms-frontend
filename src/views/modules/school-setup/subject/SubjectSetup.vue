@@ -82,6 +82,7 @@
               slot-scope="props"
             >
               <b-button
+                v-b-tooltip.hover.bottom="'Edit'"
                 variant="gradient-warning"
                 class="btn-icon rounded-circle"
                 @click="editThisRow(props)"
@@ -89,12 +90,31 @@
                 <feather-icon icon="EditIcon" />
               </b-button>
               <b-button
+                v-if="props.row.enabled === 1"
+                v-b-tooltip.hover.bottom="'Disable'"
+                variant="gradient-danger"
+                class="btn-icon rounded-circle"
+                @click="enableSubject(props.row, 0)"
+              >
+                <feather-icon icon="XIcon" />
+              </b-button>
+              <b-button
+                v-else
+                v-b-tooltip.hover.bottom="'Enable'"
+                variant="gradient-success"
+                class="btn-icon rounded-circle"
+                @click="enableSubject(props.row, 1)"
+              >
+                <feather-icon icon="CheckIcon" />
+              </b-button>
+
+              <!-- <b-button
                 variant="gradient-danger"
                 class="btn-icon rounded-circle"
                 @click="confirmDelete(props.row)"
               >
                 <feather-icon icon="TrashIcon" />
-              </b-button>
+              </b-button> -->
             </div>
           </v-client-table>
         </div>
@@ -136,7 +156,7 @@
 
 <script>
 import {
-  BButton, BRow, BCol,
+  BButton, BRow, BCol, VBTooltip,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import VSwatches from 'vue-swatches'
@@ -165,6 +185,7 @@ export default {
   },
   directives: {
     Ripple,
+    'b-tooltip': VBTooltip,
   },
   data() {
     return {
@@ -193,6 +214,12 @@ export default {
         //   chunk: 10,
         // },
         filterByColumn: true,
+        rowAttributesCallback(row) {
+          if (row.enabled === 0) {
+            return { style: 'background: #d83b3beb; color: #000000' }
+          }
+          return null
+        },
         sortable: [
           'name',
           'code',
@@ -290,6 +317,21 @@ export default {
         .then(response => {
           app.loading = false
           app.updateTable(response.subjects)
+        }).catch(error => {
+          app.$alert(error.response.data.message)
+        })
+    },
+    enableSubject(subject, status) {
+      const app = this
+      app.loading = true
+      const param = { status }
+      const deleteCurriculumSetupResource = new Resource('school-setup/enable-subject')
+      deleteCurriculumSetupResource.update(subject.id, param)
+        .then(response => {
+          app.loading = false
+          app.updateTable(response.subjects)
+        }).catch(error => {
+          app.$alert(error.response.data.message)
         })
     },
   },

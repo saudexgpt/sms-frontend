@@ -52,14 +52,18 @@
                 Teacher Name
               </div>
             </th>
-            <th
+            <template
               v-for="(subject_teacher, index) in subject_teachers"
-              :key="index"
-              class="verticalHeader solid-border"
-              :value="subject_teacher.id"
             >
-              <div>{{ subject_teacher.subject.code }}</div>
-            </th>
+              <th
+                v-if="subject_teacher.subject.enabled === 1"
+                :key="index"
+                class="verticalHeader solid-border"
+                :value="subject_teacher.id"
+              >
+                <div>{{ subject_teacher.subject.code }}</div>
+              </th>
+            </template>
             <!-- <th
               v-for="(subject_teacher, index) in subject_teachers"
               :key="index"
@@ -74,16 +78,20 @@
             :key="index"
             :value="teacher.id"
           >
+            <template v-if="teacher.user">
+              <td align="left">
+                {{ teacher.user.first_name }} {{ teacher.user.last_name }}
+              </td>
+              <template
+                v-for="(subject_teacher, subject_teacher_index) in subject_teachers"
+              >
+                <td
+                  v-if="subject_teacher.subject.enabled === 1"
+                  :key="subject_teacher_index"
+                  :value="subject_teacher.id"
+                >
 
-            <td align="left">
-              {{ teacher.user.first_name }} {{ teacher.user.last_name }}
-            </td>
-            <td
-              v-for="(subject_teacher, subject_teacher_index) in subject_teachers"
-              :key="subject_teacher_index"
-              :value="subject_teacher.id"
-            >
-              <!-- <b-form-checkbox
+                  <!-- <b-form-checkbox
                 :checked="teacher.id === subject_teacher.teacher_id"
                 class="custom-control-success"
                 name="check-button"
@@ -97,18 +105,21 @@
                   <feather-icon icon="XIcon" />
                 </span>
               </b-form-checkbox> -->
-              <div>
-                <input
-                  :id="teacher.id + '-' + subject_teacher.id"
-                  type="checkbox"
-                  :checked="teacher.id === subject_teacher.teacher_id"
-                  :name="subject_teacher.id"
-                  @click="assignSubjectTeachers(teacher.id, subject_teacher.id)"
-                >
+                  <div>
+                    <input
+                      :id="teacher.id + '-' + subject_teacher.id"
+                      type="checkbox"
+                      :checked="teacher.id === subject_teacher.teacher_id"
+                      :name="subject_teacher.id"
+                      @click="assignSubjectTeachers(teacher.id, subject_teacher.id)"
+                    >
 
-              </div>
+                  </div>
 
-            </td>
+                </td>
+              </template>
+
+            </template>
           </tr>
         </tbody>
         <tfoot class="sticky-header">
@@ -119,14 +130,18 @@
                 Teacher Name
               </div>
             </th>
-            <th
+            <template
               v-for="(subject_teacher, index) in subject_teachers"
-              :key="index"
-              class="verticalHeader solid-border"
-              :value="subject_teacher.id"
             >
-              <div>{{ subject_teacher.subject.code }}</div>
-            </th>
+              <th
+                v-if="subject_teacher.subject.enabled === 1"
+                :key="index"
+                class="verticalHeader solid-border"
+                :value="subject_teacher.id"
+              >
+                <div>{{ subject_teacher.subject.code }}</div>
+              </th>
+            </template>
             <!-- <th
               v-for="(subject_teacher, index) in subject_teachers"
               :key="index"

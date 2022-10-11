@@ -64,12 +64,16 @@
           style="width: 250px"
           @change="assignPcTeacher(props, $event)"
         >
-          <el-option
+          <template
             v-for="(each_staff, index) in staff"
-            :key="index"
-            :label="each_staff.user.first_name + ' ' + each_staff.user.last_name"
-            :value="each_staff.id"
-          />
+          >
+            <el-option
+              v-if="each_staff.user"
+              :key="index"
+              :label="each_staff.user.first_name + ' ' + each_staff.user.last_name"
+              :value="each_staff.id"
+            />
+          </template>
         </el-select>
       </div>
       <div
@@ -83,13 +87,14 @@
         >
           <feather-icon icon="EditIcon" />
         </b-button>
-        <!-- <b-button
+        <b-button
+          v-if="props.row.first_student_in_class === null"
           variant="gradient-danger"
           class="btn-icon rounded-circle"
           @click="confirmDelete(props.row)"
         >
           <feather-icon icon="TrashIcon" />
-        </b-button> -->
+        </b-button>
       </div>
     </v-client-table>
     <create-class
@@ -230,7 +235,7 @@ export default {
     },
     confirmDelete(cClass) {
       const app = this
-      const message = `You are about to delete ${cClass.class}. It might affect any student in that class. Click Yes to confirm.`
+      const message = `You are about to delete ${cClass.c_class.name}. Click Yes to confirm.`
       app.$bvModal
         .msgBoxConfirm(message, {
           title: 'Confirm Delete Action',
@@ -252,8 +257,8 @@ export default {
       const app = this
       const deleteCurriculumSetupResource = new Resource('school-setup/class/destroy')
       deleteCurriculumSetupResource.destroy(cClass.id)
-        .then(response => {
-          app.updateTable(response.classes)
+        .then(() => {
+          app.fetchClasses()
         })
     },
   },

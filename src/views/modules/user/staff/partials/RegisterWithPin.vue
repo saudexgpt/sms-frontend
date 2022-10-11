@@ -329,21 +329,21 @@
             <b-form-group label="">
               <b-form-checkbox
                 v-model="form.is_cv_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Resume/Curriculum Vitae
               </b-form-checkbox>
               <b-form-checkbox
                 v-model="form.is_edu_cert_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Educational Certificates
               </b-form-checkbox>
               <b-form-checkbox
                 v-model="form.is_exp_cert_submitted"
-                :value="1"
+                :value="true"
                 name="flavour-3a"
               >
                 Professional/Other Certificates
@@ -351,6 +351,119 @@
             </b-form-group>
           </b-col>
         </b-row>
+      </tab-content>
+      <!-- Login Credentials -->
+      <tab-content
+        title="Login Credentials"
+        :before-change="validationFormLogin"
+      >
+        <validation-observer
+          ref="loginRules"
+          tag="form"
+        >
+          <b-row>
+
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
+              <b-alert
+                variant="danger"
+                show
+              >
+                <div class="alert-body">
+                  <span><strong>Kindly select your role and set your password</strong></span>
+                </div>
+              </b-alert>
+              <h5 class="mb-0">
+                Login Credentials
+              </h5>
+            </b-col>
+            <b-col md="6">
+              <validation-provider
+                #default="{ errors }"
+                name="Roles"
+                rules="required"
+              >
+                <b-form-group
+                  label="Roles"
+                  label-for="role"
+                  :state="errors.length > 0 ? false:null"
+                >
+                  <!-- <v-select
+                    id="role"
+                    v-model="selectedRole"
+                    :options="staff_roles"
+                    label="display_name"
+                  /> -->
+                  <el-select
+                    id="role"
+                    v-model="form.roles"
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="(role, index) in staff_roles"
+                      :key="index"
+                      :label="role.display_name"
+                      :value="role.id"
+                      :disabled="role.name !== 'teacher' && role.name !== 'non-teacher'"
+                    />
+                  </el-select>
+                  <b-form-invalid-feedback :state="errors.length > 0 ? false:null">
+                    {{ errors[0] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Username"
+                label-for="sponsor_username"
+              >
+                <b-form-input
+                  id="sponsor_username"
+                  v-model="form.username"
+                  readonly
+                />
+              </b-form-group>
+            </b-col>
+            <!-- <b-col md="6">
+              <b-form-group>
+                <validation-provider
+                  #default="{ errors }"
+                  name="Password"
+                  vid="Password"
+                  rules="required|password"
+                >
+                  <b-form-input
+                    v-model="form.password"
+                    type="password"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Your Password"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group>
+                <validation-provider
+                  #default="{ errors }"
+                  name="Confirm Password"
+                  rules="required|confirmed:Password"
+                >
+                  <b-form-input
+                    v-model="form.c_password"
+                    :state="errors.length > 0 ? false:null"
+                    type="password"
+                    placeholder="Confirm Password"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col> -->
+          </b-row>
+        </validation-observer>
       </tab-content>
     </form-wizard>
 
@@ -373,7 +486,7 @@ import {
   BFormInvalidFeedback,
   BFormDatepicker,
   BFormCheckbox,
-  // BAlert,
+  BAlert,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
 // import { codeIcon } from './code'
@@ -389,7 +502,7 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
-    // BAlert,
+    BAlert,
     vSelect,
     BFormInvalidFeedback,
     BFormDatepicker,
@@ -400,9 +513,13 @@ export default {
     ToastificationContent,
   },
   props: {
-    selectedStaff: {
+    school: {
       type: Object,
-      default: () => null,
+      required: true,
+    },
+    pin: {
+      type: Number,
+      required: true,
     },
   },
   data() {
@@ -412,7 +529,28 @@ export default {
       selectedContry: '',
       selectedLanguage: '',
       form: {
-        staff_id: '',
+        last_name: '',
+        first_name: '',
+        dob: '',
+        gender: '',
+        country_id: '',
+        state_id: '',
+        lga_id: '',
+        photo: '',
+        phone1: '',
+        phone2: '',
+        email,
+        address: '',
+        roles: [],
+        username: '',
+        password: '',
+        c_password: '',
+        is_cv_submitted: null,
+        is_edu_cert_submitted: null,
+        is_exp_cert_submitted: null,
+        required,
+      },
+      empty_form: {
         last_name: '',
         first_name: '',
         dob: '',
@@ -437,7 +575,6 @@ export default {
       staff_roles: [],
       countries: [],
       selectedCountry: '',
-      defaultCountry: '',
       states: [],
       selectedState: '',
       lgas: [],
@@ -447,28 +584,22 @@ export default {
     }
   },
   created() {
-    this.setFormProperties(this.selectedStaff)
     this.fetchFormDetails()
   },
   methods: {
-    setFormProperties(selectedStaff) {
-      const app = this
-      app.form = selectedStaff.user
-      app.form.staff_id = selectedStaff.id
-      app.form.is_cv_submitted = selectedStaff.is_cv_submitted
-      app.form.is_edu_cert_submitted = selectedStaff.is_edu_cert_submitted
-      app.form.is_exp_cert_submitted = selectedStaff.is_exp_cert_submitted
-      app.selectedCountry = selectedStaff.user.country
-      app.selectedState = selectedStaff.user.state
-      app.selectedLGA = selectedStaff.user.lga
-    },
+    // onContext(ctx) {
+    //   // The date formatted in the locale, or the `label-no - date - selected` string
+    //   this.formatted = ctx.selectedFormatted
+    //   // The following will be an empty string until a valid date is entered
+    //   this.selected = ctx.selectedYMD
+    // },
     fetchFormDetails() {
       const app = this
-      const fetchCurriculumSetupResource = new Resource('user-setup/staff/create')
-      fetchCurriculumSetupResource.list()
+      const fetchCurriculumSetupResource = new Resource('staff/create')
+      fetchCurriculumSetupResource.list({ school_id: app.school.id })
         .then(response => {
           app.countries = response.countries
-          app.defaultCountry = response.selected_country
+          app.selectedCountry = response.selected_country
           app.staff_roles = response.staff_roles
           app.form.username = response.username
           app.setState()
@@ -476,47 +607,36 @@ export default {
     },
     setState() {
       const app = this
-      const index = app.countries.indexOf(app.selectedCountry)
       app.lgas = []
-      app.states = (index > -1) ? app.countries[index].states : app.defaultCountry.states
-      app.setLgas()
+      app.states = app.selectedCountry.states
     },
     setLgas() {
       const app = this
-      const index = app.states.indexOf(app.selectedState)
-      app.lgas = (index > -1) ? app.states[index].lgas : []
-      // app.lgas = app.selectedState.lgas
+      app.lgas = app.selectedState.lgas
     },
-    // setState() {
-    //   const app = this
-    //   app.lgas = []
-    //   app.states = app.selectedCountry.states
-    //   app.setLgas()
-    // },
-    // setLgas() {
-    //   const app = this
-    //   app.lgas = app.selectedState.lgas
-    // },
     formSubmitted() {
       const app = this
-      const saveStaffResource = new Resource('user-setup/staff/update')
+      const saveStudentResource = new Resource('staff/store-with-pin')
       const { form } = app
       form.country_id = app.selectedCountry.id
       form.state_id = app.selectedState.id
       form.lga_id = app.selectedLGA.id
+      form.school_id = app.school.id
+      form.pin_id = app.pin
       app.loader = true
-      saveStaffResource.update(form.staff_id, form)
+      saveStudentResource.store(form)
         .then(() => {
+          app.form = app.empty_form
           app.loader = false
-          app.$emit('update')
           app.$toast({
             component: ToastificationContent,
             props: {
-              title: 'Update Successful',
+              title: 'Successful Registration',
               icon: 'EditIcon',
               variant: 'success',
             },
           })
+          app.$emit('submit')
         }).catch(error => {
           app.loader = false
           console.log(error)

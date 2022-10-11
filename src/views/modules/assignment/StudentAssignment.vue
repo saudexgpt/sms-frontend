@@ -53,33 +53,66 @@
           class="demo-inline-spacing"
         >
           <b-button
+            v-if="row.is_marked === '0'"
             variant="outline-primary"
             @click="viewStudentResponses(row)"
           >
             Attempt
+          </b-button>
+          <b-button
+            v-else
+            variant="outline-success"
+            @click="viewStudentResponses(row)"
+          >
+            View Details
           </b-button>
         </div>
       </v-client-table>
     </el-card>
     <b-modal
       v-model="modalShow"
-      ok-only
-      ok-title="Submit"
+      cancel-only
+      cancel-title="Close"
       centered
       size="lg"
       title="Attempt Assignment"
       scrollable
-      @ok="submitAssignment()"
     >
       <b-card-text>
         <div>
           <span v-html="selected_assignment.assignment_details" />
         </div>
-        <div v-loading="loadModal">
+        <div
+          v-if="can_edit"
+          v-loading="loadModal"
+        >
           <h4>Type your answer</h4>
           <quill-editor
             v-model="form.student_answer"
           />
+          <el-button
+            type="primary"
+            @click="submitAssignment()"
+          >
+            Submit
+          </el-button>
+        </div>
+        <div v-else>
+          <div v-if="student_assignment !== null">
+            Your Answer: <br>
+            <aside><span v-html="student_assignment.student_answer" /></aside><hr>
+            <strong>Your Score: {{ student_assignment.score }}</strong><hr>
+            Teacher's Remark:
+            <aside>{{ student_assignment.remark }}</aside><br>
+          </div>
+          <div v-else>
+            <el-alert
+              :closable="false"
+              type="error"
+            >
+              This assignment is awaiting teacher's response
+            </el-alert>
+          </div>
         </div>
       </b-card-text>
     </b-modal>
@@ -141,6 +174,7 @@ export default {
         student_answer: '',
       },
       student_assignment: '',
+      can_edit: false,
     }
   },
   created() {
@@ -152,8 +186,10 @@ export default {
       this.selected_assignment = selectedAssignment
       const app = this
       app.loadModal = true
+      app.student_assignment = ''
       const fetchTeacherSubjectResource = new Resource('assignment/student/answer')
       fetchTeacherSubjectResource.get(selectedAssignment.id).then(response => {
+        app.can_edit = response.can_edit
         app.student_assignment = response.assignment_to_tackle
         app.form.student_answer = (app.student_assignment) ? app.student_assignment.student_answer : ''
         app.loadModal = false
@@ -201,6 +237,13 @@ export default {
           app.fetchAssignments()
         })
       }
+    },
+    hasExpired(date) {
+      const today = new Date()
+      if (date < today) {
+        return true
+      }
+      return false
     },
   },
 }

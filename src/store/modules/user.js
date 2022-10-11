@@ -7,10 +7,10 @@ import { resetRouter } from '@/router'
 // import store from '@/store'
 
 const state = {
-  id: null,
+  id: '',
   token: getToken(),
   userData: {
-    id: null,
+    id: '',
     name: '',
     first_name: '',
     last_name: '',
@@ -22,10 +22,10 @@ const state = {
     p_status: '',
     notifications: [],
     password_status: '',
-    unreadNotificationCount: null,
+    unreadNotificationCount: '',
     suspended_for_nonpayment: 0,
-    system_set_session: null,
-    system_set_term: null,
+    system_set_session: '',
+    system_set_term: '',
     school: {
       current_session: {
         name: '',

@@ -91,6 +91,16 @@ export const constantRoutes = [
   },
   {
     hidden: true,
+    path: '/user-registration',
+    name: 'UserRegistration',
+    component: () => import('@/views/pages/authentication/UserRegistration.vue'),
+    meta: {
+      layout: 'full',
+      // redirectIfLoggedIn: true,
+    },
+  },
+  {
+    hidden: true,
     path: '/comingsoon',
     name: 'page-coming-soon',
     component: () => import('@/views/pages/miscellaneous/ComingSoon.vue'),

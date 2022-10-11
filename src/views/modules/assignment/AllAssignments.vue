@@ -10,8 +10,28 @@
       </div>
       <el-row :gutter="5">
         <el-col
-          :md="20"
-          :sm="20"
+          :md="8"
+          :sm="8"
+          :xs="24"
+        >
+
+          <span class="demonstration">Select Class</span>
+          <el-select
+            v-model="class_teacher_id"
+            style="width: 100%"
+            placeholder="Select Class"
+          >
+            <el-option
+              v-for="(class_teacher, index) in class_teachers"
+              :key="index"
+              :value="class_teacher.id"
+              :label="class_teacher.c_class.name"
+            />
+          </el-select>
+        </el-col>
+        <el-col
+          :md="12"
+          :sm="12"
           :xs="24"
         >
 
@@ -133,23 +153,25 @@ export default {
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
             picker.$emit('pick', [start, end])
           },
-        }, {
-          text: 'Last Term',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          },
-        }, {
-          text: 'Last Year',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 365)
-            picker.$emit('pick', [start, end])
-          },
-        }],
+        },
+        // {
+        //   text: 'Last Term',
+        //   onClick(picker) {
+        //     const end = new Date()
+        //     const start = new Date()
+        //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+        //     picker.$emit('pick', [start, end])
+        //   },
+        // }, {
+        //   text: 'Last Year',
+        //   onClick(picker) {
+        //     const end = new Date()
+        //     const start = new Date()
+        //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 365)
+        //     picker.$emit('pick', [start, end])
+        //   },
+        // }
+        ],
       },
       date_range: '',
       assignments: [],
@@ -180,10 +202,12 @@ export default {
       selected_student_assignments: [],
       assignment_details: '',
       mark_assignment: false,
+      class_teachers: [],
+      class_teacher_id: '',
     }
   },
   created() {
-    // this.fetchAssignments()
+    this.fetchClasses()
   },
   methods: {
     moment,
@@ -192,11 +216,20 @@ export default {
       this.assignment_details = row.assignment_details
       this.mark_assignment = true
     },
+    fetchClasses() {
+      const app = this
+      app.loading = true
+      const fetchCurriculumSetupResource = new Resource('school-setup/classes')
+      fetchCurriculumSetupResource.list()
+        .then(response => {
+          app.class_teachers = response.class_teachers
+        })
+    },
     fetchAssignments() {
       const app = this
       app.load = true
       const date = app.date_range
-      const param = { start_date: date[0], end_date: date[1] }
+      const param = { class_teacher_id: app.class_teacher_id, start_date: date[0], end_date: date[1] }
       const fetchTeacherSubjectResource = new Resource('assignment/all-assignments')
       fetchTeacherSubjectResource.list(param).then(response => {
         app.assignments = response.assignments
