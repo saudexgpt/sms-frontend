@@ -2,7 +2,7 @@
   <div class="table-responsive">
     <table class="table table-bordered">
       <tbody>
-        <tr>
+        <!-- <tr>
           <td
             colspan="2"
             align="center"
@@ -52,12 +52,12 @@
           <td><strong>LGA of Origin: </strong><br>{{ (student.user.lga !== null) ? student.user.lga.name : 'NIL' }}</td>
 
         </tr>
-        <tr v-if="student.my_classes.length > 0">
+        <tr v-if="student.class_teacher">
 
           <td><strong>Current Level: </strong><br>{{ (student.current_student_level !== null) ? student.current_student_level.level : 'Not Set' }}</td>
-          <td><strong>Current Class: </strong><br>{{ (student.my_classes[0].class_teacher.c_class ) ? student.my_classes[0].class_teacher.c_class.name : 'Not Set' }}</td>
-          <td><strong>Current Class Teacher: </strong><br>{{ (student.my_classes[0].class_teacher.staff) ? student.my_classes[0].class_teacher.staff.user.first_name+' '+student.my_classes[0].class_teacher.staff.user.last_name : 'Not Set' }}</td>
-        </tr>
+          <td><strong>Current Class: </strong><br>{{ (student.class_teacher.c_class ) ? student.class_teacher.c_class.name : 'Not Set' }}</td>
+          <td><strong>Current Class Teacher: </strong><br>{{ (student.class_teacher.staff) ? student.class_teacher.staff.user.first_name+' '+student.class_teacher.staff.user.last_name : 'Not Set' }}</td>
+        </tr> -->
 
         <tr v-if="student.student_guardian != null">
           <td
@@ -81,69 +81,18 @@
 
       </tbody>
     </table>
-    <!-- <div class="col-md-12">
-      <div align="center">
-        <legend>CUMMULATIVE ACADEMIC PERFORMANCE ANALYSIS</legend>
-      </div>
-      <div class="col-md-6 padded">
-        <label>Junior School</label>
-        <div
-          v-for="(junior_subject, index) in student.junior_subjects"
-          :key="index"
-          class="progress-group"
-        >
-          <div
-            v-if="junior_subject.avg > 0"
-            colspan="3"
-          >
-            <small class="progress-text">{{ junior_subject.name }}</small>
-            <span class="progress-number"><b>{{ junior_subject.avg }}</b>%</span>
-
-            <div class="progress sm">
-              <div
-                class="progress-bar"
-                :style="'width: '+junior_subject.avg+'%; background: '+junior_subject.color"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 padded">
-        <label>Senior School</label>
-        <div
-          v-for="(senior_subject, index) in student.senior_subjects"
-          :key="index"
-          class="progress-group"
-        >
-          <div
-            v-if="senior_subject.avg > 0"
-            colspan="3"
-          >
-            <small class="progress-text">{{ senior_subject.name }}</small>
-            <span class="progress-number"><b>{{ senior_subject.avg }}</b>%</span>
-
-            <div class="progress sm">
-              <div
-                class="progress-bar"
-                :style="'width: '+senior_subject.avg+'%; background: '+senior_subject.color"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script>
 // import PanThumb from '@/components/PanThumb'
 import {
-  BAvatar,
+// BAvatar,
 } from 'bootstrap-vue'
-import { avatarText } from '@core/utils/filter'
+// import { avatarText } from '@core/utils/filter'
 
 export default {
-  components: { BAvatar },
+  components: {},
   props: {
     student: {
       type: Object,
@@ -152,7 +101,7 @@ export default {
   },
   data() {
     return {
-      avatarText,
+      // avatarText,
     }
   },
   computed: {

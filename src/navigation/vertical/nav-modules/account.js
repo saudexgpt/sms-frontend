@@ -1,12 +1,12 @@
 export default [
   {
-    title: 'Account',
+    title: 'Finance',
     icon: 'CreditCardIcon',
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
       modules: ['account'],
-      except: ['super'],
+      except: ['super', 'teacher'],
     },
     children: [
       {
@@ -37,7 +37,16 @@ export default [
         },
       },
       {
-        title: 'Statements',
+        title: 'Income/Expenses',
+        route: 'IncomeExpenses',
+        acl: {
+          modules: ['account'],
+          // roles: ['accountant'],
+          permissions: ['can view revenue'],
+        },
+      },
+      {
+        title: 'Report',
         route: 'Revenue',
         acl: {
           modules: ['account'],

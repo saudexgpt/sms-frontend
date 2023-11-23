@@ -33,8 +33,8 @@ tagVariant
 import dashboard from './nav-modules/dashboard'
 import appsAndPages from './apps-and-pages'
 import account from './nav-modules/account'
-import assignment from './nav-modules/assignment'
-import attendance from './nav-modules/attendance'
+// import assignment from './nav-modules/assignment'
+// import attendance from './nav-modules/attendance'
 import results from './nav-modules/result'
 import eLearning from './nav-modules/lms'
 import timeTable from './nav-modules/time-table'
@@ -45,16 +45,17 @@ import accessControl from './nav-modules/access-control'
 import subjects from './nav-modules/subjects'
 import classes from './nav-modules/classes'
 import schools from './nav-modules/schools'
-import materials from './nav-modules/materials'
+// import materials from './nav-modules/materials'
 import library from './nav-modules/library'
 import packages from './nav-modules/packages'
 import newsEvent from './nav-modules/news-event'
+import interview from './nav-modules/interview'
 // import chartsAndMaps from './charts-and-maps'
 // import uiElements from './ui-elements'
 // import formAndTable from './forms-and-table'
 
 // Array of sections
-export default [...dashboard, ...appsAndPages, ...account, ...adminSettings, ...userManagement, ...appSetup, ...classes, ...subjects, ...assignment, ...attendance, ...results, ...materials, ...timeTable, ...newsEvent, ...eLearning, ...library, ...schools, ...packages, ...accessControl]
+export default [...dashboard, ...adminSettings, ...userManagement, ...appsAndPages, ...account, ...appSetup, ...classes, ...subjects, /* ...assignment,  ...attendance, */ ...results, /* ...materials, */ ...timeTable, ...eLearning, ...interview, ...library, ...newsEvent, ...schools, ...packages, ...accessControl]
 
 // import store from '@/store'
 

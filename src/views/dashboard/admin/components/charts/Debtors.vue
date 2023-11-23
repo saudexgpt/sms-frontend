@@ -53,7 +53,6 @@
         </div>
         <!-- chart -->
         <vue-apex-charts
-          v-if="debtReport.series.length > 0"
           id="revenue-report-chart"
           type="bar"
           :height="400"

@@ -2,12 +2,12 @@
 <template>
   <div>
     <el-card v-if="!mark_assignment">
-      <div
+      <!-- <div
         slot="header"
         class="clearfix"
       >
         <h3>View All Assignments</h3>
-      </div>
+      </div> -->
       <el-row :gutter="5">
         <el-col
           :md="8"
@@ -19,6 +19,7 @@
           <el-select
             v-model="class_teacher_id"
             style="width: 100%"
+            filterable
             placeholder="Select Class"
           >
             <el-option

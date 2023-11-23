@@ -119,11 +119,13 @@ export default {
         'level',
         'description',
         'level_group.name',
+        'level_group.curriculum',
       ],
 
       options: {
         headings: {
           'level_group.name': 'Level Group',
+          'level_group.curriculum': 'Curriculum',
           action: '',
 
           // id: 'S/N',

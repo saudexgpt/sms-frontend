@@ -6,7 +6,7 @@ export default [
   //   // },
   // },
   {
-    title: 'E-Learning',
+    title: 'Academics',
     icon: 'AirplayIcon',
     // tag: '2',
     // tagVariant: 'light-warning',
@@ -19,14 +19,6 @@ export default [
     },
     children: [
       {
-        title: 'E-Exam',
-        route: 'EExam',
-        acl: {
-          modules: ['lms'],
-          roles: ['teacher', 'admin'],
-        },
-      },
-      {
         title: 'Classroom',
         route: 'Classroom',
         acl: {
@@ -35,16 +27,24 @@ export default [
         },
       },
       {
-        title: 'Student Exam',
-        route: 'StudentExam',
+        title: 'Examination',
+        route: 'EExam',
+        acl: {
+          modules: ['lms'],
+          roles: ['teacher', 'admin'],
+        },
+      },
+      {
+        title: 'My Classroom',
+        route: 'StudentClassroom',
         acl: {
           modules: ['lms'],
           roles: ['student'],
         },
       },
       {
-        title: 'Class Room',
-        route: 'StudentClassroom',
+        title: 'My Examination',
+        route: 'StudentExam',
         acl: {
           modules: ['lms'],
           roles: ['student'],

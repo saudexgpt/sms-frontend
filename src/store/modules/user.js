@@ -22,7 +22,7 @@ const state = {
     p_status: '',
     notifications: [],
     password_status: '',
-    unreadNotificationCount: '',
+    unreadNotificationCount: 0,
     suspended_for_nonpayment: 0,
     system_set_session: '',
     system_set_term: '',
@@ -35,7 +35,7 @@ const state = {
       },
     },
     student: '',
-    whatsapp_no: '2347044449412',
+    whatsapp_no: '2348160295559',
   },
 }
 
@@ -56,11 +56,14 @@ const mutations = {
   SET_TOKEN(state, token) {
     state.token = token
   },
+  SET_ID(state, id) {
+    state.id = id
+  },
   SET_NOTIFICATIONS: (state, notifications) => {
     state.userData.notifications = notifications
   },
   SET_UNREADNOTIFICATION_COUNT: (state, count) => {
-    state.userData.unreadNotificationCount = count
+    state.userData.unreadNotificationCount += count
   },
   ADD_NEW_NOTIFICATION: (state, notification) => {
     state.userData.notifications.unshift(notification)
@@ -105,8 +108,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password })
         .then(response => {
-          commit('SET_USER_DATA', response)
+          commit('SET_USER_DATA', response.data)
           commit('SET_TOKEN', response.tk)
+          commit('SET_ID', response.data.id)
           setToken(response.tk)
           resolve(response)
         })
@@ -134,6 +138,7 @@ const actions = {
           }
           // console.log(data)
           commit('SET_USER_DATA', data)
+          commit('SET_ID', data.id)
           resolve(data)
         })
         .catch(error => {
@@ -147,7 +152,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token)
         .then(() => {
-          commit('SET_USER_DATA', null)
+          commit('SET_USER_DATA', '')
           removeToken()
           resetRouter()
           resolve()

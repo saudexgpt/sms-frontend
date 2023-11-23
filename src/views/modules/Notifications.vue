@@ -1,7 +1,7 @@
 <template>
-  <div class="app-container">
+  <el-card class="app-container">
     <div class="block">
-      <legend>Notifications</legend>
+      <legend>{{ title }}</legend>
       <el-timeline
         v-loading="listLoading"
         style="height: 400px; overflow:auto;"
@@ -11,6 +11,7 @@
           :key="index"
           :timestamp="moment(activity_log.created_at).fromNow()"
           placement="top"
+          color="#0bbd87"
         >
           <el-card>
             <label>{{ activity_log.data.title }}</label>
@@ -19,7 +20,7 @@
         </el-timeline-item>
       </el-timeline>
     </div>
-  </div>
+  </el-card>
 </template>
 
 <script>
@@ -28,6 +29,12 @@ import Resource from '@/api/resource'
 
 const markNotificationAsRead = new Resource('notification/mark-as-read')
 export default {
+  props: {
+    title: {
+      type: String,
+      default: 'Notification',
+    },
+  },
   data() {
     return {
       show_notification: true,
@@ -36,7 +43,7 @@ export default {
   },
   computed: {
     notifications() {
-      return this.$store.getters.notifications
+      return this.$store.getters.userData.notifications
     },
   },
   created() {

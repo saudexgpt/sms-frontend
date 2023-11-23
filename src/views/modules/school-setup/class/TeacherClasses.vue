@@ -1,7 +1,7 @@
 <template>
   <el-card v-loading="load">
     <div slot="header">
-      <h4>Classes Assigned to {{ teacher }}</h4>
+      <h4>My Classes</h4>
     </div>
     <el-row
       :gutter="10"

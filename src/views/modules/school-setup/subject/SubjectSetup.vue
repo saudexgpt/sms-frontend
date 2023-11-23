@@ -239,6 +239,7 @@ export default {
       editable_row: '',
       selected_row_index: '',
       selected_teacher: '',
+
     }
   },
   created() {
@@ -258,7 +259,7 @@ export default {
         })
     },
     changeColor(props, value) {
-      console.log(props)
+      // console.log(props)
       const app = this
       const param = {
         color_code: value.replace('#', ''),
@@ -272,7 +273,13 @@ export default {
           // console.log(response)
         })
     },
-    updateTable(subjects) {
+    updateTable(levelGroups) {
+      const app = this
+      app.level_groups = levelGroups
+      const index = levelGroups.findIndex(object => object.id === app.selected_level_group.id)
+      app.selected_level_group.subjects = levelGroups[index].subjects
+    },
+    updateSubjects(subjects) {
       const app = this
       app.selected_level_group.subjects = subjects
     },
@@ -316,7 +323,7 @@ export default {
       deleteCurriculumSetupResource.destroy(subject.id)
         .then(response => {
           app.loading = false
-          app.updateTable(response.subjects)
+          app.updateSubjects(response.subjects)
         }).catch(error => {
           app.$alert(error.response.data.message)
         })
@@ -329,7 +336,7 @@ export default {
       deleteCurriculumSetupResource.update(subject.id, param)
         .then(response => {
           app.loading = false
-          app.updateTable(response.subjects)
+          app.updateSubjects(response.subjects)
         }).catch(error => {
           app.$alert(error.response.data.message)
         })

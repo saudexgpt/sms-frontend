@@ -1,6 +1,6 @@
 <template>
   <div class="demo-wrap">
-    <div
+    <!-- <div
       v-if="fetchData.result_settings.display_logo_for_result_background==='yes'"
     >
 
@@ -18,7 +18,7 @@
         :src="baseServerUrl +'storage/'+school.logo"
         alt=""
       >
-    </div>
+    </div> -->
     <div class="demo-content table-responsive">
       <table
         class="resultTable table-bordered"

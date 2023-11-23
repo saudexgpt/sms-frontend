@@ -79,7 +79,8 @@
                   v-if="form.payer_recipient_role === 'student'"
                   v-model="form.payer_recipient_id"
                   style="width: 100%;"
-                  placeholder="User"
+                  filterable
+                  placeholder="Select Student"
                 >
                   <el-option
                     v-for="(student, index) in students"
@@ -92,7 +93,8 @@
                   v-if="form.payer_recipient_role === 'staff'"
                   v-model="form.payer_recipient_id"
                   style="width: 100%;"
-                  placeholder="User Role"
+                  filterable
+                  placeholder="Select Staff"
                 >
                   <el-option
                     v-for="(each_staff, index) in staff"

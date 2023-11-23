@@ -40,12 +40,18 @@
                   v-model="subject_teacher_id"
                   style="width: 100%"
                 >
-                  <el-option
+                  <template
                     v-for="(subject_teacher, index) in subjectTeachers"
-                    :key="index"
-                    :value="subject_teacher.id"
-                    :label="subject_teacher.subject.name + ' (' + subject_teacher.class_teacher.c_class.name + ')'"
-                  />
+                  >
+
+                    <el-option
+                      v-if="userData.staff.id === subject_teacher.teacher_id"
+
+                      :key="index"
+                      :value="subject_teacher.id"
+                      :label="subject_teacher.subject.name + ' (' + subject_teacher.class_teacher.c_class.name + ')'"
+                    />
+                  </template>
                 </el-select>
               </b-form-group>
             </b-col>
@@ -61,7 +67,7 @@
             </b-col>
             <b-col cols="12">
               <b-form-group
-                label="Select File"
+                label="Select File (PDF file only)"
               >
                 <input
                   type="file"
@@ -134,6 +140,9 @@ export default {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
+    userData() {
+      return this.$store.getters.userData
+    },
   },
   created() {
     // this.fetchCurriculumClasss()
@@ -163,7 +172,7 @@ export default {
         })
         .catch(e => {
           app.load = false
-          app.$message(e.response.message)
+          app.$message(e.response.data.message)
         })
     },
   },

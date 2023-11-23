@@ -56,8 +56,8 @@ import {
   BRow, BCol,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import ResultSettingsDetails from './partials/ResultSettingsDetails.vue'
 import Resource from '@/api/resource'
+import ResultSettingsDetails from './partials/ResultSettingsDetails.vue'
 
 export default {
   components: {

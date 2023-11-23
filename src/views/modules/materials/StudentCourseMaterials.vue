@@ -1,6 +1,6 @@
 <template>
   <div v-loading="load">
-    <el-card>
+    <div>
       <div
         slot="header"
         class="no-print"
@@ -40,38 +40,64 @@
           :gutter="10"
         >
           <el-col
-            v-for="(material, index2) in materials"
-            :key="index2"
-            :xs="8"
-            :sm="6"
-            :md="4"
-            :lg="4"
-
-            align="center"
+            :xs="24"
+            :sm="18"
+            :md="18"
+            :lg="18"
           >
-            <el-card>
-              <el-link
-                :href="baseServerUrl +'storage/'+material.material"
-                target="_blank"
+            <div
+              v-if="readFile"
+              style="background: #fcfcfc; border: 2px #f0f0f0 solid; padding: 10px; border-radius: 5px; height: 650px; overflow: auto"
+            >
+              <read-material :material="selectedMaterial" />
+            </div>
+            <div
+              v-else
+              style="background: #fcfcfc; border: 2px #000000 solid; padding: 10px; border-radius: 5px; height: 650px; overflow: auto"
+            >
+              <el-empty description="Click on a material to view the content" />
+            </div>
+          </el-col>
+          <el-col
+            :xs="24"
+            :sm="6"
+            :md="6"
+            :lg="6"
+          >
+            <aside style="height: 650px; overflow: auto">
+              <small>Available Materials</small>
+              <div
+                v-for="(material, index2) in materials"
+                :key="index2"
+
+                align="center"
               >
-                <!-- <img
+                <el-card>
+                  <div
+                    style="cursor: pointer"
+                    @click="readMaterial(material)"
+                  >
+                    <!-- <img
                   :src="baseServerUrl +'images/doc.png'"
                   alt="File"
                   class="img-polaroid"
                   width="80"
                 > -->
-                <feather-icon
-                  icon="FileTextIcon"
-                  :style="'font-size: 76px; color: ' + material.subject_teacher.subject.color_code"
-                  size="76"
-                />
-                <p>
-                  <strong><small>{{ material.title }}</small></strong><br>
-                  <small>{{ material.subject_teacher.subject.name }}</small><br>
-                  <small>{{ material.subject_teacher.class_teacher.c_class.name }}</small>
-                </p>
-              </el-link>
-            </el-card>
+                    <feather-icon
+                      icon="FileTextIcon"
+                      :style="'font-size: 60px; color: ' + material.subject_teacher.subject.color_code"
+                      size="60"
+                    />
+                    <p>
+                      <strong>{{ material.title }}</strong><br>
+                      <small>{{ material.subject_teacher.subject.name }}</small><br>
+                      <small>{{ material.subject_teacher.class_teacher.c_class.name }}</small><br>
+                    </p>
+                  </div>
+                </el-card>
+                <hr>
+              </div>
+            </aside>
           </el-col>
         </el-row>
         <el-row v-else>
@@ -98,7 +124,18 @@
           </div>
         </b-alert>
       </div>
-    </el-card>
+    </div>
+    <!-- <div v-if="readFile">
+      <b-button
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="danger"
+        @click="readFile = false"
+      >
+        Go back
+      </b-button>
+      <br><br>
+      <read-material :material="selectedMaterial" />
+    </div> -->
   </div>
 </template>
 <script>
@@ -107,14 +144,17 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
+import ReadMaterial from './ReadMaterial.vue'
 
 const selectionOptions = new Resource('school-setup/student-subject')
 
 export default {
   components: {
+    // BButton,
     BAlert,
     BRow,
     BCol,
+    ReadMaterial,
   },
   directives: {
     Ripple,
@@ -128,6 +168,8 @@ export default {
       materials: [],
       show_materials: false,
       isCreateClassSidebarActive: false,
+      readFile: false,
+      selectedMaterial: null,
 
     }
   },
@@ -163,6 +205,7 @@ export default {
       app.show_materials = false
       app.selected_subject = app.subject_teachers[app.selected_subject_index]
       app.load = true
+      app.readFile = false
       const subjectMaterials = new Resource('materials/subject-materials')
       subjectMaterials.get(app.selected_subject.id)
         .then(response => {
@@ -174,6 +217,15 @@ export default {
           app.load = false
           console.log(error)
         })
+    },
+    readMaterial(material) {
+      const app = this
+      app.readFile = false
+      app.selectedMaterial = null
+      setTimeout(() => {
+        app.selectedMaterial = material
+        app.readFile = true
+      }, 100)
     },
 
   },

@@ -418,7 +418,7 @@
             </b-col>
             <b-col md="4">
               <b-form-group
-                label="Sponsor Username"
+                label="Username"
                 label-for="sponsor_username"
               >
                 <b-form-input
@@ -430,7 +430,7 @@
             </b-col>
             <b-col md="4">
               <b-form-group
-                label="Sponsor Password"
+                label="Password"
                 label-for="sponsor_password"
               >
                 <b-form-input

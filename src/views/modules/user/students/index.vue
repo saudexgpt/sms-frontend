@@ -1,11 +1,13 @@
 <template>
   <el-card>
-    <b-tabs content-class="mt-1">
+    <b-tabs
+      content-class="mt-1"
+    >
       <!-- This tabs content will always be mounted -->
       <b-tab lazy>
         <template #title>
           <feather-icon icon="UsersIcon" />
-          <span>List of Students</span>
+          <span>List</span>
         </template>
         <students-table />
       </b-tab>
@@ -14,21 +16,21 @@
       <b-tab>
         <template #title>
           <feather-icon icon="UserPlusIcon" />
-          <span>Register A Student</span>
+          <span>Single Registration</span>
         </template>
         <register-new-student />
       </b-tab>
       <b-tab lazy>
         <template #title>
           <feather-icon icon="UploadIcon" />
-          <span>Register Bulk Students</span>
+          <span>Bulk Registration</span>
         </template>
         <register-bulk-students />
       </b-tab>
       <b-tab lazy>
         <template #title>
           <feather-icon icon="CornerRightUpIcon" />
-          <span>Promote Students</span>
+          <span>Promote</span>
         </template>
         <promote-students />
       </b-tab>

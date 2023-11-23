@@ -29,11 +29,18 @@ export default [
         },
       },
       {
-        title: 'Register Schools',
+        title: 'Register',
         route: 'register-schools',
         acl: {
           permissions: ['can manage schools', 'can register schools'],
         },
+      },
+      {
+        title: 'Proposal',
+        route: 'proposal',
+        // acl: {
+        //   permissions: ['can manage schools', 'can register schools'],
+        // },
       },
     ],
   },

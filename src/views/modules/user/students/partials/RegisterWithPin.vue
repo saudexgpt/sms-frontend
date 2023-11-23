@@ -29,7 +29,7 @@
                 Student's Personal Information
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Surname"
                 label-for="last-name"
@@ -49,7 +49,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Other Names"
                 label-for="first-name"
@@ -69,7 +69,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <validation-provider
                 #default="{ errors }"
                 name="Country"
@@ -95,7 +95,7 @@
             </b-col>
             <b-col
               v-if="states.length > 0"
-              md="6"
+              md="12"
             >
               <validation-provider
                 #default="{ errors }"
@@ -122,7 +122,7 @@
             </b-col>
             <b-col
               v-if="lgas.length > 0"
-              md="6"
+              md="12"
             >
               <validation-provider
                 #default="{ errors }"
@@ -147,7 +147,7 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="DOB (YYYY-MM-DD)"
                 label-for="dob"
@@ -189,7 +189,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Gender"
                 label-for="gender"
@@ -216,7 +216,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Disability"
                 label-for="disability"
@@ -257,7 +257,7 @@
                 Admission Details
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Admission No."
                 label-for="registration_no"
@@ -276,7 +276,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Admission Session"
                 label-for="admission_session"
@@ -303,7 +303,7 @@
               </b-form-group>
             </b-col>
             <b-col
-              md="6"
+              md="12"
             >
               <validation-provider
                 #default="{ errors }"
@@ -344,7 +344,7 @@
               </validation-provider>
             </b-col>
             <b-col
-              md="6"
+              md="12"
             >
               <validation-provider
                 #default="{ errors }"
@@ -397,7 +397,7 @@
                 Sponsor's Details
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Main Mobile Number"
                 label-for="parent_phone"
@@ -417,7 +417,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Alternative Mobile Number"
                 label-for="parent_phone2"
@@ -430,7 +430,7 @@
                 />
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Email"
                 label-for="email"
@@ -450,7 +450,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Surname"
                 label-for="last-name"
@@ -470,7 +470,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Other Names"
                 label-for="first-name"
@@ -490,7 +490,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Gender"
                 label-for="gender"
@@ -517,7 +517,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Relationship with Child"
                 label-for="relationship"
@@ -544,7 +544,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Residential Address"
                 label-for="address"
@@ -564,7 +564,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Occupation"
                 label-for="occupation"
@@ -667,7 +667,7 @@
                 Student's Login Credentials
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Student Username"
                 label-for="student_username"
@@ -679,7 +679,7 @@
                 />
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Student Password"
                 label-for="student_password"
@@ -701,7 +701,7 @@
                 Sponsor Login Credentials
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Sponsor Username"
                 label-for="sponsor_username"
@@ -713,7 +713,7 @@
                 />
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Sponsor Password"
                 label-for="sponsor_password"

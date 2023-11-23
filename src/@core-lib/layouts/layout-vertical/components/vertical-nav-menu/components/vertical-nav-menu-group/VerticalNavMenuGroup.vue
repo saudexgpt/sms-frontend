@@ -12,7 +12,7 @@
       class="d-flex align-items-center"
       @click="() => updateGroupOpen(!isOpen)"
     >
-      <feather-icon :icon="item.icon || 'CircleIcon'" />
+      <feather-icon :icon="item.icon || 'TargetIcon'" />
       <span class="menu-title text-truncate">{{ t(item.title) }}</span>
       <b-badge
         v-if="item.tag"

@@ -8,7 +8,7 @@
     <b-navbar
       :toggleable="false"
       :variant="navbarBackgroundColor"
-      class="header-navbar navbar navbar-shadow align-items-center"
+      class="header-navbar navbar navbar-shadow align-items-center no-print"
       :class="[navbarTypeClass]"
     >
       <slot
@@ -24,6 +24,7 @@
     <!-- Vertical Nav Menu -->
     <vertical-nav-menu
       v-if="!isNavMenuHidden"
+      class="no-print"
       :is-vertical-menu-active="isVerticalMenuActive"
       :toggle-vertical-menu-active="toggleVerticalMenuActive"
     >
@@ -38,7 +39,7 @@
 
     <!-- Vertical Nav Menu Overlay -->
     <div
-      class="sidenav-overlay"
+      class="sidenav-overlay no-print"
       :class="overlayClasses"
       @click="isVerticalMenuActive = false"
     />

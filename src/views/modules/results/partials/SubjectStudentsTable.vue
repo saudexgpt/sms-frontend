@@ -145,9 +145,9 @@ import {
   BModal, BButton,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import Resource from '@/api/resource'
 import SingleEntry from './single/SingleResultUpload.vue'
 // import BulkEntry from './bulk/BulkResultUpload.vue'
-import Resource from '@/api/resource'
 
 const saveResultAction = new Resource('result/result-action')
 export default {

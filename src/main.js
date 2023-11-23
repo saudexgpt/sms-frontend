@@ -18,12 +18,12 @@ import solidGauge from 'highcharts/modules/solid-gauge'
 import stockInit from 'highcharts/modules/stock'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
+// import Pusher from 'pusher-js'
 import i18n from '@/libs/i18n'
 import lang from '@/lang'
 import router from './router'
 import store from './store'
 import App from './App.vue'
-
 // Global Components
 import './global-components'
 import '@/permission'
@@ -35,14 +35,25 @@ import '@/libs/clipboard'
 import '@/libs/toastification'
 import '@/libs/sweet-alerts'
 import '@/libs/vue-select'
-import '@/libs/tour'
+// import '@/libs/tour'
 
 // Axios Mock Adapter
-import '@/@fake-db/db'
+// import '@/@fake-db/db'
+
+/* -------------------------------------------------------------------------- */
+/*                             PUSHER CONFIG                                  */
+/* -------------------------------------------------------------------------- */
+// Pusher.logToConsole = true
+// const pusher = new Pusher(process.env.VUE_APP_MIX_PUSHER_APP_KEY, {
+//   cluster: process.env.VUE_APP_MIX_PUSHER_APP_CLUSTER,
+//   encrypted: true,
+// })
+// Vue.prototype.$pusher = pusher
 
 Vue.use(ElementUI, {
   i18n: (key, value) => lang.t(key, value),
 })
+
 Vue.use(CKEditor)
 Vue.use(ClientTable, {
   perPage: 10,

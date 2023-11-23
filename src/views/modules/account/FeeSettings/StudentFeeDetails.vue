@@ -34,6 +34,7 @@
             <td>Added to fees</td>
             <td>
               <b-button
+                v-if="selectedFee.amount_paid < 1"
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                 variant="danger"
                 class="mr-1"
@@ -56,6 +57,7 @@
             <td>Not added</td>
             <td>
               <b-button
+                v-if="selectedFee.amount_paid < 1"
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                 variant="success"
                 class="mr-1"

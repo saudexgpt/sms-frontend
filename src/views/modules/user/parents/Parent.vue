@@ -9,6 +9,24 @@
             List of Parents/Guardians
           </h3>
         </b-col>
+        <b-col
+          cols="5"
+        >
+          <span class="pull-right">
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="gradient-primary"
+              size="sm"
+              @click="isCreateClassSidebarActive = true"
+            >
+              <feather-icon
+                icon="FilePlusIcon"
+                class="mr-50"
+              />
+              <span class="align-middle">Add</span>
+            </b-button>
+          </span>
+        </b-col>
       </b-row>
     </div>
     <div>
@@ -60,6 +78,15 @@
               ><feather-icon icon="EyeIcon" /></router-link>
             </b-button>
             <b-button
+              v-if="checkPermission(['can update user profile'])"
+              v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
+              variant="info"
+              class="btn-icon rounded-circle"
+              @click="editThisRow(props.row)"
+            ><feather-icon icon="Edit2Icon" />
+            </b-button>
+            <b-button
+              v-if="checkPermission(['can reset user password'])"
               v-b-tooltip.hover.right="'Reset Password'"
               variant="gradient-warning"
               class="btn-icon rounded-circle"
@@ -68,6 +95,7 @@
               <feather-icon icon="UnlockIcon" />
             </b-button>
             <b-button
+              v-if="checkPermission(['can login as any user'])"
               v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
               variant="dark"
               class="btn-icon rounded-circle"
@@ -80,6 +108,17 @@
       </v-client-table>
 
     </div>
+    <create-parent
+      v-if="isCreateClassSidebarActive"
+      v-model="isCreateClassSidebarActive"
+      @save="fetchGuardians"
+    />
+    <edit-parent
+      v-if="isEditClassSidebarActive"
+      v-model="isEditClassSidebarActive"
+      :edit-data="editable_row"
+      @update="fetchGuardians"
+    />
   </el-card>
 </template>
 
@@ -87,15 +126,18 @@
 import {
   BButton, BRow, BCol, VBTooltip,
 } from 'bootstrap-vue'
-// import vSelect from 'vue-select'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
+import checkPermission from '@/utils/permission'
+import CreateParent from './Create.vue'
+import EditParent from './Edit.vue'
 
 export default {
   components: {
     // VueGoodTable,
-    // vSelect,
+    CreateParent,
+    EditParent,
     BButton,
     // BAlert,
     // BPagination,
@@ -186,8 +228,10 @@ export default {
     this.fetchGuardians()
   },
   methods: {
+    checkPermission,
     fetchGuardians() {
       const app = this
+      app.isCreateClassSidebarActive = false
       app.loading = true
       const fetchGuardianResource = new Resource('user-setup/guardians')
       fetchGuardianResource.list()

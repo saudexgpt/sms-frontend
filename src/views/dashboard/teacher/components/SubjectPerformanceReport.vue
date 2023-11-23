@@ -10,7 +10,7 @@
     >
 
       <b-col
-        md="3"
+        md="12"
         class="revenue-report-wrapper"
       >
         <strong>Make Selection</strong>
@@ -51,34 +51,26 @@
         </b-button> -->
       </b-col>
       <b-col
-        md="9"
+        md="12"
         class="revenue-report-wrapper"
       >
-        <div class="d-sm-flex justify-content-between align-items-center mb-3">
+        <div align="center">
           <h4 class="card-title mb-0 mb-sm-0">
             My Students' Average Subject Performance
           </h4>
           <strong>[{{ response_data.selected_session }}, {{ response_data.selected_term }} Term]</strong>
-          <!-- <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center mr-2">
-              <span class="bullet bullet-primary svg-font-small-3 mr-50 cursor-pointer" />
-              <span>Earning</span>
-            </div>
-            <div class="d-flex align-items-center ml-75">
-              <span class="bullet bullet-warning svg-font-small-3 mr-50 cursor-pointer" />
-              <span>Expense</span>
-            </div>
-          </div> -->
         </div>
 
         <!-- chart -->
-        <vue-apex-charts
-          id="revenue-report-chart"
-          type="bar"
-          height="230"
-          :options="chartOptions"
-          :series="series"
-        />
+        <div>
+          <vue-apex-charts
+            id="revenue-report-chart"
+            type="bar"
+            height="250"
+            :options="chartOptions"
+            :series="series"
+          />
+        </div>
       </b-col>
     </b-row>
   </b-card>
@@ -93,7 +85,6 @@ import { $themeColors } from '@themeConfig'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
-const chartDataFetch = new Resource('report/display-chart')
 export default {
   components: {
     VueApexCharts,
@@ -124,7 +115,7 @@ export default {
           },
         },
         xaxis: {
-          categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+          type: 'category',
           labels: {
             style: {
               colors: '#6E6B7B',
@@ -140,16 +131,17 @@ export default {
           },
         },
         legend: {
-          show: false,
+          show: true,
         },
         dataLabels: {
-          enabled: false,
+          enabled: true,
         },
         colors: [$themeColors.primary, $themeColors.warning],
         plotOptions: {
           bar: {
             columnWidth: '17%',
             endingShape: 'rounded',
+            horizontal: true,
           },
           distributed: true,
         },
@@ -215,10 +207,12 @@ export default {
       const app = this
       app.load = true
       app.chartOptions.xaxis.categories = []
+
+      const chartDataFetch = new Resource('report/display-chart')
       chartDataFetch.list(this.params)
         .then(response => {
           app.series = response.series
-          app.chartOptions.xaxis.categories = response.subject_names
+          // app.chartOptions.xaxis.categories = response.subject_names
           // app.getSubjectAndClass()
           app.response_data = response
           if (app.params.term_id === app.params.sess_id === '') {

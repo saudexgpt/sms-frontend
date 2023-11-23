@@ -1,24 +1,31 @@
 <template>
-  <b-card v-if="user !== null">
-
-    <b-row>
-
-      <!-- User Info: Left col -->
-      <b-col
-        cols="24"
-        xl="7"
-        class="d-flex justify-content-between flex-column"
+  <b-card v-if="user">
+    <!-- User Avatar & Action Buttons -->
+    <div
+      align="center"
+      style="background: #f0f0f0; padding: 10px"
+    >
+      <img
+        :src="baseServerUrl +'storage/'+ user.photo"
+        alt="Photo"
+        width="120"
+        onerror="this.src='/images/profile-image.png'"
+        style="border: #000000 solid 3px; border-radius: 5px"
       >
-        <!-- User Avatar & Action Buttons -->
-        <div class="d-flex justify-content-start">
-          <b-avatar
+      <div>
+        <br>
+        <h5>{{ user.first_name +' ' + user.last_name }}</h5>
+        <small class="font-weight-bold">{{ user.email }}</small><br>
+        <span class="font-weight-bold">{{ user.phone }}</span>
+      </div>
+      <!-- <b-avatar
             :src="baseServerUrl +'storage/'+user.photo"
             variant="light-primary"
-            :text="avatarText(user.first_name +' ' + user.last_name)"
+            onerror="this.src='/images/profile-image.png'"
             size="120px"
             rounded
-          />
-          <div class="d-flex flex-column ml-1">
+          /> -->
+      <!-- <div class="d-flex flex-column ml-1">
             <div class="mb-1">
               <h2 class="mb-0">
                 {{ user.first_name +' ' + user.last_name }}
@@ -26,108 +33,73 @@
               <small class="font-weight-bold">{{ user.email }}</small><br>
               <span class="font-weight-bold">{{ user.phone }}</span>
             </div>
-          </div>
-        </div>
-        <!-- We want to make sure only the owner of the data can modify it-->
-        <div
-          v-if="userData.id === user.id"
-          class="demo-inline-spacing"
-        >
-          <b-button
-            v-if="user.role !== 'student'"
-            size="sm"
-            variant="primary"
-            @click="changePhoto()"
-          >
-            Change Photo
-          </b-button>
-          <b-button
-            size="sm"
-            variant="danger"
-            @click="dialogVisible = true"
-          >
-            Update Password
-          </b-button>
-        </div>
-      </b-col>
-      <b-col
-        cols="24"
-        xl="5"
+          </div> -->
+    </div>
+    <!-- We want to make sure only the owner of the data can modify it-->
+    <div
+      v-if="userData.id === user.id"
+      class="demo-inline-spacing"
+    >
+      <b-button
+        v-if="user.role !== 'student'"
+        size="sm"
+        variant="primary"
+        @click="changePhoto()"
       >
-        <table class="mt-2 mt-xl-0 w-100">
-          <tr>
-            <th class="pb-50">
-              <feather-icon
-                icon="UserIcon"
-                class="mr-75"
-              />
-              <span>ID: </span>
-              <span class="font-weight-bold">{{ user.username }}</span>
-            </th>
-          </tr>
-          <tr>
-            <th class="pb-50">
-              <feather-icon
-                icon="UserIcon"
-                class="mr-75"
-              />
-              <span>Gender: </span>
-              <span class="font-weight-bold">{{ user.gender }}</span>
-            </th>
-          </tr>
-          <tr v-if="user.dob">
-            <th class="pb-50">
-              <feather-icon
-                icon="UserIcon"
-                class="mr-75"
-              />
-              <span>DOB: </span>
-              <span class="font-weight-bold">{{ user.dob }}</span>
-            </th>
-          </tr>
-          <tr>
-            <th class="pb-50">
-              <feather-icon
-                icon="MapPinIcon"
-                class="mr-75"
-              />
-              <span>Address: </span>
-              <span class="font-weight-bold">{{ user.address }}</span>
-            </th>
-          </tr>
-          <tr v-if="user.state">
-            <th class="pb-50">
-              <feather-icon
-                icon="MapPinIcon"
-                class="mr-75"
-              />
-              <span>State Of Origin: </span>
-              <span class="font-weight-bold">{{ (user.state) ? user.state.name : 'Not Set' }}</span>
-            </th>
-          </tr>
-          <tr v-if="user.lga">
-            <th class="pb-50">
-              <feather-icon
-                icon="MapPinIcon"
-                class="mr-75"
-              />
-              <span>LGA of Origin: </span>
-              <span class="font-weight-bold">{{ (user.lga) ? user.lga.name : 'Not Set' }}</span>
-            </th>
-          </tr>
-          <tr v-if="user.religion">
-            <th class="pb-50">
-              <feather-icon
-                icon="MapPinIcon"
-                class="mr-75"
-              />
-              <span>Religion: </span>
-              <span class="font-weight-bold">{{ (user.religion) ? user.religion : 'Not Set' }}</span>
-            </th>
-          </tr>
-        </table>
-      </b-col>
-    </b-row>
+        Change Photo
+      </b-button>
+      <b-button
+        size="sm"
+        variant="danger"
+        @click="dialogVisible = true"
+      >
+        Update Password
+      </b-button>
+    </div>
+    <table class="table-bordered mt-2 mt-xl-0 w-100">
+      <tr>
+        <th class="padded-th">
+          <span>ID: </span>
+          <span class="font-weight-bold">{{ user.username }}</span>
+        </th>
+      </tr>
+      <tr>
+        <th class="padded-th">
+          <span>Gender: </span>
+          <span class="font-weight-bold">{{ user.gender }}</span>
+        </th>
+      </tr>
+      <tr v-if="user.dob">
+        <th class="padded-th">
+          <span>DOB: </span>
+          <span class="font-weight-bold">{{ user.dob }}</span>
+        </th>
+      </tr>
+      <tr v-if="user.religion">
+        <th class="padded-th">
+          <span>Religion: </span>
+          <span class="font-weight-bold">{{ (user.religion) ? user.religion : 'Not Set' }}</span>
+        </th>
+      </tr>
+      <tr>
+        <th class="padded-th">
+          <span>Address: </span>
+          <span class="font-weight-bold">{{ user.address }}</span>
+        </th>
+      </tr>
+      <tr v-if="user.state">
+        <th class="padded-th">
+          <span>State Of Origin: </span>
+          <span class="font-weight-bold">{{ (user.state) ? user.state.name : 'Not Set' }}</span>
+        </th>
+      </tr>
+      <tr v-if="user.lga">
+        <th class="padded-th">
+          <span>LGA of Origin: </span>
+          <span class="font-weight-bold">{{ (user.lga) ? user.lga.name : 'Not Set' }}</span>
+        </th>
+      </tr>
+    </table>
     <el-dialog
       title="Change Password"
       :visible.sync="dialogVisible"
@@ -185,10 +157,10 @@
 
 <script>
 import {
-  BButton, BCard, BAvatar, BRow, BCol,
+  BButton, BCard,
 } from 'bootstrap-vue'
 import { mapGetters } from 'vuex'
-import { avatarText } from '@core/utils/filter'
+// import { avatarText } from '@core/utils/filter'
 import UploadPhoto from '@/views/modules/user/UploadPhoto.vue'
 import Resource from '@/api/resource'
 
@@ -196,25 +168,23 @@ export default {
   components: {
     BCard,
     BButton,
-    BRow,
-    BCol,
-    BAvatar,
+    // BAvatar,
     UploadPhoto,
   },
   props: {
     user: {
       type: Object,
       required: true,
-      default: () => (null),
+      default: () => ({}),
     },
   },
   data() {
     // const { resolveUserRoleVariant } = useUsersList()
     return {
-      avatarText,
+      // avatarText,
       // resolveUserRoleVariant,
       form: {
-        email: this.user.email,
+        email: '',
         new_password: '',
         confirm_password: '',
       },
@@ -230,6 +200,9 @@ export default {
     ...mapGetters([
       'userData',
     ]),
+  },
+  mounted() {
+    this.form.email = this.user.email
   },
   methods: {
     updatePassword() {
@@ -265,6 +238,11 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.card-body {
+  padding: 0.5rem;
+}
+.padded-th {
+  padding: 1rem;
+}
 </style>

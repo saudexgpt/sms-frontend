@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div v-loading="load">
     <el-row
       :gutter="10"
       class="padded"
@@ -15,8 +15,8 @@
             <li><code><a @click="handleDownload">Download CSV Format</a></code> to get the file format</li>
             <li>Open with a spreadsheet package, example Microsoft Excel package</li>
             <li>Leave the Table Header Names the way they are and <strong class="red">DO NOT MODIFY THEM</strong></li>
-            <li>Fill the downloaded csv file accordingly as guided by the Header Names. Each row for an entry.</li>
-            <li>Delete the two sample entries given to guide you and start from row number two (2) in the file.</li>
+            <li>Fill the downloaded csv file accordingly as guided by the Header Names. Each row for an entry. Where no data exist for a column, fill in a NIL. <br><strong class="red">DO NOT leave any cell blank.</strong></li>
+            <!-- <li>Delete the two sample entries given to guide you and start from row number two (2) in the file.</li> -->
             <li>When done with all entries, SAVE your file with .csv (Comma delimited) file extension. <strong class="red">For example students.csv</strong></li>
             <li>Fill the form accordingly and select the file from where you saved</li>
             <li>Preview your work and click on SUBMIT if satisfied</li>
@@ -92,7 +92,7 @@
     <legend v-if="tableData.length > 0">
       Preview what you just uploaded and then click on the submit button. <a
         class="btn btn-success"
-        @click="addBulkProductToStock"
+        @click="submitBulkStudent"
       >SUBMIT</a>
     </legend>
     <div style="height: 600px; overflow:auto;">
@@ -113,7 +113,7 @@
     <legend v-if="tableData.length > 0">
       Click on the submit button. <a
         class="btn btn-success"
-        @click="addBulkProductToStock"
+        @click="submitBulkStudent"
       >SUBMIT</a>
     </legend>
   </div>
@@ -179,6 +179,7 @@ export default {
       levels: [],
       selectedLevel: '',
       classes: [],
+      load: false,
 
     }
   },
@@ -204,7 +205,7 @@ export default {
       // this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         // const multiHeader = [['List of Products', '', '', '', '']];
-        const tHeader = ['SURNAME', 'OTHER_NAMES', 'GENDER', 'DOB', /* 'LEVEL', 'CLASS', */ 'ADMISSION_YEAR', 'PARENT_FIRST_NAME', 'PARENT_LAST_NAME', 'PARENT_PHONE_1', 'PARENT_PHONE_2', 'PARENT_EMAIL', 'PARENT_OCCUPATION', 'RESIDENTIAL_ADDRESS', 'RELIGION']
+        const tHeader = ['SURNAME', 'OTHER_NAMES', 'GENDER', 'DOB', /* 'LEVEL', 'CLASS', */ 'ADMISSION_NO', 'ADMISSION_YEAR', 'PARENT_FIRST_NAME', 'PARENT_LAST_NAME', 'PARENT_PHONE_1', 'PARENT_PHONE_2', 'PARENT_EMAIL', 'PARENT_OCCUPATION', 'RESIDENTIAL_ADDRESS', 'RELIGION']
         // const filterVal = []
         // const list = [] // this.items
         const data = [] // this.formatJson(filterVal, list)
@@ -224,21 +225,27 @@ export default {
       this.tableHeader = header
       // console.log(results);
     },
-    addBulkProductToStock() {
+    submitBulkStudent() {
       const app = this
       const { form } = app
       if (form.level_id === '') {
         app.$message({ message: 'Please select a level and class', type: 'danger' })
       } else {
+        app.load = true
         form.bulk_data = app.tableData
         uploadBulkStudents.store(form)
           .then(response => {
-            console.log(response)
-            app.tableData = []
-            app.tableHeader = []
-            app.$message({ message: 'Bulk upload Successful!!!', type: 'success' })
+            app.load = false
+            app.tableData = response.unsaved_data
+            if (app.tableData.length > 0) {
+              app.$alert('Some data could not be uploaded. Possible cause may be duplicate student Admission Number')
+            } else {
+              app.tableHeader = []
+              app.$message({ message: 'Bulk upload Successful!!!', type: 'success' })
+            }
           })
           .catch(error => {
+            app.load = false
             app.$message({ message: error, type: 'danger' })
           })
       }

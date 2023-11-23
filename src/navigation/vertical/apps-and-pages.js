@@ -3,7 +3,7 @@ export default [
   //   header: 'Apps & Pages',
   // },
   {
-    title: 'Messages',
+    title: 'Mailbox',
     route: 'apps-email',
     icon: 'MailIcon',
     acl: {

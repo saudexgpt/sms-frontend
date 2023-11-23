@@ -136,7 +136,7 @@
 
 </template>
 <script>
-
+import { $themeColors } from '@themeConfig'
 import Resource from '@/api/resource'
 
 const chartDataFetch = new Resource('report/display-chart')
@@ -172,7 +172,8 @@ export default {
       subject_performance: {
         chart: {
           type: 'column',
-
+          inverted: false,
+          height: 450,
           options3d: {
             enabled: false,
             alpha: 0,
@@ -238,6 +239,8 @@ export default {
       gender_performance: {
         chart: {
           type: 'column',
+          inverted: true,
+          height: 800,
           options3d: {
             enabled: false,
             alpha: 0,
@@ -280,7 +283,7 @@ export default {
 
         ],
 
-        // colors: ['#063', '#910000'],
+        colors: [$themeColors.primary, $themeColors.danger],
 
         credits: {
           enabled: false,

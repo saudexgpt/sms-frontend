@@ -27,7 +27,7 @@ export default [
         },
       },
       {
-        title: 'Add Assignment',
+        title: 'Add',
         route: 'AddAssignment',
         acl: {
           modules: ['assignment'],
@@ -35,7 +35,7 @@ export default [
         },
       },
       {
-        title: 'View Assignments',
+        title: 'View',
         route: 'ViewAssignments',
         acl: {
           modules: ['assignment'],

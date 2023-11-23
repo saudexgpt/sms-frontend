@@ -43,8 +43,8 @@
 </template>
 <script>
 import { BCard } from 'bootstrap-vue'
-import SelectQuestionType from './SelectQuestionType.vue'
 import Resource from '@/api/resource'
+import SelectQuestionType from './SelectQuestionType.vue'
 
 const subjectTeacherDashboard = new Resource('lms/subject-teachers')
 export default {
@@ -57,7 +57,7 @@ export default {
       load: false,
     }
   },
-  mounted() {
+  created() {
     this.subjectTeachers()
     //  var timeinterval = setInterval(() => {
     //     this.subjectTeachers();

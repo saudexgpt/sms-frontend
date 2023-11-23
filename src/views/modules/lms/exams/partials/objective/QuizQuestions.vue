@@ -15,15 +15,6 @@
         type="error"
         effect="dark"
       />
-      <div id="clock">
-
-        <stop-watch
-          v-if="quiz_attempt != ''"
-          :quiz-attempt="quiz_attempt"
-          @timeup="checkTime"
-        />
-
-      </div>
       <div
         v-loading="loader"
         class="box-body"
@@ -38,43 +29,16 @@
               class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
               style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
             >
-              <font color="red">
-                Question {{ index + 1 }}  of  {{ answers.length }}
-              </font>
-              <div class="demo-inline-spacing">
-                <button
-                  v-if="index != 0"
-                  class="btn btn-primary"
-                  @click="load(index,index-1);"
-                > <feather-icon
-                  icon="ArrowLeftIcon"
-                /> Prev
-                </button>
-                <button
-                  v-if="index+1 === answers.length"
-                  class="btn btn-dark"
-                  @click="previewAswers()"
-                > <feather-icon
-                  icon="ListIcon"
-                /> Preview
-                </button>
-                <button
-                  v-else
-                  class="btn btn-primary"
-                  @click="load(index,index+1);"
-                > Next
-                  <feather-icon
-                    icon="ArrowRightIcon"
-                  />
-                </button>
+              <div>
+                <strong style="color: red">
+                  Question {{ index + 1 }}  of  {{ answers.length }}
+                </strong>
               </div>
-              <div style="background: #fcfcfc; padding:10px;">
-                <div
-                  class="controls"
-                  style="font-size: 15px;"
-                >
-                  <span v-html="quiz.question.question" /><hr>
-                </div>
+              <hr>
+              <aside>
+                <span v-html="quiz.question.question" />
+              </aside>
+              <div style="padding:10px;">
 
                 <div class="control-group">
                   <label
@@ -87,7 +51,46 @@
                       type="hidden"
                     >
                     <div id="opt11">
-                      <label
+                      <el-radio
+
+                        v-model="quiz.student_answer"
+                        label="A"
+                        border
+                        size="medium"
+                        @change="quiz.student_answer_option = quiz.question.optA"
+                      />
+                      <span
+                        v-html="quiz.question.optA"
+                      />
+                      <hr>
+                      <el-radio
+                        v-model="quiz.student_answer"
+                        label="B"
+                        border
+                        size="medium"
+                        @change="quiz.student_answer_option = quiz.question.optB"
+                      />
+                      <span v-html="quiz.question.optB" />
+                      <hr>
+                      <el-radio
+                        v-model="quiz.student_answer"
+                        label="C"
+                        border
+                        size="medium"
+                        @change="quiz.student_answer_option = quiz.question.optC"
+                      />
+                      <span v-html="quiz.question.optC" />
+                      <hr>
+                      <el-radio
+                        v-model="quiz.student_answer"
+                        label="D"
+                        border
+                        size="medium"
+                        @change="quiz.student_answer_option = quiz.question.optD"
+                      />
+                      <span v-html="quiz.question.optD" />
+                      <hr>
+                      <!-- <label
                         for="ansA"
                         style="cursor: pointer"
                       >(A)&nbsp;&nbsp;</label>
@@ -137,7 +140,7 @@
                         value="D"
                         type="radio"
                         @click="quiz.student_answer_option = quiz.question.optD"
-                      ><span v-html="quiz.question.optD" /><br>
+                      ><span v-html="quiz.question.optD" /><br>-->
 
                     </div>
 
@@ -145,10 +148,11 @@
                 </div>
               </div>
               <br>
-              <div class="demo-inline-spacing">
+
+              <div class="demo-inline-spacing pull-right">
                 <button
                   v-if="index != 0"
-                  class="btn btn-primary"
+                  class="btn btn-danger"
                   @click="load(index,index-1);"
                 > <feather-icon
                   icon="ArrowLeftIcon"
@@ -216,16 +220,6 @@
 
           </div>
 
-          <legend>Navigate Questions</legend>
-
-          <a
-            v-for="(quiz, index) in answers"
-            :id="'quest_button_'+index"
-            :key="index"
-            style="cursor:pointer; font-size: 20px; border-radius: 4px; background-color: #ccc; color: #fff; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px;"
-            @click="change(index);"
-          >{{ index+1 }}</a>
-
         </div>
       </div>
 
@@ -238,45 +232,43 @@
       :lg="8"
       :xl="8"
     >
-      <!-- <el-row :gutter="5">
-        <div class="demo-inline-spacing">
-          <button
-            v-if="!preview"
-            class="btn btn-primary"
-            @click="previewAswers()"
-          > Preview
-          </button>
-          <button
-            v-if="preview"
-            class="btn btn-warning"
-            @click="load(answers.length,answers.length-1);"
-          >
-            Back to Exam
-          </button>
-          <button
-            class="btn btn-success"
-            @click="saveAnswers()"
-          >
-            <i class="fa fa-save" /> SUBMIT
-          </button>
-        </div>
-        <br>
-      </el-row> -->
-      <a
-        v-if="!show_calculator"
-        style="font-size: 20px;"
-        class="badge btn-dark"
-        @click="show_calculator=true"
-      >Show Calculator</a>
-      <a
-        v-if="show_calculator"
-        class="badge btn-danger"
-        style="font-size: 20px;"
-        @click="show_calculator=false"
-      >Hide Calculator</a>
-      <div v-if="show_calculator"><hr>
-        <calculator />
+
+      <div id="clock">
+
+        <stop-watch
+          v-if="quiz_attempt != ''"
+          :quiz-attempt="quiz_attempt"
+          @timeup="checkTime"
+        />
+
       </div>
+      <aside>
+        <legend>Navigate Questions</legend>
+
+        <a
+          v-for="(quiz, index) in answers"
+          :id="'quest_button_'+index"
+          :key="index"
+          style="cursor:pointer; font-size: 20px; border-radius: 4px; background-color: #ccc; color: #fff; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px;"
+          @click="change(index);"
+        >{{ index+1 }}</a>
+        <hr>
+        <a
+          v-if="!show_calculator"
+          style="font-size: 20px;"
+          class="badge btn-dark"
+          @click="show_calculator=true"
+        >Show Calculator</a>
+        <a
+          v-if="show_calculator"
+          class="badge btn-danger"
+          style="font-size: 20px;"
+          @click="show_calculator=false"
+        >Hide Calculator</a>
+        <div v-if="show_calculator"><hr>
+          <calculator />
+        </div>
+      </aside>
     </el-col>
     <div
       v-if="submitted"
@@ -322,7 +314,7 @@ export default {
   data() {
     return {
       quiz_attempt: '',
-      show_calculator: true,
+      show_calculator: false,
       answers: [],
       current_question: 0,
       preview: false,

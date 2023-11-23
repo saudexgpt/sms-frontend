@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="student"
+    v-if="dashboardData"
   >
     <el-row
       :gutter="10"
@@ -13,235 +13,176 @@
         :xl="12"
       >
         <analytics-congratulation
-          :data="student.user"
-          :current-class="current_class"
+          :data="dashboardData.student.user"
+          :current-class="dashboardData.current_class"
         />
       </el-col>
       <el-col
-        :xs="12"
+        :xs="24"
         :sm="12"
-        :md="6"
-        :lg="6"
-        :xl="6"
+        :md="12"
+        :lg="12"
+        :xl="12"
       >
-        <statistic-card-with-area-chart
+        <!-- <statistic-card-with-area-chart
           icon="ActivityIcon"
           :statistic="average_performance + '%'"
           statistic-title="My Performance"
           :chart-data="series"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="12"
-        :md="6"
-        :lg="6"
-        :xl="6"
-      >
-        <statistic-card-horizontal
-          color="warning"
-          icon="UsersIcon"
-          :statistic="total_in_class"
-          statistic-title="Total in Class"
-        />
-        <statistic-card-horizontal
-          color="primary"
-          icon="BookIcon"
-          :statistic="subject_teachers.length"
-          statistic-title="No. of Subjects"
-        />
-      </el-col>
-      <!-- <el-col
-        :xs="12"
-        :sm="12"
-        :md="10"
-        :lg="10"
-        :xl="10"
-      >
-        <statistic-card-horizontal
-          color="success"
-          icon="UsersIcon"
-          :statistic="10"
-          statistic-title="My Teachers"
-        />
-      </el-col> -->
-      <!-- <el-col
-        :xs="12"
-        :sm="12"
-        :md="6"
-        :lg="6"
-        :xl="6"
-      >
-        <router-link :to="{name: 'MyResult'}">
-          <statistic-card-horizontal
-            icon="BarChartIcon"
-            statistic="100%"
-            statistic-title="My Result"
-          />
-        </router-link>
-      </el-col> -->
-    </el-row>
-
-    <el-row :gutter="10">
-      <el-col
-        :lg="12"
-        :xl="12"
-        :md="12"
-        :sm="12"
-        :xs="24"
-      >
+        /> -->
         <b-card
-          v-if="class_teacher !== ''"
-          :img-src="require('@/assets/images/banner/banner-2.jpg')"
-          img-alt="Profile Cover Photo"
-          img-top
-          class="card-profile"
+          no-body
+          class="card-statistics"
         >
-          <div class="profile-image-wrapper">
-            <div class="profile-image p-0">
-              <b-avatar
-                size="114"
-                variant="light"
-                :src="baseServerUrl +'storage/'+class_teacher.photo"
-              />
-            </div>
-          </div>
-          <h3>{{ class_teacher.first_name + ' ' + class_teacher.last_name }}</h3>
-          <h6 class="text-muted">
-            {{ class_teacher.email }}
-          </h6>
-          <b-badge
-            class="profile-badge"
-            variant="light-primary"
-          >
-            Class Teacher
-          </b-badge>
-          <hr class="mb-2">
-        </b-card>
-        <b-card>
-          <div slot="header">
-            <h4>My Subjects</h4>
-          </div>
+          <b-card-header>
+            <b-card-title>Statistics</b-card-title>
+            <!-- <b-card-text class="font-small-2 mr-15 mb-1">
+              Updated 1 month ago
+            </b-card-text> -->
+          </b-card-header>
+          <b-card-body class="statistics-body">
+            <b-row>
+              <b-col
+                :xs="24"
+                :sm="4"
+                :md="4"
+                :lg="4"
+                :xl="4"
+              >
+                <b-media no-body>
+                  <b-media-aside
 
-          <v-client-table
-            v-model="subject_teachers"
-            :columns="columns"
-            :options="options"
-          >
-            <div
-              slot="sn"
-              slot-scope="props"
-            >
-              {{ props.index }}
-            </div>
-          </v-client-table>
-        </b-card>
-        <student-routine />
-      </el-col>
+                    class="mr-1"
+                  >
+                    <b-avatar
+                      size="36"
+                      variant="success"
+                    >
+                      <feather-icon
+                        size="18"
+                        icon="UserCheckIcon"
+                      />
+                    </b-avatar>
+                  </b-media-aside>
+                  <b-media-body class="my-auto">
+                    <h4 class="font-weight-bolder mb-1">
+                      {{ dashboardData.current_class }}
+                    </h4>
+                    <b-card-text class="font-small-3 mb-1">
+                      &nbsp;
+                    </b-card-text>
+                  </b-media-body>
+                </b-media>
+              </b-col>
 
-      <el-col
-        :lg="12"
-        :xl="12"
-        :md="12"
-        :sm="12"
-        :xs="24"
-      >
-        <timeline />
+              <b-col
+                :xs="24"
+                :sm="4"
+                :md="4"
+                :lg="4"
+                :xl="4"
+              >
+                <b-media no-body>
+                  <b-media-aside
+
+                    class="mr-1"
+                  >
+                    <b-avatar
+                      size="36"
+                      variant="primary"
+                    >
+                      <feather-icon
+                        size="18"
+                        icon="UsersIcon"
+                      />
+                    </b-avatar>
+                  </b-media-aside>
+                  <b-media-body class="my-auto">
+                    <h4 class="font-weight-bolder mb-1">
+                      {{ dashboardData.total_in_class - 1 }}
+                    </h4>
+                    <b-card-text class="font-small-3 mb-1">
+                      Class Mates
+                    </b-card-text>
+                  </b-media-body>
+                </b-media>
+              </b-col>
+              <b-col
+                :xs="24"
+                :sm="4"
+                :md="4"
+                :lg="4"
+                :xl="4"
+              >
+                <b-media no-body>
+                  <b-media-aside
+
+                    class="mr-1"
+                  >
+                    <b-avatar
+                      size="36"
+                      variant="warning"
+                    >
+                      <feather-icon
+                        size="18"
+                        icon="BookIcon"
+                      />
+                    </b-avatar>
+                  </b-media-aside>
+                  <b-media-body class="my-auto">
+                    <h4 class="font-weight-bolder mb-1">
+                      {{ dashboardData.subject_teachers.length }}
+                    </h4>
+                    <b-card-text class="font-small-3 mb-1">
+                      Subjects
+                    </b-card-text>
+                  </b-media-body>
+                </b-media>
+              </b-col>
+            </b-row>
+          </b-card-body>
+        </b-card>
+
       </el-col>
     </el-row>
-    <!-- <el-row :gutter="10">
-      <el-col
-        :lg="6"
-        :xl="6"
-        :md="6"
-        :sm="24"
-        :xs="24"
-      >
-        <student-routine />
-      </el-col>
-    </el-row> -->
   </div>
 </template>
 
 <script>
-import { BCard, BAvatar, BBadge } from 'bootstrap-vue'
-import StatisticCardHorizontal from '@core/components/statistics-cards/StatisticCardHorizontal.vue'
-import StatisticCardWithAreaChart from '@core/components/statistics-cards/StatisticCardWithAreaChart.vue'
-// import StudentDetails from '@/views/modules/user/students/partials/Details.vue'
-import StudentRoutine from '@/views/modules/time-table/StudentRoutine.vue'
-import Timeline from '@/views/modules/user/Timeline.vue'
+import {
+  BCard, BCardHeader, BCardTitle, BCardBody, BAvatar, BRow, BCol, BMedia,
+  BMediaBody, BMediaAside, BCardText,
+} from 'bootstrap-vue'
 import AnalyticsCongratulation from '@/views/dashboard/analytics/AnalyticsCongratulation.vue'
-import Resource from '@/api/resource'
 
-const dataAnalysisResource = new Resource('dashboard/student')
 export default {
 
   components: {
-    BCard, BAvatar, BBadge, StatisticCardHorizontal, StatisticCardWithAreaChart, /* StudentDetails, */ StudentRoutine, AnalyticsCongratulation, Timeline,
+    BCard,
+    BAvatar,
+    BCardHeader,
+    BCardTitle,
+    BCardBody,
+    BRow,
+    BCol,
+    BMedia,
+    BMediaBody,
+    BMediaAside,
+    BCardText,
+    // StatisticCardHorizontal,
+    // StatisticCardWithAreaChart,
+    /* StudentDetails, */
+    AnalyticsCongratulation,
   },
-
+  props: {
+    dashboardData: {
+      type: Object,
+      default: () => (null),
+    },
+  },
   data() {
     return {
-      role: 'student',
-
-      student: '',
-      subject_teachers: [],
-      total_in_class: 0,
-      current_class: '',
-      class_teacher: '',
-      series: [
-        {
-          name: 'Performance',
-          data: [],
-        },
-      ],
-      average_performance: 0,
-      columns: [
-        'sn',
-        'subject.name',
-      ],
-
-      options: {
-        headings: {
-          'subject.name': 'Subject',
-          sn: '#',
-        },
-        sortable: [
-          'id',
-          'subject.name',
-        ],
-        // filterable: false,
-        filterable: [
-          'id',
-          'subject.name',
-        ],
-      },
     }
-  },
-  computed: {
-    baseServerUrl() {
-      return this.$store.getters.baseServerUrl
-    },
-  },
-  created() {
-    this.fetchData()
-  },
-  methods: {
-
-    fetchData() {
-      const app = this
-      // this.listLoading = true;
-      dataAnalysisResource.list()
-        .then(response => {
-          app.student = response.student
-          app.subject_teachers = response.subject_teachers
-          app.series[0].data = response.performance_data
-          app.average_performance = response.average_performance
-          app.total_in_class = response.total_in_class
-          app.current_class = response.current_class
-          app.class_teacher = response.class_teacher
-        })
-    },
   },
 }
 </script>

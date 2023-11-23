@@ -1,7 +1,8 @@
 <template>
   <el-card v-loading="load">
     <div slot="header">
-      <h4>Subjects Assigned to {{ teacher }}</h4>
+      <h4>My Subjects</h4>
+      <small>Click to manage elective students (if necessary)</small>
     </div>
     <el-row
       :gutter="10"

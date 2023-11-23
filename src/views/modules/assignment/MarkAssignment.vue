@@ -17,10 +17,10 @@
           slot="child_row"
           slot-scope="{row}"
         >
-          <aside>
+          <div style="background: #fdf9cc; padding: 10px; border-radius: 5px">
             <legend>{{ row.student.user.first_name + "'s" }} Answer</legend>
             <span v-html="row.student_answer" />
-          </aside>
+          </div>
 
         </div>
         <div

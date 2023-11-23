@@ -43,6 +43,7 @@ import attendance from './modules/attendance'
 import result from './modules/result'
 import timeTable from './modules/time-table'
 import eLearning from './modules/lms'
+import interview from './modules/interview'
 import userSetup from './modules/user-management'
 import schoolSetup from './modules/school-setup'
 import appSetup from './modules/app-setup'
@@ -165,6 +166,7 @@ export const asyncRoutes = [
   ...result,
   ...timeTable,
   ...eLearning,
+  ...interview,
   ...userSetup,
   ...schoolSetup,
   ...schools,

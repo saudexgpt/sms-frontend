@@ -7,7 +7,7 @@
     >
       <el-tab-pane
         key="Admission"
-        label="Admission Chart"
+        label="Population Chart"
         name="Admission"
       >
 
@@ -33,17 +33,13 @@
         </keep-alive>
 
       </el-tab-pane>
-      <el-tab-pane
+      <!-- <el-tab-pane
         v-if="modules.includes('account')"
         key="Revenue"
         label="Revenue Chart"
         name="Revenue"
       >
         <keep-alive>
-          <!-- <academic-performance
-            v-if="activeName=='Academic'"
-            type="Academic"
-          /> -->
           <revenue
             v-if="sessions.length > 0 && activeName=='Revenue'"
             type="Revenue"
@@ -67,8 +63,8 @@
           />
         </keep-alive>
 
-      </el-tab-pane>
-      <!-- <el-tab-pane
+      </el-tab-pane> -->
+      <el-tab-pane
         key="Attendance"
         label="Attendance Chart"
         name="Attendance"
@@ -79,7 +75,7 @@
             type="Attendance"
           />
         </keep-alive>
-      </el-tab-pane> -->
+      </el-tab-pane>
     </el-tabs>
 
   </div>
@@ -87,17 +83,18 @@
 <script>
 
 import AdmissionChart from './charts/AdmissionChart.vue'
-// import AttendanceChart from '../../../attendance/index'
+import AttendanceChart from './charts/AttendanceChart.vue'
 import AcademicPerformance from './charts/AcademicPerformance.vue'
-import Revenue from './charts/Revenue.vue'
-import Debtors from './charts/Debtors.vue'
+// import Revenue from './charts/Revenue.vue'
+// import Debtors from './charts/Debtors.vue'
 
 export default {
   components: {
     AdmissionChart,
     AcademicPerformance,
-    Revenue,
-    Debtors,
+    AttendanceChart,
+    // Revenue,
+    // Debtors,
   },
   props: {
     sessions: {

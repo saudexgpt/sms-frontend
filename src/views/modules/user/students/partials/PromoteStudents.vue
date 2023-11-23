@@ -105,6 +105,16 @@
               label="Select Students to be promoted (multiple selection allowed)"
               label-for="class"
             >
+              <el-switch
+                v-model="promote_all"
+                style="display: block"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-text="Promote All"
+                inactive-text=""
+                @change="setPromoteAll()"
+              />
+              <br>
               <el-select
                 id="class"
                 v-model="form.promote_student_id"
@@ -194,6 +204,7 @@ export default {
       levels: [],
       selectedLevel: '',
       students: [],
+      promote_all: true,
 
     }
   },
@@ -216,6 +227,7 @@ export default {
       fetchLevelStudentsResource.list(param)
         .then(response => {
           app.students = response.students
+          app.setPromoteAll()
         })
     },
     promoteStudents() {
@@ -230,6 +242,17 @@ export default {
           }
           app.$message('Promotion Successful')
         })
+    },
+    setPromoteAll() {
+      const app = this
+      const promoteAll = app.promote_all
+      const promoteStudentId = []
+      if (promoteAll) {
+        app.students.forEach(student => {
+          promoteStudentId.push(student.id)
+        })
+      }
+      app.form.promote_student_id = promoteStudentId
     },
   },
 }

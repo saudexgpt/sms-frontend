@@ -3,8 +3,10 @@
     <b-card class="mb-0">
       <div align="center">
         <img
-          src="/logo.png"
+          src="/images/logo/logo.png"
+          alt="logo"
           width="150"
+          class="mx-auto"
         >
         <h3>Register New School</h3>
         <router-link to="/login">

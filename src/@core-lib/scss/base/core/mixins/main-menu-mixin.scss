@@ -212,6 +212,7 @@
           color: $main-menu-top-open-color;
           background: $main-menu-top-open-head-bg;
           border-radius: 6px;
+          margin-bottom: 5px;
         }
       }
 
@@ -231,7 +232,7 @@
           box-shadow: 0 0 10px 1px rgba($primary, 0.7);
           color: $white;
           font-weight: 400;
-          border-radius: 4px;
+          border-radius: 20px;
         }
       }
 
@@ -254,6 +255,11 @@
       ul {
         padding: 0;
         margin: 0;
+        background: $main-menu-top-open-head-bg;
+        margin: $menu-second-level-padding;
+        padding: 5px 0 10px 0;
+        border-radius: 6px;
+
 
         li {
           color: $main-menu-sub-color;
@@ -283,7 +289,7 @@
           > a {
             color: $main-menu-sub-open-color;
             background: $main-menu-top-active-head-bg;
-            border-radius: 6px;
+            border-radius: 20px;
           }
           //for 2rd level menu
           > ul {
@@ -307,7 +313,7 @@
         .active {
           background: linear-gradient(118deg, rgba($primary, 1), rgba($primary, 0.7));
           box-shadow: 0 0 10px 1px rgba($primary, 0.7);
-          border-radius: 4px;
+          border-radius: 20px;
           z-index: 1;
           > a {
             color: $white;

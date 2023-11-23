@@ -64,7 +64,7 @@
       :title="view_detail.student.user.first_name + ' ' + view_detail.student.user.last_name"
       width="95%"
     >
-      <div class="table-responsive">
+      <div>
         <table class="table table-bordered">
           <thead>
             <tr>

@@ -1,71 +1,81 @@
 <template>
 
-  <div
-    v-if="student"
-    class="table-responsive"
-  >
+  <div class="user-activity">
+    <div class="post">
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td
+              align="center"
+            >
+              <img
+                :src="baseServerUrl + 'storage/'+staff.school.logo"
+                width="200"
+              >
+              <h4>{{ staff.school.name.toUpperCase() }}</h4>
+              <p>{{ staff.school.address }}</p>
 
-    <div>
-      <div align="center">
-        <img
-          :src="'storage/'+student.user.photo"
-          :height="'100px'"
-          :width="'100px'"
-          :hoverable="false"
-        ><br>
-        <strong>{{ student.user.last_name+', '+student.user.first_name }}</strong><br>
-        <strong>{{ student.registration_no }}</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-        <h4>SUBJECT PERFORMANCE ANALYSIS</h4>
-      </div>
-      <div class="col-md-6 padded">
-        <legend>Junior School</legend>
+    </div>
+    <div
+      v-if="staff.class_teachers"
+      class="post"
+    >
+      <h4>Assigned Class</h4>
+      <div class="row">
         <div
-          v-for="(junior_subject, index) in student.junior_subjects"
-          :key="index"
-          class="progress-group"
+          v-for="class_teacher in staff.class_teachers"
+          :key="class_teacher.id"
+          class="col-xs-12 col-sm-6 col-md-6"
         >
           <div
-            v-if="junior_subject.avg > 0"
-            colspan="3"
+            class="box"
+            style="border: medium solid #f0f0f0; border-radius: 10px; padding: 20px"
           >
-            <small class="progress-text">{{ junior_subject.name }}</small>
-            <span class="progress-number"><b>{{ junior_subject.avg }}</b>%</span>
-
-            <div class="progress sm">
-              <div
-                class="progress-bar"
-                :style="'width: '+junior_subject.avg+'%; background: '+junior_subject.color"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 padded">
-        <legend>Senior School</legend>
-        <div
-          v-for="(senior_subject, index) in student.senior_subjects"
-          :key="index"
-          class="progress-group"
-        >
-          <div
-            v-if="senior_subject.avg > 0"
-            colspan="3"
-          >
-            <small class="progress-text">{{ senior_subject.name }}</small>
-            <span class="progress-number"><b>{{ senior_subject.avg }}</b>%</span>
-
-            <div class="progress sm">
-              <div
-                class="progress-bar"
-                :style="'width: '+senior_subject.avg+'%; background: '+senior_subject.color"
-              />
+            <div class="box-body">
+              <h4 class="profile-username text-center">
+                {{ class_teacher.c_class.name }}
+              </h4>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div
+      v-if="staff.subject_teachers.length"
+      class="post"
+    >
 
+      <div class="box-body">
+        <h4>Assigned Subjects</h4>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>S/N</th>
+              <th>Subject Name</th>
+              <th>Subject Code</th>
+              <th>Class</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(subject_teacher, index) in staff.subject_teachers"
+              :key="index"
+            >
+              <td>{{ index + 1 }}</td>
+              <td>{{ subject_teacher.subject.name }}</td>
+              <td>{{ subject_teacher.subject.code }}</td>
+              <td>{{ subject_teacher.class_teacher.c_class.name }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -75,7 +85,7 @@
 export default {
   // components: { PanThumb },
   props: {
-    student: {
+    staff: {
       type: Object,
       default: () => ({}),
     },
@@ -85,6 +95,12 @@ export default {
     return {
 
     }
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+
   },
   mounted() {
     // console.log(this.student)

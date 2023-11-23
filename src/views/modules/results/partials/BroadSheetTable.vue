@@ -28,34 +28,34 @@
           </div>
           <table
             id="myTable"
-            class="table table-striped table-bordered"
+            class="resultTable table-striped table-bordered"
           >
             <thead>
-              <tr role="row">
+              <tr>
                 <th
-                  class="sorting_asc"
+                  class="sorting_asc padded"
                   tabindex="0"
                   aria-controls="table_marksheet"
                   style="width: 41px;"
                   @click="sortTable(3 + broadSheetData.result_subjects.length)"
                 >
-                  <div style="margin-top: 100px!important;">
+                  <div>
                     S/N
                   </div>
                 </th>
                 <th
-                  class="solid-border clickable"
+                  class="solid-border clickable padded"
                   @click="sortTable(1)"
                 >
-                  <div style="margin-top: 100px!important;">
+                  <div>
                     Student Name
                   </div>
                 </th>
                 <th
-                  class="solid-border clickable"
+                  class="solid-border clickable padded"
                   @click="sortTable(2)"
                 >
-                  <div style="margin-top: 100px!important;">
+                  <div>
                     Student ID
                   </div>
                 </th>
@@ -66,21 +66,21 @@
                   class="verticalHeader solid-border clickable"
                   @click="sortTable(3 + index)"
                 >
-                  <span>{{ subject_name }}</span>
+                  <div><span>{{ subject_name }}</span></div>
                 </th>
 
                 <th
                   class="verticalHeader solid-border"
                   @click="sortTable(3 + broadSheetData.result_subjects.length)"
                 >
-                  <span>Average</span>
+                  <div><span>Average</span></div>
 
                 </th>
                 <th
                   class="verticalHeader clickable"
                   @click="sortTable(3 + broadSheetData.result_subjects.length)"
                 >
-                  <span>Average Grade</span>
+                  <div><span>Average Grade</span></div>
 
                 </th>
                 <!--<th class="verticalHeader sorting" >
@@ -90,7 +90,7 @@
                   class="verticalHeader solid-border clickable"
                   @click="sortTable(3 + broadSheetData.result_subjects.length)"
                 >
-                  <span>Position</span>
+                  <div><span>Position</span></div>
                 </th>
                 <th class="solid-border noExport" />
               </tr>

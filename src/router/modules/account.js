@@ -39,4 +39,13 @@ export default [
       permissions: ['can view revenue'],
     },
   },
+  {
+    path: '/account/income-and-expenses',
+    name: 'IncomeExpenses',
+    component: () => import('@/views/modules/account/Revenue/IncomeExpenses.vue'),
+    meta: {
+      permissions: ['can view revenue'],
+    },
+  },
+
 ]

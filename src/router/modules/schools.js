@@ -33,6 +33,12 @@ export default [
     },
   },
   {
+    hidden: true,
+    path: '/schools/proposal',
+    name: 'proposal',
+    component: () => import('@/views/modules/schools/Proposal.vue'),
+  },
+  {
     path: '/account/suspended',
     name: 'account-suspended',
     component: () => import('@/views/modules/schools/AccountSuspended.vue'),

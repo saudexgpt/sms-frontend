@@ -5,7 +5,6 @@
     <div v-if="show_result">
       <el-card>
         <div
-          slot="header"
           class="no-print"
         >
           <el-button
@@ -20,12 +19,18 @@
           <thead>
             <tr>
               <td
-                colspan="9"
+                colspan="10"
                 align="center"
               >
                 <img
-                  v-if="fetched_data.result_settings.logo !== null"
                   :src="baseServerUrl +'storage/'+fetched_data.school.logo"
+                  alt="School LOGO"
+                  class="img-polaroid"
+                  width="200"
+                >
+                <!--<img
+                  v-if="fetched_data.result_settings.logo !== null"
+                  :src="baseServerUrl +'storage/'+fetched_data.result_settings.logo"
                   alt="School LOGO"
                   class="img-polaroid"
                   width="200"
@@ -36,43 +41,10 @@
                   alt="School LOGO"
                   class="img-polaroid"
                   width="200"
-                ><br>
+                >-->
+                <br>
                 <strong v-if="fetched_data.result_settings.display_school_name_on_result === 'yes'">{{ fetched_data.school.name.toUpperCase() }}</strong><br>
                 <small v-if="fetched_data.result_settings.display_school_address_on_result === 'yes'">{{ fetched_data.school.address }}</small>
-              </td>
-              <!-- <td
-                colspan="8"
-                align="center"
-              >
-
-                <img
-                  src="images/coat_of_arms.png"
-                  alt=""
-                  width="100"
-                >
-                <div>
-
-                  <strong>GOVERNMENT OF {{ fetched_data.school.lga.state.name.toUpperCase() }} STATE OF NIGERIA</strong>
-                  <br>
-                  STATE SECONDARY EDUCATION BOARD, {{ fetched_data.school.lga.name.toUpperCase() }}<br>
-
-                  <strong>TERMINAL REPORT</strong>
-                </div>
-
-              </td> -->
-              <td align="center">
-                <img
-                  :src="baseServerUrl+'storage/'+fetched_data.student_in_class.student.user.photo"
-                  alt="Student Photo"
-                  class="img-polaroid"
-                  width="80"
-                >
-
-              </td>
-
-            </tr>
-            <tr>
-              <td colspan="10">
                 <div
                   align="center"
                   class="report"
@@ -82,8 +54,31 @@
               </td>
 
             </tr>
+            <!-- <tr>
+              <td colspan="10">
+                <div
+                  align="center"
+                  class="report"
+                >
+                  <h3>{{ ucWords(fetched_data.term_spec) }} Term Report Sheet</h3>
+                </div>
+              </td>
+
+            </tr> -->
             <tr>
-              <td colspan="4">
+              <td
+                rowspan="3"
+                align="center"
+              >
+                <img
+                  :src="baseServerUrl+'storage/'+fetched_data.student_in_class.student.user.photo"
+                  alt="Student Photo"
+                  class="img-polaroid"
+                  width="80"
+                  onerror="this.src='/images/profile-image.png'"
+                >
+              </td>
+              <td colspan="3">
                 <strong>NAME: </strong> {{ fetched_data.student_in_class.student.user.last_name +', '+fetched_data.student_in_class.student.user.first_name }}
               </td>
               <td colspan="3">
@@ -100,7 +95,7 @@
               <td colspan="2">
                 <strong>NO. IN CLASS: </strong>{{ fetched_data.no_in_class }}
               </td>
-              <td colspan="4">
+              <td colspan="3">
                 <strong>SESSION: </strong>{{ fetched_data.this_session.name }}
               </td>
               <td colspan="3">
@@ -155,10 +150,10 @@
 </template>
 <script>
 
+import Resource from '@/api/resource'
 import FullTerm from './partials/FullTerm.vue'
 import HalfTerm from './partials/HalfTerm.vue'
 // import html2canvas from 'html2canvas'
-import Resource from '@/api/resource'
 
 // import Helper from '@/api/helper'
 
@@ -213,7 +208,7 @@ export default {
 
   methods: {
     checkColSpan(resultSettings) {
-      let colspan = 10
+      let colspan = 7
       if (resultSettings.display_class_average_score === 'yes' && resultSettings.display_student_class_average === 'yes') {
         colspan = 3
       } else if (resultSettings.display_class_average_score === 'no' && resultSettings.display_student_class_average === 'yes') {
@@ -306,6 +301,12 @@ export default {
 @media print {
   table{
     font-size: 10px;
+  }
+  .el-col-lg-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-lg-19 {
+    width: 79.16667% !important;
   }
 }
 </style>

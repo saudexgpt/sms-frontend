@@ -158,7 +158,7 @@ export default {
         headings: {
           'level.level': 'Level',
           'c_class.name': 'Class Name',
-          staff: 'PC-Teacher (pick to change)',
+          staff: 'Assigned Teacher (pick to change)',
           // assign: 'Assign TO',
           action: '',
 
@@ -235,7 +235,7 @@ export default {
     },
     confirmDelete(cClass) {
       const app = this
-      const message = `You are about to delete ${cClass.c_class.name}. Click Yes to confirm.`
+      const message = `You are about to delete ${cClass.class}. It might affect any student in that class. Click Yes to confirm.`
       app.$bvModal
         .msgBoxConfirm(message, {
           title: 'Confirm Delete Action',

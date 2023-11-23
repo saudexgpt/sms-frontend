@@ -1,4 +1,12 @@
 export default [
+  // {
+  //   path: '/lms/vle',
+  //   name: 'VirtualLearning',
+  //   component: () => import('@/views/modules/lms/VirtualLearning.vue'),
+  //   meta: {
+  //     roles: ['teacher'],
+  //   },
+  // },
   {
     path: '/lms/e-exam',
     name: 'EExam',

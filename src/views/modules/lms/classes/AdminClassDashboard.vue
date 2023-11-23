@@ -1,124 +1,115 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
-  <el-card v-loading="load">
-    <div slot="header">
-      <div class="box-title">
-        Created Classrooms
-      </div>
-
-    </div>
-    <div class="box-body">
-      <div v-if="!go_online">
-        <span class="pull-right">
-          <a
-            class="btn btn-primary"
-            @click="fetchData('yes')"
-          >All Classrooms</a>
-          <a
-            class="btn btn-primary"
-            @click="fetchData('no')"
-          >Today's Classrooms</a>
-        </span>
-        <v-client-table
-          :data="daily_classrooms"
-          :columns="columns"
-          :options="options"
+  <el-card>
+    <b-tabs
+      pills
+      content-class="mt-1"
+    >
+      <!-- This tabs content will always be mounted -->
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="MonitorIcon" />
+          <span>Online Class</span>
+        </template>
+        <teacher-routine view-type="online_class" />
+      </b-tab>
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="UserCheckIcon" />
+          <span>Attendance</span>
+        </template>
+        <b-tabs
+          content-class="mt-1"
         >
-
-          <template
-            slot="subject"
-            slot-scope="props"
-          >
-            <span v-html="props.row.subject_teacher.subject.name" />
-          </template>
-          <template
-            slot="teacher"
-            slot-scope="props"
-          >
-            {{ props.row.subject_teacher.staff.user.first_name }}
-            {{ props.row.subject_teacher.staff.user.last_name }}
-          </template>
-
-          <template
-            slot="action"
-            slot-scope="props"
-          >
-            <a
-              class="btn btn-primary btn-sm"
-              @click="viewStudents(props.row)"
-            ><i class="fa fa-users" /> View Class</a>
-          </template>
-
-        </v-client-table>
-      </div>
-
-      <div v-if="go_online">
-        <a
-          class="btn btn-danger"
-          @click="go_online = false"
-        > Go Back</a>
-        <view-online-students
-          :daily-classroom="daily_classroom"
-          :query-string="query_string"
-        />
-      </div>
-    </div>
-
+          <b-tab lazy>
+            <template #title>
+              <span>Class</span>
+            </template>
+            <class-attendance />
+          </b-tab>
+          <b-tab lazy>
+            <template #title>
+              <span>Subject</span>
+            </template>
+            <subject-attendance />
+          </b-tab>
+        </b-tabs>
+      </b-tab>
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="EditIcon" />
+          <span>Assignments</span>
+        </template>
+        <b-tabs
+          content-class="mt-1"
+        >
+          <b-tab lazy>
+            <template #title>
+              <feather-icon icon="EyeIcon" />
+              <span>View</span>
+            </template>
+            <view-assignments />
+          </b-tab>
+          <b-tab lazy>
+            <template #title>
+              <feather-icon icon="PlusIcon" />
+              <span>Create</span>
+            </template>
+            <create-assignment />
+          </b-tab>
+        </b-tabs>
+      </b-tab>
+      <!-- This tabs content will not be mounted until the tab is shown -->
+      <!-- and will be un-mounted when hidden -->
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="BookIcon" />
+          <span>Materials</span>
+        </template>
+        <course-materials />
+      </b-tab>
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="FileTextIcon" />
+          <span>Lesson Plan</span>
+        </template>
+        <lesson-plan />
+      </b-tab>
+      <!-- <b-tab
+        lazy
+      >
+        <template #title>
+          <feather-icon icon="TrendingUpIcon" />
+          <span>Progress</span>
+        </template>
+        Sanguine
+      </b-tab> -->
+    </b-tabs>
   </el-card>
 </template>
+
 <script>
-import Resource from '@/api/resource'
-import ViewOnlineStudents from './partials/ViewOnlineStudents.vue'
+import {
+  BTabs, BTab,
+} from 'bootstrap-vue'
+import CourseMaterials from '@/views/modules/materials/CourseMaterials.vue'
+import ViewAssignments from '@/views/modules/assignment/AllAssignments.vue'
+import CreateAssignment from '@/views/modules/assignment/AddAssignment.vue'
+import LessonPlan from '@/views/modules/materials/Curriculum.vue'
+import ClassAttendance from '@/views/modules/attendance/ClassAttendance.vue'
+import SubjectAttendance from '@/views/modules/attendance/SubjectAttendance.vue'
+import TeacherRoutine from './AdminJoinOnlineClass.vue'
 
 export default {
-  components: { ViewOnlineStudents },
-  data() {
-    return {
-      daily_classrooms: [],
-      columns: ['subject', 'topic', 'start', 'end', 'teacher', 'date', 'action'],
-      options: {
-        headings: {
-          subject: 'Subject',
-          topic: 'Topic',
-          duration: 'Duration (minutes)',
-          teacher: 'Subject Teacher',
-          date: 'Date',
-          action: 'Action',
-        },
-        sortable: ['subject', 'class'],
-        filterable: ['subject', 'class'],
-      },
-
-      daily_classroom: { materials: [] },
-      go_online: false,
-      view_all: 'no',
-      query_string: '',
-      load: false,
-    }
-  },
-  mounted() {
-    this.fetchData('no')
-  },
-  methods: {
-    fetchData(viewAll) {
-      const app = this
-      const onlineClassroomsResource = new Resource('lms/created-online-classrooms')
-      app.load = true
-      onlineClassroomsResource.list({ option: viewAll }) // back end route from web.php
-
-        .then(response => {
-          app.load = false
-          app.daily_classrooms = response.daily_classrooms
-        })
-    },
-
-    viewStudents(dailyClassroom) {
-      const app = this
-      app.daily_classroom = dailyClassroom
-      const name = 'Proprietor'
-      app.query_string = `?open=false&sessionid=${dailyClassroom.subject_teacher_id}&publicRoomIdentifier=dashboard&userFullName=${name}`
-      app.go_online = true
-    },
+  components: {
+    BTabs,
+    BTab,
+    TeacherRoutine,
+    CourseMaterials,
+    ViewAssignments,
+    CreateAssignment,
+    LessonPlan,
+    ClassAttendance,
+    SubjectAttendance,
   },
 }
 </script>

@@ -1,6 +1,8 @@
 <template>
   <el-card>
-    <b-tabs content-class="mt-1">
+    <b-tabs
+      content-class="mt-1"
+    >
       <!-- This tabs content will always be mounted -->
       <b-tab>
         <template #title>
@@ -19,13 +21,6 @@
         </template>
         <register-new-staff />
       </b-tab>
-      <b-tab lazy>
-        <template #title>
-          <feather-icon icon="KeyIcon" />
-          <span>Assign Privileges</span>
-        </template>
-        <assign-access />
-      </b-tab>
     </b-tabs>
   </el-card>
 </template>
@@ -36,7 +31,6 @@ import {
 } from 'bootstrap-vue'
 import StaffTable from './partials/Staff.vue'
 import RegisterNewStaff from './partials/RegisterNewStaff.vue'
-import AssignAccess from './partials/AssignAccess.vue'
 
 export default {
   components: {
@@ -44,7 +38,6 @@ export default {
     BTab,
     StaffTable,
     RegisterNewStaff,
-    AssignAccess,
   },
 }
 </script>

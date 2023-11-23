@@ -122,7 +122,7 @@ export default {
       revenueReport: {
         chartOptions: {
           chart: {
-            stacked: true,
+            stacked: false,
             type: 'bar',
             toolbar: { show: false },
           },
@@ -198,6 +198,7 @@ export default {
           },
           legend: {
             show: true,
+            position: 'bottom',
             formatter(val, opts) {
               return `${val}: ₦${opts.w.globals.series[opts.seriesIndex].toLocaleString()}`
             },

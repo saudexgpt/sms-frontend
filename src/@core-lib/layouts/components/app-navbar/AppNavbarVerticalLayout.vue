@@ -17,40 +17,30 @@
         </b-link>
       </li>
     </ul>
-
-    <!-- Left Col -->
     <div
       v-if="school"
       class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex"
     >
       <div v-if="roles.includes('admin')">
         <div class="demo-inline-spacing">
-          <b-badge
+          <el-tag
             v-if="systemSetSession.id === school.current_session.id"
-            variant="dark"
-            class="badge-glow"
           >{{ school.current_session.name + ' Session' }}
-          </b-badge>
-          <b-badge
+          </el-tag>
+          <el-tag
             v-else
             id="popover-session"
-            variant="danger"
-            class="badge-glow"
           >{{ school.current_session.name + ' Session' }}
-          </b-badge>
-          <b-badge
+          </el-tag>
+          <el-tag
             v-if="systemSetTerm.id === school.current_term.id"
-            variant="dark"
-            class="badge-glow"
           >{{ school.current_term.name + ' Term' }}
-          </b-badge>
-          <b-badge
+          </el-tag>
+          <el-tag
             v-else
             id="popover-term"
-            variant="danger"
-            class="badge-glow"
           >{{ school.current_term.name + ' Term' }}
-          </b-badge>
+          </el-tag>
         </div>
 
         <b-popover
@@ -119,23 +109,16 @@
       </div>
       <div v-else>
         <div class="demo-inline-spacing">
-          <b-badge
-            variant="dark"
-            class="badge-glow"
-          >{{ school.current_session.name + ' Session' }}
-          </b-badge>
-          <b-badge
-            variant="dark"
-            class="badge-glow"
-          >{{ school.current_term.name + ' Term' }}
-          </b-badge>
+          <el-tag>{{ school.current_session.name + ' Session' }}
+          </el-tag>
+          <el-tag>{{ school.current_term.name + ' Term' }}
+          </el-tag>
         </div>
       </div>
 
       <!-- Bookmarks Container -->
       <!-- <bookmarks /> -->
     </div>
-
     <b-navbar-nav class="nav align-items-center ml-auto">
       <b-nav-item to="/apps/email">
         <el-tooltip
@@ -158,7 +141,7 @@
       >
         <notification-dropdown />
       </el-tooltip>
-      <b-nav-item
+      <!-- <b-nav-item
         v-if="roles.includes('admin')"
         :href="'https://web.whatsapp.com/send?phone=' + whatsAppNo"
         target="_blank"
@@ -171,7 +154,7 @@
         >
           <img src="@/assets/images/whatsapp-logo.png">
         </el-tooltip>
-      </b-nav-item>
+      </b-nav-item> -->
       <user-dropdown />
     </b-navbar-nav>
   </div>
@@ -179,7 +162,7 @@
 
 <script>
 import {
-  BLink, BNavbarNav, BNavItem, BBadge, BPopover, BButton,
+  BLink, BNavbarNav, BNavItem, BButton, BPopover,
 } from 'bootstrap-vue'
 // import Bookmarks from './components/Bookmarks.vue'
 // import Locale from './components/Locale.vue'
@@ -193,13 +176,12 @@ import Resource from '@/api/resource'
 export default {
   components: {
     BLink,
-    BBadge,
 
     // Navbar Components
     BNavbarNav,
     BNavItem,
-    BPopover,
     BButton,
+    BPopover,
     // Bookmarks,
     // Locale,
     // SearchBar,
@@ -273,3 +255,12 @@ export default {
   },
 }
 </script>
+<style scoped>
+.el-tag {
+  background: rgb(255, 255, 255, 0.9);
+  color: #000000;
+  border-radius: 30px !important;
+  border: 2px solid #333333;
+  font-weight: 600;
+}
+</style>

@@ -74,7 +74,7 @@ export default [
     name: 'MyWardResult',
     component: () => import('@/views/modules/results/MyResult.vue'),
     meta: {
-      roles: ['parent'],
+      roles: ['parent', 'admin'],
     },
   },
 ]

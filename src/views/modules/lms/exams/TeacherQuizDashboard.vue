@@ -1,88 +1,182 @@
 <template>
-  <div v-if="can_view_teacher">
-    <el-row
-      :gutter="8"
-    >
-      <el-col
-        :xs="24"
-        :sm="8"
-        :md="8"
-      >
-        <router-link
-          to="set-questions"
-          class="small-box-footer"
+
+  <b-card>
+
+    <div slot="header">
+      <b-row>
+        <b-col
+          cols="6"
         >
-          <statistic-card-horizontal
-            color="white"
-            bg="primary"
-            icon="ListIcon"
-            :statistic="teacher_questions"
-            statistic-title="Question Bank"
-          />
-        </router-link>
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="warning"
-          icon="Edit2Icon"
-          :statistic="compiled_quizzes"
-          statistic-title="Quizzes"
+          <label for="">Select Subject</label>
+          <el-select
+            v-model="subject_teacher_id"
+            style="width: 100%;"
+            placeholder="Select Subject"
+            filterable
+            @input="fetchQuestionBank()"
+          >
+            <el-option
+              v-for="(subjectTeacher, index) in subject_teachers"
+              :key="index"
+              :label="`${subjectTeacher.subject.name.toUpperCase()} ${subjectTeacher.class_teacher.c_class.name}`"
+              :value="subjectTeacher.id"
+            />
+          </el-select>
+        </b-col>
+        <b-col
+          cols="6"
+        >
+          <label for="">Select Question Type</label>
+          <el-select
+            v-model="option.question_type"
+            style="width: 100%;"
+            placeholder="Select Question Type"
+          >
+            <el-option
+              label="OBJECTIVE QUESTIONS"
+              value="objective"
+            />
+            <!-- <el-option
+              label="THEORY QUESTIONS"
+              value="theory"
+            /> -->
+          </el-select>
+        </b-col>
+      </b-row>
+      <hr>
+    </div>
+    <b-tabs
+      pills
+      content-class="mt-1"
+    >
+      <!-- This tabs content will always be mounted -->
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="UsersIcon" />
+          <span>Question Bank</span>
+        </template>
+        <div v-loading="load">
+          <div v-if="option.question_type=='objective'">
+            <obj-questions
+              v-if="subject_teacher !== ''"
+              :subject-teacher="subject_teacher"
+              :option="option"
+              @display="displayForm"
+              @reload="fetchQuestionBank"
+            />
+          </div>
+          <!-- <div v-if="option.question_type=='theory'">
+            <theory-questions
+              v-if="subject_teacher !== ''"
+              :subject-teacher="subject_teacher"
+              :option="option"
+              @display="displayForm"
+              @reload="fetchQuestionBank"
+            />
+          </div> -->
+        </div>
+      </b-tab>
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="PlusIcon" />
+          <span>Add A Question</span>
+        </template>
+        <add-objective-question
+          :subject-teacher="subject_teacher"
+          :option="option"
         />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="success"
-          icon="UserCheckIcon"
-          :statistic="quiz_attempts"
-          statistic-title="Attempts"
+      </b-tab>
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="UploadIcon" />
+          <span>Upload Bulk Questions</span>
+        </template>
+        <upload-bulk-questions />
+      </b-tab>
+      <b-tab lazy>
+        <template #title>
+          <feather-icon icon="UploadIcon" />
+          <span>Set Exam</span>
+        </template>
+        <h4
+          v-if="subject_teacher !== ''"
+          class="box-title"
+        >
+          Examination for {{ subject_teacher.subject.name }} ({{ subject_teacher.class_teacher.c_class.name }})
+        </h4>
+        <set-quiz
+          :subject-teacher="subject_teacher"
+          @reload="$emit('reload')"
         />
-      </el-col>
-    </el-row>
-  </div>
+      </b-tab>
+    </b-tabs>
+
+  </b-card>
 </template>
 <script>
-import StatisticCardHorizontal from '@core/components/statistics-cards/StatisticCardHorizontal.vue'
+import {
+  BTabs, BTab, BCard, BRow, BCol,
+} from 'bootstrap-vue'
 import Resource from '@/api/resource'
+import ObjQuestions from './partials/objective/ObjQuestions.vue'
+// import TheoryQuestions from './partials/theory/TheoryQuestions.vue'
+import UploadBulkQuestions from './UploadBulkQuestions.vue'
+import AddObjectiveQuestion from './partials/objective/AddObjectiveQuestion.vue'
+import SetQuiz from './partials/objective/SetQuiz.vue'
 
-const studentDashboard = new Resource('lms/quiz-dashboard')
 export default {
   components: {
-    StatisticCardHorizontal,
+    BTabs,
+    BTab,
+    BCard,
+    BRow,
+    BCol,
+    ObjQuestions,
+    // TheoryQuestions,
+    UploadBulkQuestions,
+    AddObjectiveQuestion,
+    SetQuiz,
   },
   data() {
     return {
-      teacher_questions: 0,
-      compiled_quizzes: 0,
-      quiz_attempts: 0,
-      can_view_teacher: false,
-
+      subject_teachers: [],
+      subject_teacher_id: '',
+      option: {
+        question_type: 'objective',
+      },
+      load: false,
+      subject_teacher: '',
+      display_form: true,
     }
   },
-  mounted() {
-    this.fetchData()
+  created() {
+    this.subjectTeachers()
   },
   methods: {
-    fetchData() {
+    subjectTeachers() {
       const app = this
-      studentDashboard.list() // back end route from web.php
+      app.load = true
+      const subjectTeacherDashboard = new Resource('lms/subject-teachers')
+      subjectTeacherDashboard.list() // back end route from web.php
 
         .then(response => {
-          app.teacher_questions = response.teacher_questions
-          app.compiled_quizzes = response.compiled_quizzes
-          app.quiz_attempts = response.quiz_attempts
-          app.teacher_questions = response.teacher_questions
-          app.can_view_teacher = response.can_view_teacher
+          app.subject_teachers = response.subject_teachers
+          app.load = false
         })
+    },
+    fetchQuestionBank() {
+      const app = this
+      app.load = true
+      const fetchQuestionBankResource = new Resource('lms/fetch-questions-bank')
+      fetchQuestionBankResource.get(app.subject_teacher_id) // back end route from web.php
+
+        .then(response => {
+          app.subject_teacher = response.subject_teacher
+          app.load = false
+        })
+    },
+    displayForm(status) {
+      this.display_form = status
     },
   },
 }

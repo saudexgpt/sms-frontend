@@ -118,6 +118,7 @@
 import {
   BRow, BCol, BButton, BCard, BAvatar,
 } from 'bootstrap-vue'
+// eslint-disable-next-line import/no-cycle
 import { avatarText } from '@core/utils/filter'
 import Resource from '@/api/resource'
 import UserBio from '@/views/modules/user/UserBioData.vue'

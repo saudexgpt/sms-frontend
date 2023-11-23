@@ -1,8 +1,11 @@
 <template>
   <div v-loading="load">
-    <el-card>
-      <el-col :xs="24">
-        <span class="demonstration">Subject</span>
+    <el-row :gutter="10">
+      <el-col
+        :xs="24"
+        :md="12"
+      >
+        <span class="demonstration">Select Subject</span>
         <el-select
           v-model="form.subject_teacher_id"
           style="width: 100%"
@@ -15,8 +18,11 @@
             :value="subject_teacher.id"
           /></el-select>
       </el-col>
-      <el-col :xs="24">
-        <span class="demonstration">Deadline</span>
+      <el-col
+        :xs="24"
+        :md="12"
+      >
+        <span class="demonstration">Set Deadline</span>
         <el-date-picker
           v-model="form.deadline"
           type="datetime"
@@ -26,7 +32,7 @@
         />
       </el-col>
       <el-col :xs="24">
-        <span class="demonstration">Task</span>
+        <span class="demonstration">Type Task</span>
         <quill-editor
           v-model="form.assignment_details"
         />
@@ -40,8 +46,11 @@
         >
           Submit
         </button>
+
+        <br>
+        <br>
       </el-col>
-    </el-card>
+    </el-row>
   </div>
 </template>
 <script>

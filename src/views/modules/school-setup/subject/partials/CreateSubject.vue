@@ -125,10 +125,10 @@ export default {
       type: Array,
       required: true,
     },
-    sections: {
-      type: Array,
-      required: true,
-    },
+    // sections: {
+    //   type: Array,
+    //   required: true,
+    // },
   },
   data() {
     return {

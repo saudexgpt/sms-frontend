@@ -76,7 +76,6 @@
               <validation-provider
                 #default="{ errors }"
                 name="Country"
-                rules="required"
               >
                 <b-form-group
                   label="Country"
@@ -86,7 +85,7 @@
                   <v-select
                     id="country"
                     v-model="selectedCountry"
-                    :options="countries"
+                    :options="necessaryParams.countries"
                     label="country_name"
                     @input="setState()"
                   />
@@ -103,7 +102,6 @@
               <validation-provider
                 #default="{ errors }"
                 name="State of Origin"
-                rules="required"
               >
                 <b-form-group
                   label="State of Origin"
@@ -130,7 +128,6 @@
               <validation-provider
                 #default="{ errors }"
                 name="LGA"
-                rules="required"
               >
                 <b-form-group
                   label="LGA of Origin"
@@ -386,127 +383,40 @@
                 Sponsor's Details
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
-                label="Main Mobile Number"
+                label="Select parent"
                 label-for="parent_phone"
               >
                 <validation-provider
                   #default="{ errors }"
-                  name="Main Phone Number"
-                  rules="required|integer:min:11|integer:max:11"
-                >
-                  <b-form-input
-                    id="parent_phone"
-                    v-model="form.parent_phone"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Enter Phone Number"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Alternative Mobile Number"
-                label-for="parent_phone2"
-                rules="integer:min:11|integer:max:11"
-              >
-                <b-form-input
-                  id="parent_phone2"
-                  v-model="form.parent_phone2"
-                  placeholder="Enter Alternative Phone Number"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Email"
-                label-for="email"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Email"
-                  rules="required|email"
-                >
-                  <b-form-input
-                    id="email"
-                    v-model="form.email"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Email"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Surname"
-                label-for="last-name"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Surname"
+                  name="Select Parent"
                   rules="required"
                 >
-                  <b-form-input
-                    id="last-name"
-                    v-model="form.lname"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Enter Surname"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Other Names"
-                label-for="first-name"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Other Names"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="first-name"
-                    v-model="form.fname"
-                    placeholder="Enter other names"
-                    :state="errors.length > 0 ? false:null"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Gender"
-                label-for="gender"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Gender"
-                  rules="required"
-                >
-
                   <el-select
-                    v-model="form.sponsor_gender"
+                    v-model="form.guardian_id"
                     style="width: 100%;"
-                    placeholder="Select Gender"
+                    filterable
+                    placeholder="Select Parent"
                   >
                     <el-option
-                      v-for="(gender, index) in genders"
+                      v-for="(guardian, index) in guardians"
                       :key="index"
-                      :label="gender"
-                      :value="gender"
-                    />
+                      :label="(guardian.user) ? `${guardian.user.first_name} ${guardian.user.last_name} | ${guardian.user.email} | ${guardian.user.phone1} | ${guardian.user.phone2}` : ''"
+                      :value="guardian.id"
+                    >
+                      <template v-if="guardian.user">
+                        <span style="float: left"><strong>{{ `${guardian.user.first_name} ${guardian.user.last_name}` }}</strong></span>
+                        <span style="float: right; color: #8492a6; font-size: 13px">{{ `${guardian.user.email} | ${guardian.user.phone1} | ${guardian.user.phone2}` }}</span>
+                      </template>
+                    </el-option>
                   </el-select>
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
+                <span>If the Parent/Guardian for this student is not found, <a @click="isCreateClassSidebarActive = true"><strong>Click Here to create one</strong></a></span>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Relationship with Child"
                 label-for="relationship"
@@ -529,46 +439,6 @@
                       :value="relationship"
                     />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Residential Address"
-                label-for="address"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Address"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="address"
-                    v-model="form.address"
-                    placeholder="Enter residential address"
-                    :state="errors.length > 0 ? false:null"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Occupation"
-                label-for="occupation"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Occupation"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="occupation"
-                    v-model="form.occupation"
-                    placeholder="Enter sponsor's occupation"
-                    :state="errors.length > 0 ? false:null"
-                  />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
@@ -630,7 +500,11 @@
         </b-row>
       </tab-content>
     </form-wizard>
-
+    <create-parent
+      v-if="isCreateClassSidebarActive"
+      v-model="isCreateClassSidebarActive"
+      @save="fetchFormDetails"
+    />
   </div>
 </template>
 
@@ -652,11 +526,13 @@ import {
   BFormCheckbox,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
+import CreateParent from '@/views/modules/user/parents/Create.vue'
 // import { codeIcon } from './code'
 import Resource from '@/api/resource'
 
 export default {
   components: {
+    CreateParent,
     ValidationProvider,
     ValidationObserver,
     FormWizard,
@@ -687,8 +563,9 @@ export default {
   data() {
     const maxDate = new Date()
     return {
+      isCreateClassSidebarActive: false,
       max: maxDate,
-      selectedContry: '',
+      guardians: [],
       selectedLanguage: '',
       form: {
         id: '',
@@ -712,6 +589,7 @@ export default {
         email,
         lname: '',
         fname: '',
+        guardian_id: '',
         sponsor_gender: '',
         relation: '',
         address: '',
@@ -744,8 +622,14 @@ export default {
       loader: false,
     }
   },
+  computed: {
+    necessaryParams() {
+      return this.$store.getters.necessaryParams
+    },
+  },
   created() {
     this.selected_level = this.selectedLevel
+    this.defaultCountry = this.necessaryParams.selected_country
     this.setFormProperties(this.studentInClass)
     this.fetchFormDetails()
   },
@@ -773,6 +657,7 @@ export default {
       app.form.level_id = student.current_level
       app.form.class_teacher_id = studentInClass.class_teacher_id
       if (student.student_guardian) {
+        app.form.guardian_id = student.student_guardian.guardian_id
         app.form.parent_phone = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.phone1 : ''
         app.form.parent_phone2 = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.phone2 : ''
         app.form.email = (student.student_guardian.guardian.user) ? student.student_guardian.guardian.user.email : ''
@@ -793,16 +678,17 @@ export default {
     },
     fetchFormDetails() {
       const app = this
+      app.loader = true
       const fetchCurriculumSetupResource = new Resource('user-setup/students/create')
       fetchCurriculumSetupResource.list()
         .then(response => {
-          app.countries = response.countries
-          app.defaultCountry = response.selected_country
           app.levels = response.levels
+          app.guardians = response.guardians
           app.form.username = response.parent_username
           app.admission_sessions = response.admission_sessions
           app.setState()
           app.setClass()
+          app.loader = false
         })
     },
     setState() {
@@ -827,9 +713,9 @@ export default {
       const saveStudentResource = new Resource('user-setup/students/update')
       const { form } = app
       form.level_id = app.selected_level.id
-      form.country_id = app.selectedCountry.id
-      form.state_id = app.selectedState.id
-      form.lga_id = app.selectedLGA.id
+      form.country_id = (app.selectedCountry) ? app.selectedCountry.id : null
+      form.state_id = (app.selectedState) ? app.selectedState.id : null
+      form.lga_id = (app.selectedLGA) ? app.selectedLGA.id : null
       app.loader = true
       saveStudentResource.update(form.id, form)
         .then(() => {

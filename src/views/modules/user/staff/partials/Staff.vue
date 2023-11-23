@@ -13,18 +13,23 @@
       <hr>
     </div>
     <div v-if="selectedStaff === null">
-      <el-tabs>
-        <el-tab-pane
-          :label="`Active (${activeStaff.length})`"
+      <b-tabs
+        pills
+        nav-class="nav-pill-danger"
+      >
+        <b-tab
+          :title="`Active (${activeStaff.length})`"
         >
-          <el-button
-            v-if="activeStaff.length > 0"
-            :loading="downloadLoading"
-            style="margin:0 0 20px 20px;"
-            type="primary"
-            icon="document"
-            @click="handleDownload('List of Staff', activeStaff)"
-          >Export Excel</el-button>
+          <span class="pull-right">
+            <el-button
+              v-if="activeStaff.length > 0"
+              :loading="downloadLoading"
+              style="margin:0 0 20px 20px;"
+              type="primary"
+              icon="document"
+              @click="handleDownload('List of Staff', activeStaff)"
+            >Export Excel</el-button>
+          </span>
           <v-client-table
             v-model="activeStaff"
             v-loading="loading"
@@ -35,65 +40,50 @@
               slot="action"
               slot-scope="props"
             >
-              <span>
-                <b-button
-                  v-b-tooltip.hover.right="'View Details'"
-                  variant="gradient-primary"
-                  class="btn-icon rounded-circle"
-                >
-
+              <b-dropdown
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                class="mx-1"
+                right
+                text="Action"
+                variant="primary"
+              >
+                <b-dropdown-item>
                   <router-link
                     :to="{name: 'staffDetails', params: {id: props.row.id}}"
-                    style="color: #fff;"
-                  ><feather-icon icon="EyeIcon" /></router-link>
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
-                  variant="success"
-                  class="btn-icon rounded-circle"
-                  @click="editStaff(props.row)"
-                ><feather-icon icon="Edit2Icon" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Reset Password'"
-                  variant="gradient-warning"
-                  class="btn-icon rounded-circle"
-                  @click="resetPassword(props.row.user)"
-                >
-                  <feather-icon icon="UnlockIcon" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"
-                  variant="dark"
-                  class="btn-icon rounded-circle"
-                  @click="loginAsUser(props.row.user)"
-                >
-                  <feather-icon icon="KeyIcon" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"
-                  variant="danger"
-                  class="btn-icon rounded-circle"
-                  @click="removeStaff(props.row)"
-                >
-                  <feather-icon icon="TrashIcon" />
-                </b-button>
-              </span>
+                  >
+                    <span><feather-icon icon="EyeIcon" /> View Details</span>
+                  </router-link>
+                </b-dropdown-item>
+                <b-dropdown-item @click="editStaff(props.row)">
+                  <span><feather-icon icon="Edit2Icon" /> Edit</span>
+                </b-dropdown-item>
+                <b-dropdown-item @click="resetPassword(props.row.user)">
+                  <span><feather-icon icon="UnlockIcon" /> Reset Password</span>
+                </b-dropdown-item>
+                <b-dropdown-item @click="loginAsUser(props.row.user)">
+                  <span v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"><feather-icon icon="KeyIcon" /> Login</span>
+                </b-dropdown-item>
+                <b-dropdown-item @click="removeStaff(props.row)">
+                  <span v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"><feather-icon icon="TrashIcon" /> Delete</span>
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
           </v-client-table>
 
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`Pending Activation (${deactivatedStaff.length})`"
+        </b-tab>
+        <b-tab
+          :title="`Pending Activation (${deactivatedStaff.length})`"
         >
-          <el-button
-            v-if="deactivatedStaff.length > 0"
-            :loading="downloadLoading"
-            style="margin:0 0 20px 20px;"
-            type="primary"
-            icon="document"
-            @click="handleDownload('List of Staff awaiting activation', deactivatedStaff)"
-          >Export Excel</el-button>
+          <span class="pull-right">
+            <el-button
+              v-if="deactivatedStaff.length > 0"
+              :loading="downloadLoading"
+              style="margin:0 0 20px 20px;"
+              type="primary"
+              icon="document"
+              @click="handleDownload('List of Staff awaiting activation', deactivatedStaff)"
+            >Export Excel</el-button>
+          </span>
           <v-client-table
             v-model="deactivatedStaff"
             v-loading="loading"
@@ -104,47 +94,35 @@
               slot="action"
               slot-scope="props"
             >
-              <span>
-                <b-button
-                  v-b-tooltip.hover.right="'View Details'"
-                  variant="gradient-primary"
-                  class="btn-icon rounded-circle"
-                >
-
+              <b-dropdown
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                class="mx-1"
+                right
+                text="Action"
+                variant="dark"
+              >
+                <b-dropdown-item>
                   <router-link
                     :to="{name: 'staffDetails', params: {id: props.row.id}}"
-                    style="color: #fff;"
-                  ><feather-icon icon="EyeIcon" /></router-link>
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Edit ' + props.row.user.first_name +' data'"
-                  variant="success"
-                  class="btn-icon rounded-circle"
-                  @click="editStaff(props.row)"
-                ><feather-icon icon="Edit2Icon" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Activate account for ' + props.row.user.first_name"
-                  variant="dark"
-                  class="btn-icon rounded-circle"
-                  @click="approve(props.row.user)"
-                >
-                  <feather-icon icon="ThumbsUpIcon" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"
-                  variant="danger"
-                  class="btn-icon rounded-circle"
-                  @click="removeStaff(props.row)"
-                >
-                  <feather-icon icon="TrashIcon" />
-                </b-button>
-              </span>
+                  >
+                    <span><feather-icon icon="EyeIcon" /> View Details</span>
+                  </router-link>
+                </b-dropdown-item>
+                <!-- <b-dropdown-item @click="editStaff(props.row)">
+                  <feather-icon icon="Edit2Icon" /> Edit
+                </b-dropdown-item> -->
+                <b-dropdown-item @click="approve(props.row.user)">
+                  <span><feather-icon icon="ThumbsUpIcon" /> Activate</span>
+                </b-dropdown-item>
+                <b-dropdown-item @click="removeStaff(props.row)">
+                  <span><feather-icon icon="TrashIcon" /> Delete</span>
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
           </v-client-table>
 
-        </el-tab-pane>
-      </el-tabs>
+        </b-tab>
+      </b-tabs>
     </div>
     <div v-else>
       <edit-staff
@@ -157,20 +135,24 @@
 
 <script>
 import {
-  BButton, BRow, BCol, VBTooltip,
+  BRow, BCol, VBTooltip, BDropdown, BDropdownItem, BTabs, BTab,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import Resource from '@/api/resource'
 import EditStaff from './EditStaff.vue'
 // import vSelect from 'vue-select'
 // import { VueGoodTable } from 'vue-good-table'
-import Resource from '@/api/resource'
 
 export default {
   components: {
     EditStaff,
+    BTabs,
+    BTab,
     // VueGoodTable,
     // vSelect,
-    BButton,
+    // BButton,
+    BDropdown,
+    BDropdownItem,
     // BAlert,
     // BPagination,
     // BFormGroup,
@@ -191,14 +173,14 @@ export default {
       pageLength: 10,
       dir: false,
       columns: [
-        'action',
         'user.username',
         'user.last_name',
         'user.first_name',
-        'user.email',
-        'user.phone1',
+        // 'user.email',
+        // 'user.phone1',
         'user.gender',
-        'user.password_status',
+        'action',
+        // 'user.password_status',
       ],
 
       options: {

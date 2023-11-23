@@ -31,8 +31,49 @@
         <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="load">
 
-            <!-- first name -->
             <b-col cols="12">
+              <b-form-group
+                label="Select Curriculum"
+                label-for="v-curriculum"
+              >
+                <v-select
+                  v-model="selected_curriculum_category"
+                  placeholder="Select Curriculum"
+                  :options="curriculum_categories"
+                  label="name"
+                  value="id"
+                  @input="setCurriculumLevelGroups()"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Select Level Group"
+                label-for="v-curriculum_level_group"
+              >
+                <el-select
+                  v-model="form.curriculum_level_group_id"
+                  collapse-tags
+                  style="width: 100%;"
+                  placeholder="Select Level Group"
+                >
+                  <el-option
+                    v-for="(curriculum_level_group, index) in curriculum_level_groups"
+                    :key="index"
+                    :label="curriculum_level_group.name"
+                    :value="curriculum_level_group.id"
+                  />
+                </el-select>
+                <!-- <v-select
+                  v-model="form.curriculum_level_group_id"
+                  placeholder="Select Level Group"
+                  :options="curriculum_level_groups"
+                  label="name"
+                  value="id"
+                /> -->
+              </b-form-group>
+            </b-col>
+            <!-- <b-col cols="12">
               <b-form-group
                 label="Level Group"
                 label-for="v-curriculum"
@@ -43,7 +84,7 @@
                   readonly
                 />
               </b-form-group>
-            </b-col>
+            </b-col> -->
             <b-col cols="12">
               <b-form-group
                 label="Edit Level Name"
@@ -88,7 +129,7 @@
 </template>
 
 <script>
-// import vSelect from 'vue-select'
+import vSelect from 'vue-select'
 import {
   BSidebar, BRow, BCol, BFormGroup, BButton, BFormInput,
 } from 'bootstrap-vue'
@@ -97,6 +138,7 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
+    vSelect,
     BFormInput,
     BSidebar,
     BRow,
@@ -126,18 +168,47 @@ export default {
       form: {
         level: '',
         description: '',
+        curriculum_level_group_id: '',
       },
       selected_curriculum: '',
       curricula: [],
+      curriculum_categories: [],
+      selected_curriculum_category: '',
+      curriculum_level_groups: [],
+      selected_curriculum_group: '',
+      curriculumLevels: [],
+      load: false,
     }
   },
   created() {
     this.form = this.selectedCurriculumLevel
     this.selected_curriculum = this.form.curriculum_setup
+    this.fetchCurriculumLevels()
   },
   methods: {
+    fetchCurriculumLevels() {
+      const app = this
+      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-curriculum-categories')
+      fetchCurriculumSetupResource.list()
+        .then(response => {
+          app.curriculum_categories = response.curriculum_categories
+          const curriculumCategoryId = app.form.level_group.curriculum_category_id
+          const index = app.curriculum_categories.findIndex(object => object.id === curriculumCategoryId)
+          app.selected_curriculum_category = app.curriculum_categories[index]
+          app.curriculum_level_groups = app.selected_curriculum_category.curriculum_level_groups
+        })
+    },
+    setCurriculumLevelGroups() {
+      const app = this
+      app.curriculum_level_groups = app.selected_curriculum_category.curriculum_level_groups
+      app.form.curriculum_level_group_id = ''
+    },
     update() {
       const app = this
+      if (app.form.curriculum_level_group_id === '') {
+        app.$alert('Please select level group')
+        return
+      }
       const updateCurriculumSetupResource = new Resource('school-setup/level/update')
       const param = app.form
       updateCurriculumSetupResource.update(param.id, param)

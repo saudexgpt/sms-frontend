@@ -178,8 +178,8 @@ import {
   BSidebar, BButton, BFormGroup, BAlert, BRow, BCol,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import SubjectStudentsTable from './partials/SubjectStudentsTable.vue'
 import Resource from '@/api/resource'
+import SubjectStudentsTable from './partials/SubjectStudentsTable.vue'
 
 const selectionOptions = new Resource('result/set-selection-options')
 const recordStudentResult = new Resource('result/get-subject-students')

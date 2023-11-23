@@ -188,7 +188,7 @@ export default {
       sess_id: '',
       staff: [],
       level_index: '',
-      level: '',
+      level: {},
       loading: false,
       editable_row: '',
       selected_row_index: '',

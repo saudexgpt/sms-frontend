@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <el-card>
     <div
       slot="header"
       class="clearfix"
@@ -141,7 +141,7 @@
       :currency="currency"
       @save="updateTable"
     />
-  </div>
+  </el-card>
 </template>
 
 <script>

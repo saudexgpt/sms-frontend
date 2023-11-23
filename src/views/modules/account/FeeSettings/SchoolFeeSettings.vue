@@ -77,6 +77,13 @@
           />
         </el-select>
       </b-col>
+      <b-col
+        cols="8"
+      >
+        <el-alert type="error">
+          After creating school fees, you need to apply the fees so that parents can view and make payments
+        </el-alert>
+      </b-col>
     </b-row>
     <v-client-table
       v-model="school_fees"

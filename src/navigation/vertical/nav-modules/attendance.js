@@ -16,7 +16,7 @@ export default [
     },
     children: [
       {
-        title: 'Class Attendance',
+        title: 'Class',
         route: 'ClassAttendance',
         acl: {
           modules: ['attendance'],
@@ -24,7 +24,7 @@ export default [
         },
       },
       {
-        title: 'Subject Attendance',
+        title: 'Subject',
         route: 'SubjectAttendance',
         acl: {
           modules: ['attendance'],

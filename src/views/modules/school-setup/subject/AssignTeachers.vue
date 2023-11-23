@@ -42,13 +42,13 @@
       <table
         v-if="filtered_staff.length > 0"
         v-loading="loading"
-        class="table table-bordered table-striped"
+        class="resultTable table-bordered table-striped"
       >
         <thead class="sticky-header">
           <tr>
             <!-- <th /> -->
             <th>
-              <div style="margin-top: 100px!important;">
+              <div class="padded">
                 Teacher Name
               </div>
             </th>
@@ -58,18 +58,12 @@
               <th
                 v-if="subject_teacher.subject.enabled === 1"
                 :key="index"
-                class="verticalHeader solid-border"
+                class="verticalHeader solid-border padded"
                 :value="subject_teacher.id"
               >
-                <div>{{ subject_teacher.subject.code }}</div>
+                <div><span>{{ subject_teacher.subject.code }}</span></div>
               </th>
             </template>
-            <!-- <th
-              v-for="(subject_teacher, index) in subject_teachers"
-              :key="index"
-            >
-              {{ subject_teacher.subject.name }}
-            </th> -->
           </tr>
         </thead>
         <tbody>
@@ -122,11 +116,10 @@
             </template>
           </tr>
         </tbody>
-        <tfoot class="sticky-header">
+        <!-- <tfoot class="sticky-header">
           <tr>
-            <!-- <th /> -->
             <th>
-              <div style="margin-top: 100px!important;">
+              <div class="padded">
                 Teacher Name
               </div>
             </th>
@@ -136,20 +129,14 @@
               <th
                 v-if="subject_teacher.subject.enabled === 1"
                 :key="index"
-                class="verticalHeader solid-border"
+                class="verticalHeader solid-border padded"
                 :value="subject_teacher.id"
               >
-                <div>{{ subject_teacher.subject.code }}</div>
+                <div><span>{{ subject_teacher.subject.code }}</span></div>
               </th>
             </template>
-            <!-- <th
-              v-for="(subject_teacher, index) in subject_teachers"
-              :key="index"
-            >
-              {{ subject_teacher.subject.name }}
-            </th> -->
           </tr>
-        </tfoot>
+        </tfoot> -->
       </table>
     </div>
     <!--SIDEBAR MODAL-->
@@ -390,8 +377,5 @@ export default {
 }
 .table th, [dir] .table td {
   padding: 0.75rem 0.75rem;
-}
-.sticky-header {
-    position: sticky;
 }
 </style>

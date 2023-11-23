@@ -1,10 +1,11 @@
 <template>
   <div>
     <div v-if="cant_view === false">
-      <el-card>
+      <el-card
+        class="no-print"
+      >
         <div
           slot="header"
-          class="no-print"
         >
           <b-row>
             <b-col
@@ -200,8 +201,8 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import checkRole from '@/utils/role'
-import StudentResultDetails from './StudentResultDetails.vue'
 import Resource from '@/api/resource'
+import StudentResultDetails from './StudentResultDetails.vue'
 
 const selectionOptions = new Resource('result/student-selection-options')
 

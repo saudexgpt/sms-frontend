@@ -37,24 +37,53 @@
 
       <div v-if="show_curriculum">
         <el-row :gutter="10">
-          <el-col :xs="24">
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <el-link
-              v-if="curriculum.curriculum !== null"
-              :href="baseServerUrl +'storage/'+curriculum.curriculum"
-              target="_blank"
-            >
-              <img
-                :src="baseServerUrl +'images/doc.png'"
-                alt="File"
-                class="img-polaroid"
-                width="80"
+          <el-col
+            :xs="24"
+            :sm="16"
+          >
+            <div>
+              <el-alert :closable="false">
+                Lesson Note for Week {{ week }} by {{ teacher }}
+              </el-alert>
+              <strong>Topic: {{ title }}</strong>
+              <hr>
+            </div>
+            <div style="background: #fcfcfc; border: 2px #000000 solid; padding: 10px; border-radius: 5px; height: 500px; overflow: auto">
+              <div
+                v-html="description"
+              />
+            </div>
+          </el-col>
+          <el-col
+            :xs="24"
+            :sm="8"
+          >
+            <aside style="height: 650px; overflow: auto">
+              <div
+                v-for="(note, note_index) in notes"
+                :key="note_index"
               >
-            </el-link>
-            <div
-              v-if="curriculum.description !== null"
-              v-html="curriculum.description"
-            />
+                <el-card
+                  class="box-card"
+                >
+                  <div
+                    slot="header"
+                    class="clearfix"
+                  >
+                    <span>Week {{ note.week }}</span>
+                    <el-button
+                      style="float: right; padding: 3px 0"
+                      type="text"
+                      @click="setNoteDetails(note);"
+                    >Read</el-button>
+                  </div>
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  Topic: <strong>{{ note.title }}</strong>
+                </el-card>
+                <hr>
+
+              </div>
+            </aside>
           </el-col>
         </el-row>
       </div>
@@ -96,8 +125,12 @@ export default {
       load: false,
       selected_subject_index: '',
       selected_subject: '',
-      curriculum: '',
+      notes: [],
       show_curriculum: false,
+      description: '',
+      title: '',
+      week: '',
+      teacher: '',
 
     }
   },
@@ -131,17 +164,35 @@ export default {
       app.show_curriculum = false
       app.selected_subject = app.subject_teachers[app.selected_subject_index]
       app.load = true
+      app.unsetNoteDetails()
       const subjectMaterials = new Resource('materials/subject-curriculum')
       subjectMaterials.get(app.selected_subject.id)
         .then(response => {
-          app.curriculum = response.curriculum
+          app.notes = response.curriculum
           app.load = false
+          if (app.notes.length > 0) {
+            app.setNoteDetails(app.notes[0])
+          }
           app.show_curriculum = true
         })
         .catch(error => {
           app.load = false
           console.log(error)
         })
+    },
+    setNoteDetails(note) {
+      const app = this
+      app.title = note.title
+      app.description = note.description
+      app.week = note.week
+      app.teacher = `${note.teacher.user.first_name} ${note.teacher.user.last_name}`
+    },
+    unsetNoteDetails() {
+      const app = this
+      app.title = ''
+      app.description = ''
+      app.week = ''
+      app.teacher = ''
     },
   },
 }

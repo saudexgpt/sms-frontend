@@ -66,7 +66,7 @@
       type="border-card"
     >
       <el-tab-pane
-        v-if="checkPermission(['can view subject attendance'])"
+        v-if="checkPermission(['can view subject attendance']) && can_create"
         label="Take Attendance"
       >
         <legend>{{ date_in_words }}</legend>
@@ -224,6 +224,7 @@ export default {
       day_of_week: '',
       date_in_words: '',
       month_and_year: '',
+      can_create: false,
 
     }
   },
@@ -254,6 +255,7 @@ export default {
           app.attendance.absent_students = response.absent_students
           app.attendance.present_students = response.present_students
           app.attendance_id = response.attendance_id
+          app.can_create = response.can_create
           app.show = true
           app.no_of_days_in_month = response.no_of_days_in_month
           app.selected_day = response.day

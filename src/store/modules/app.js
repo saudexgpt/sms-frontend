@@ -1,4 +1,5 @@
 import { $themeBreakpoints } from '@themeConfig'
+import Resource from '@/api/resource'
 
 export default {
   namespaced: true,
@@ -6,6 +7,10 @@ export default {
     windowWidth: 0,
     shallShowOverlay: false,
     baseServerUrl: process.env.VUE_APP_MIX_BASE_SERVER_URL,
+    params: {
+      countries: [],
+      selected_country: {},
+    },
   },
   getters: {
     currentBreakPoint: state => {
@@ -24,6 +29,20 @@ export default {
     TOGGLE_OVERLAY(state, val) {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
     },
+    SET_NECESSARY_PARAMS(state, params) {
+      state.params = params
+    },
   },
-  actions: {},
+  actions: {
+    fetchNecessaryParams({ commit }) {
+      const fetchParamsResource = new Resource('fetch-necessary-params')
+      fetchParamsResource.list()
+        .then(response => {
+          commit('SET_NECESSARY_PARAMS', response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+  },
 }

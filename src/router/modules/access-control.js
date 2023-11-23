@@ -2,7 +2,7 @@ export default [
   {
     path: '/acl/roles',
     name: 'manage-roles',
-    component: () => import('@/views/modules/access-control/Roles.vue'),
+    component: () => import('@/views/modules/access-control/index.vue'),
     meta: {
       permissions: ['can manage roles'],
     },

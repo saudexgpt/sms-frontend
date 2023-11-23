@@ -19,7 +19,7 @@ export default [
     },
     children: [
       {
-        title: 'Configure Grades',
+        title: 'Grade Settings',
         route: 'ManageGrade',
         acl: {
           modules: ['result'],

@@ -97,6 +97,7 @@ export default {
         'action',
         // 'logo',
         'name',
+        'slug',
         'email',
         'phone',
         'estimated_no_of_students',
@@ -104,6 +105,7 @@ export default {
         'admin_first_name',
         'admin_last_name',
         'admin_email',
+        'admin_phone1',
         'created_at',
       ],
 
@@ -111,6 +113,7 @@ export default {
         headings: {
           estimated_no_of_students: 'Estimated Students Population',
           created_at: 'Date Registered',
+          admin_phone1: 'Phone',
           action: '',
         },
         sortable: [],

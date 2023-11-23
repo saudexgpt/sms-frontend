@@ -82,16 +82,17 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="col-md-4">
       <div class="box primary">
         <div class="box-header bg-blue">
           <h4 class="box-title">
-            Uploaded Documents for
+            Uploaded Materials for
             <strong>{{ dailyClassroom.topic }}</strong>
           </h4>
         </div>
         <div
           class="box-body"
+          style="height: 450px; overflow: auto"
         >
           <div
             v-for="(material, index) in dailyClassroom.materials"
@@ -104,7 +105,6 @@
               <div
                 class="small-box"
                 align="center"
-                style="border: #000 solid 2px"
               >
                 <a
                   :href="baseServerUrl + 'storage/' + material.file_link"
@@ -148,21 +148,35 @@
               <div
                 class="small-box"
                 align="center"
-                style="border: #000 solid 2px"
               >
                 <a
                   :href="baseServerUrl + 'storage/' + material.file_link"
                   target="_blank"
                 >
-                  <h4>
-
-                    <feather-icon
-                      icon="FileTextIcon"
-                      :style="'font-size: 76px; color: #000000;'"
-                      size="76"
-                    />
+                  <h4 v-if="material.file_name.split('.')[1] == 'pdf'">
+                    <i class="fa fa-file-pdf-o fa-5x" />
+                    <!-- <embed :src="'/storage/'+material.file_link" width="500" height="375"> -->
                   </h4>
-                  View Document
+                  <h4
+                    v-else-if="
+                      material.file_name.split('.')[1] == 'pptx' ||
+                        material.file_name.split('.')[1] == 'ppt'
+                    "
+                  >
+                    <i class="fa fa-file-powerpoint-o fa-5x" />
+                  </h4>
+                  <h4
+                    v-else-if="
+                      material.file_name.split('.')[1] == 'doc' ||
+                        material.file_name.split('.')[1] == 'docx'
+                    "
+                  >
+                    <i class="fa fa-file-word-o fa-5x" />
+                  </h4>
+                  <h4 v-else>
+                    <i class="fa fa-file fa-5x" />
+                  </h4>
+                  Download File
                 </a>
 
                 <p v-if="showform">
@@ -170,7 +184,7 @@
                     class="red"
                     @click="deleteMaterial(index, material.id)"
                   >
-                    Delete
+                    <i class="fa fa-trash" /> Delete
                   </a>
                 </p>
               </div>
@@ -179,8 +193,8 @@
         </div>
       </div>
     </div>
-    <hr>
-    <div>
+
+    <div class="col-md-8">
       <div class="box primary">
         <div class="box-header bg-blue">
           <h4 class="box-title">
@@ -190,6 +204,7 @@
         </div>
         <div
           class="box-body"
+          style="height: 450px; overflow: auto"
         >
           <div
             v-for="(video, index) in dailyClassroom.videos"

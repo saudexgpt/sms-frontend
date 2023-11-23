@@ -1,96 +1,24 @@
 <template>
-  <div v-if="dashboardData !== null">
+  <div v-if="statistics.length > 0">
     <el-row
       :gutter="8"
     >
       <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
+        v-for="(item, index) in statistics"
+        :key="index"
+        :xs="24"
+        :sm="12"
+        :md="6"
+        :lg="6"
+        :xl="6"
       >
         <statistic-card-horizontal
           color="white"
-          bg="primary"
-          icon="UserPlusIcon"
-          :statistic="dashboardData.active_students"
-          statistic-title="Active Students"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="warning"
-          icon="UserMinusIcon"
-          :statistic="dashboardData.suspended_students"
-          statistic-title="Suspended Students"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="success"
-          icon="UserCheckIcon"
-          :statistic="dashboardData.alumni"
-          statistic-title="Graduated Student"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="danger"
-          icon="UserXIcon"
-          :statistic="dashboardData.withdrawn_students"
-          statistic-title="Withdrawn Students"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="secondary"
-          icon="UsersIcon"
-          :statistic="dashboardData.totalStaff"
-          statistic-title="Active Personnels"
-        />
-      </el-col>
-      <el-col
-        :xs="12"
-        :sm="8"
-        :md="8"
-        :lg="4"
-        :xl="2"
-      >
-        <statistic-card-horizontal
-          color="white"
-          bg="dark"
-          icon="UsersIcon"
-          :statistic="dashboardData.totalGuardian"
-          statistic-title="Total Guardians"
+          :bg="item.color"
+          :icon="item.icon"
+          :statistic="item.statistic"
+          :statistic-title="item.title"
+          :custom-style="'border-top-left-radius: 1rem; border-bottom-right-radius: 1rem'"
         />
       </el-col>
     </el-row>
@@ -111,7 +39,54 @@ export default {
     },
   },
   data() {
-    return {}
+    return {
+      statistics: [],
+    }
+  },
+  mounted() {
+    this.setData()
+  },
+  methods: {
+    setData() {
+      const app = this
+      const data = [
+        // {
+        //   color: 'primary', icon: 'UsersIcon', statistic: app.dashboardData.population, title: 'Total Users',
+        // },
+        // {
+        //   color: 'success', icon: 'TrendingUpIcon', statistic: app.dashboardData.total_income, title: 'Total Income',
+        // },
+        // {
+        //   color: 'warning', icon: 'TrendingDownIcon', statistic: app.dashboardData.total_expenses, title: 'Total Expenses',
+        // },
+        // {
+        //   color: 'danger', icon: 'CreditCardIcon', statistic: app.dashboardData.total_debts, title: 'Total Debts',
+        // },
+
+        {
+          color: 'primary', icon: 'UserPlusIcon', statistic: app.dashboardData.total_students, title: 'Active Students',
+        },
+        // {
+        //   color: 'primary', icon: 'UserPlusIcon', statistic: app.dashboardData.active_students, title: 'Active Students',
+        // },
+        // {
+        //   color: 'warning', icon: 'UserMinusIcon', statistic: app.dashboardData.suspended_students, title: 'Suspended Students',
+        // },
+        // {
+        //   color: 'success', icon: 'UserCheckIcon', statistic: app.dashboardData.alumni, title: 'Graduated Students',
+        // },
+        {
+          color: 'danger', icon: 'UserXIcon', statistic: app.dashboardData.withdrawn_students, title: 'Withdrawn Students',
+        },
+        {
+          color: 'warning', icon: 'UsersIcon', statistic: app.dashboardData.totalStaff, title: 'Active Personnel',
+        },
+        {
+          color: 'dark', icon: 'UsersIcon', statistic: app.dashboardData.totalGuardian, title: 'Parents/Guardians',
+        },
+      ]
+      app.statistics = data
+    },
   },
 }
 </script>

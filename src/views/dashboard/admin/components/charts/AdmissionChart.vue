@@ -2,55 +2,67 @@
   <div class="app-container">
     <div class="box">
       <div class="box-header">
-        <h4 class="box-title">
-          Admission Report
-        </h4>
+        <h5 class="box-title">
+          Select Academic Session
+        </h5>
       </div>
       <div class="box-body">
-        <el-row
+        <aside
           :gutter="0"
           class="panel-group"
         >
-          <el-col
-            :xs="24"
-            :sm="12"
-            :md="12"
-            class="box-panel-col"
+          <el-select
+            v-model="params.admission_sess_id"
+            filterable
+            placeholder="Select Academic Session"
+            style="width: 100%"
+            @input="loadChart()"
           >
-            <el-select
-              v-model="params.admission_sess_id"
-              filterable
-              placeholder="Select Academic Session"
-              style="width: 100%"
-              @input="loadChart()"
-            >
-              <el-option
-                v-for="(session, index) in all_sessions"
-                :key="index"
-                :label="session.name"
-                :value="session.id"
-              />
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row
+            <el-option
+              v-for="(session, index) in all_sessions"
+              :key="index"
+              :label="session.name"
+              :value="session.id"
+            />
+          </el-select>
+        </aside>
+        <div
           v-loading="load"
           :gutter="0"
           class="panel-group"
         >
-          <highcharts :options="chart_analytics" />
-        </el-row>
+          <b-row class="match-height">
+            <b-col lg="9">
+              <highcharts
+                :options="chart_analytics"
+              />
+            </b-col>
+            <b-col lg="3">
+              <aside>
+                <vue-apex-charts
+                  :options="genderChat.chartOptions"
+                  :series="genderChat.series"
+                />
+              </aside>
+            </b-col>
+          </b-row>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import {
+  BRow, BCol,
+} from 'bootstrap-vue'
+import VueApexCharts from 'vue-apexcharts'
 // import Multiselect from 'vue-multiselect'
+import { $themeColors } from '@themeConfig'
 import Resource from '@/api/resource'
 
 const chartDataFetch = new Resource('report/display-chart')
 export default {
-  // components: { Multiselect },
+  components: { BRow, BCol, VueApexCharts },
   props: {
     role: {
       type: String,
@@ -59,6 +71,8 @@ export default {
   },
   data() {
     return {
+      total_male: 0,
+      total_female: 0,
       all_sessions: [],
       selected_session: '',
       admission_sess_id: '',
@@ -66,6 +80,7 @@ export default {
       chart_analytics: {
         chart: {
           type: 'column',
+          inverted: false,
           options3d: {
             enabled: false,
             alpha: 0,
@@ -73,30 +88,11 @@ export default {
             depth: 100,
             viewDistance: 25,
           },
-          scrollablePlotArea: {
-            minWidth: 900,
-            scrollPositionX: 1,
-          },
+          // scrollablePlotArea: {
+          //   minWidth: 900,
+          //   scrollPositionX: 1,
+          // },
           events: {
-            // drilldown(e) {
-            //   // console.log(e);
-            //   // this.xAxis[0].setTitle({ text: drilldownTitleXAxis });
-            //   // this.xAxis[0].setTitle({ text: 'Classes' });
-            //   // this.setSubtitle({ text: e.point.name+' Attendance' });
-            //   // this.xAxis.categories = ['Adult','Youth','Children', 'Total'];
-            //   // this.xAxis[0].setCategories({ Category: ['Adult','Youth','Children', 'Total'] });
-            //   // this.update({
-            //   //     scrollbar: {
-            //   //         enabled: true
-            //   //     }
-            //   // }, false);
-            // },
-            // drillup(e) {
-            //   // console.log(e);
-            //   // this.xAxis[0].setTitle({ text: 'Levels' });
-            //   // this.yAxis[0].setTitle({ text: defaultTitleYAxis });
-            //   // this.setSubtitle({ text: 'Click on a column to drill down and see attendance for each class' });
-            // },
           },
         },
         title: {
@@ -130,7 +126,7 @@ export default {
             text: 'No. of Students',
           },
           stackLabels: {
-            enabled: true,
+            enabled: false,
             style: {
               fontWeight: 'bold',
               color: 'gray',
@@ -141,10 +137,13 @@ export default {
           column: {
             stacking: 'normal',
             dataLabels: {
-              enabled: true,
+              enabled: false,
+              // rotation: 180,
             },
+            // borderRadius: 7,
           },
         },
+        colors: [$themeColors.primary, $themeColors.danger],
         series: [
 
         ],
@@ -159,6 +158,57 @@ export default {
         },
       },
 
+      genderChat: {
+        chartOptions: {
+          chart: {
+            type: 'donut',
+            toolbar: {
+              show: false,
+            },
+          },
+          dataLabels: {
+            enabled: false,
+          },
+          legend: {
+            show: true,
+            position: 'bottom',
+            formatter(val, opts) {
+              return `${val}: ${opts.w.globals.series[opts.seriesIndex]}`
+            },
+          },
+          // comparedResult: [2, -3, 8],
+          labels: ['Male', 'Female'],
+          stroke: { width: 0 },
+          colors: [$themeColors.primary, $themeColors.danger],
+          plotOptions: {
+            pie: {
+              startAngle: 0,
+              donut: {
+                labels: {
+                  show: true,
+                  name: {
+                    show: true,
+                    offsetY: 15,
+                  },
+                  value: {
+                    offsetY: -15,
+                    formatter(val) {
+                      // eslint-disable-next-line radix
+                      return `${parseInt(val)}`
+                    },
+                  },
+                  total: {
+                    show: true,
+                    offsetY: 15,
+                    label: 'Total',
+                  },
+                },
+              },
+            },
+          },
+        },
+        series: [0, 0],
+      },
       params: {
         category: 'admission',
         role: this.role,
@@ -194,7 +244,9 @@ export default {
         app.selected_session = data.selected_session
         app.all_sessions = data.all_sessions
         app.admission_sess_id = data.admission_sess_id
-
+        app.genderChat.series = [data.total_male, data.total_female]
+        app.total_male = data.total_male
+        app.total_female = data.total_female
         app.load = false
       }).catch(error => {
         console.log(error)

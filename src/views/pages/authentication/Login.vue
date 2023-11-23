@@ -5,9 +5,9 @@
       <!-- Left Text-->
       <b-col
         lg="8"
-        class="d-none d-lg-flex align-items-center p-5"
+        class="d-none d-lg-flex no-padding"
       >
-        <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
+        <div class="w-100 d-lg-flex">
           <b-img
             fluid
             :src="imgUrl"
@@ -37,7 +37,7 @@
             <img
               src="/images/logo/logo.png"
               alt="logo"
-              width="250"
+              width="200"
               class="mx-auto"
             >
           </b-card-title>
@@ -54,12 +54,12 @@
           >
             <!-- email -->
             <b-form-group
-              label="Username"
               label-for="login-email"
             >
               <b-form-input
                 id="login-email"
                 v-model="userEmail"
+                class="round"
                 name="login-email"
                 placeholder="Enter username"
               />
@@ -68,7 +68,7 @@
             <!-- forgot password -->
             <b-form-group>
               <b-input-group
-                class="input-group-merge"
+                class="input-group-merge round"
               >
                 <b-form-input
                   id="login-password"
@@ -88,18 +88,25 @@
               </b-input-group>
             </b-form-group>
             <b-button
-              variant="primary"
+              pill
+              variant="gradient-primary"
               block
               @click="login"
             >
-              Sign in
+              Log in
             </b-button>
             <b-card-text class="text-center mt-2">
               <span>Don't have an account? </span>
               <b-link :to="{name:'UserRegistration'}">
-                <span>&nbsp;Sign Up</span>
+                <span>&nbsp;Register</span>
               </b-link>
             </b-card-text>
+            <!-- <b-card-text class="text-center mt-2">
+              <span>Want to be a marketing partner? </span>
+              <b-link to="register-partner">
+                <span>&nbsp;Click Here</span>
+              </b-link>
+            </b-card-text> -->
           </b-form>
           <el-alert
             v-if="reset_password"
@@ -114,13 +121,14 @@
           >
             <!-- email -->
             <b-form-group
-              label="Username"
               label-for="login-email"
             >
               <b-form-input
                 id="login-email"
                 v-model="form.email"
+                class="round"
                 name="login-email"
+                placeholder="Enter username"
                 disabled
               />
             </b-form-group>
@@ -128,7 +136,7 @@
             <!-- forgot password -->
             <b-form-group>
               <b-input-group
-                class="input-group-merge"
+                class="input-group-merge round"
               >
                 <b-form-input
                   v-model="form.new_password"
@@ -168,7 +176,8 @@
               </b-input-group>
             </b-form-group>
             <b-button
-              variant="warning"
+              pill
+              variant="gradient-warning"
               block
               @click="updatePassword"
             >
@@ -213,12 +222,12 @@ export default {
     BFormInput,
     BInputGroupAppend,
     BInputGroup,
-    BCardText,
     // BFormCheckbox,
     BCardTitle,
     BImg,
     BForm,
     BButton,
+    BCardText,
     // ValidationProvider,
     // ValidationObserver,
   },
@@ -228,7 +237,7 @@ export default {
       status: '',
       password: '',
       userEmail: '',
-      sideImg: require('@/assets/images/pages/login-v2.svg'),
+      sideImg: require('@/assets/images/pages/login/lms2.png'),
 
       // validation rules
       required,
@@ -344,8 +353,8 @@ export default {
             component: ToastificationContent,
             position: 'top-right',
             props: {
-              title: error.response.statusText,
-              icon: 'CoffeeIcon',
+              title: 'Error', // .response.statusText,
+              icon: 'AlertTriangleIcon',
               variant: 'danger',
               text: error.response.data.message,
             },
@@ -378,4 +387,9 @@ export default {
 
 <style lang="scss">
 @import '@core/scss/vue/pages/page-auth.scss';
+</style>
+<style scoped>
+.no-padding {
+  padding: 0 !important;
+}
 </style>

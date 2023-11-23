@@ -1,5 +1,8 @@
 <template>
-  <div v-loading="loader">
+  <div
+    v-if="showForm"
+    v-loading="loader"
+  >
     <form-wizard
       color="#7367F0"
       :title="null"
@@ -83,7 +86,7 @@
                   <v-select
                     id="country"
                     v-model="selectedCountry"
-                    :options="countries"
+                    :options="necessaryParams.countries"
                     label="country_name"
                     @input="setState()"
                   />
@@ -397,27 +400,67 @@
                 Sponsor's Details
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
-                label="Main Mobile Number"
+                label="Select parent"
                 label-for="parent_phone"
               >
                 <validation-provider
                   #default="{ errors }"
-                  name="Main Phone Number"
-                  rules="required|integer:min:11|integer:max:11"
+                  name="Select Parent"
+                  rules="required"
                 >
-                  <b-form-input
-                    id="parent_phone"
-                    v-model="form.parent_phone"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Enter Phone Number"
-                  />
+                  <el-select
+                    v-model="form.guardian_id"
+                    style="width: 100%;"
+                    filterable
+                    placeholder="Select Parent"
+                  >
+                    <el-option
+                      v-for="(guardian, index) in guardians"
+                      :key="index"
+                      :label="(guardian.user) ? `${guardian.user.first_name} ${guardian.user.last_name} | ${guardian.user.email} | ${guardian.user.phone1} | ${guardian.user.phone2}` : ''"
+                      :value="guardian.id"
+                    >
+                      <template v-if="guardian.user">
+                        <span style="float: left"><strong>{{ `${guardian.user.first_name} ${guardian.user.last_name}` }}</strong></span>
+                        <span style="float: right; color: #8492a6; font-size: 13px">{{ `${guardian.user.email} | ${guardian.user.phone1} | ${guardian.user.phone2}` }}</span>
+                      </template>
+                    </el-option>
+                  </el-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+                <span>If the Parent/Guardian for this student is not found, <a @click="isCreateClassSidebarActive = true"><strong>Click Here to create one</strong></a></span>
+              </b-form-group>
+            </b-col>
+            <b-col md="12">
+              <b-form-group
+                label="Relationship with Child"
+                label-for="relationship"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="Relationship with Child"
+                  rules="required"
+                >
+
+                  <el-select
+                    v-model="form.relation"
+                    style="width: 100%;"
+                    placeholder="Select Relationship"
+                  >
+                    <el-option
+                      v-for="(relationship, index) in relationships"
+                      :key="index"
+                      :label="relationship"
+                      :value="relationship"
+                    />
+                  </el-select>
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <!-- <b-col md="6">
               <b-form-group
                 label="Alternative Mobile Number"
                 label-for="parent_phone2"
@@ -519,33 +562,6 @@
             </b-col>
             <b-col md="6">
               <b-form-group
-                label="Relationship with Child"
-                label-for="relationship"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Relationship with Child"
-                  rules="required"
-                >
-
-                  <el-select
-                    v-model="form.relation"
-                    style="width: 100%;"
-                    placeholder="Select Relationship"
-                  >
-                    <el-option
-                      v-for="(relationship, index) in relationships"
-                      :key="index"
-                      :label="relationship"
-                      :value="relationship"
-                    />
-                  </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
                 label="Residential Address"
                 label-for="address"
               >
@@ -583,7 +599,7 @@
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
-            </b-col>
+            </b-col> -->
           </b-row>
         </validation-observer>
       </tab-content>
@@ -660,7 +676,7 @@
                 show
               >
                 <div class="alert-body">
-                  <span><strong>Give these credentials to their respective recipients. The password can then be changed on first login. </strong></span>
+                  <span><strong>Copy out the login credential for {{ form.first_name }}. The password can be changed on first login. </strong></span>
                 </div>
               </b-alert>
               <h5 class="mb-0">
@@ -692,7 +708,7 @@
               </b-form-group>
             </b-col>
           </b-row>
-          <b-row>
+          <!-- <b-row>
             <b-col
               cols="12"
               class="mb-2"
@@ -725,11 +741,15 @@
                 />
               </b-form-group>
             </b-col>
-          </b-row>
+          </b-row> -->
         </validation-observer>
       </tab-content>
     </form-wizard>
-
+    <create-parent
+      v-if="isCreateClassSidebarActive"
+      v-model="isCreateClassSidebarActive"
+      @save="fetchFormDetails"
+    />
   </div>
 </template>
 
@@ -752,11 +772,14 @@ import {
   BAlert,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
+
+import CreateParent from '@/views/modules/user/parents/Create.vue'
 // import { codeIcon } from './code'
 import Resource from '@/api/resource'
 
 export default {
   components: {
+    CreateParent,
     ValidationProvider,
     ValidationObserver,
     FormWizard,
@@ -778,9 +801,12 @@ export default {
   data() {
     const maxDate = new Date()
     return {
+      isCreateClassSidebarActive: false,
+      showForm: true,
       max: maxDate,
       selectedContry: '',
       selectedLanguage: '',
+      guardians: [],
       form: {
         last_name: '',
         first_name: '',
@@ -799,6 +825,7 @@ export default {
         parent_phone: '',
         parent_phone2: '',
         email,
+        guardian_id: '',
         lname: '',
         fname: '',
         sponsor_gender: '',
@@ -835,6 +862,7 @@ export default {
         email,
         lname: '',
         fname: '',
+        guardian_id: '',
         sponsor_gender: '',
         relation: '',
         address: '',
@@ -866,8 +894,14 @@ export default {
       loader: false,
     }
   },
+  computed: {
+    necessaryParams() {
+      return this.$store.getters.necessaryParams
+    },
+  },
   created() {
     this.fetchFormDetails()
+    // this.selectedCountry = this.necessaryParams.selectedCountry
   },
   methods: {
     // onContext(ctx) {
@@ -881,13 +915,12 @@ export default {
       const fetchCurriculumSetupResource = new Resource('user-setup/students/create')
       fetchCurriculumSetupResource.list()
         .then(response => {
-          app.countries = response.countries
-          app.selectedCountry = response.selected_country
           app.levels = response.levels
+          app.guardians = response.guardians
           app.form.registration_no = response.reg_no
           app.form.username = response.parent_username
           app.admission_sessions = response.admission_sessions
-          app.setState()
+          // app.setState()
         })
     },
     setState() {
@@ -915,8 +948,8 @@ export default {
       saveStudentResource.store(form)
         .then(() => {
           app.form = app.empty_form
+          app.fetchFormDetails()
           app.loader = false
-
           app.$toast({
             component: ToastificationContent,
             props: {
@@ -925,6 +958,7 @@ export default {
               variant: 'success',
             },
           })
+          document.getElementById('step-PersonalDetails0').click()
         }).catch(error => {
           app.loader = false
           app.$toast({

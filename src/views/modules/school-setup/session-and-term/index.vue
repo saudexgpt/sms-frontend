@@ -157,7 +157,9 @@ export default {
           app.sessions = response.sessions
           app.terms = response.terms
           app.saved_current_session = response.current_session
+          app.current_session = response.current_session.id
           app.saved_current_term = response.current_term
+          app.current_term = response.current_term.id
           app.loading = false
         })
     },
@@ -171,6 +173,7 @@ export default {
       activateSessionResource.store(param)
         .then(response => {
           app.saved_current_session = response.current_session
+          app.current_session = response.current_session.id
           app.loading_session = false
         })
     },
@@ -184,6 +187,7 @@ export default {
       activateTermResource.store(param)
         .then(response => {
           app.saved_current_term = response.current_term
+          app.current_term = response.current_term.id
           app.loading_term = false
         })
     },

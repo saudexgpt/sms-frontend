@@ -236,9 +236,9 @@ import {
 } from 'bootstrap-vue'
 import StatisticCardHorizontal from '@core/components/statistics-cards/StatisticCardHorizontal.vue'
 import Resource from '@/api/resource'
+import checkPermission from '@/utils/permission'
 import StudentsList from './partials/StudentsList.vue'
 import StaffList from './partials/StaffList.vue'
-import checkPermission from '@/utils/permission'
 
 const schoolResource = new Resource('schools/show')
 export default {

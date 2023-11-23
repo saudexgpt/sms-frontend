@@ -29,7 +29,7 @@
                 Personal Information
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Surname"
                 label-for="last-name"
@@ -49,7 +49,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Other Names"
                 label-for="first-name"
@@ -69,7 +69,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <validation-provider
                 #default="{ errors }"
                 name="Country"
@@ -95,7 +95,7 @@
             </b-col>
             <b-col
               v-if="states.length > 0"
-              md="6"
+              md="12"
             >
               <validation-provider
                 #default="{ errors }"
@@ -122,7 +122,7 @@
             </b-col>
             <b-col
               v-if="lgas.length > 0"
-              md="6"
+              md="12"
             >
               <validation-provider
                 #default="{ errors }"
@@ -147,7 +147,7 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="DOB (YYYY-MM-DD)"
                 label-for="dob"
@@ -188,7 +188,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Gender"
                 label-for="gender"
@@ -237,7 +237,7 @@
                 Contact Details
               </h5>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Main Mobile Number"
                 label-for="phone1"
@@ -257,7 +257,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Alternative Mobile Number"
                 label-for="phone2"
@@ -270,7 +270,7 @@
                 />
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Email"
                 label-for="email"
@@ -290,7 +290,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Residential Address"
                 label-for="address"
@@ -372,17 +372,17 @@
                 show
               >
                 <div class="alert-body">
-                  <span><strong>Kindly select your role and set your password</strong></span>
+                  <span><strong>Kindly select your role</strong></span>
                 </div>
               </b-alert>
-              <h5 class="mb-0">
+              <!-- <h5 class="mb-0">
                 Login Credentials
-              </h5>
+              </h5> -->
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <validation-provider
                 #default="{ errors }"
-                name="Roles"
+                name="Select Role"
                 rules="required"
               >
                 <b-form-group
@@ -415,7 +415,7 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group
                 label="Username"
                 label-for="sponsor_username"
@@ -425,9 +425,10 @@
                   v-model="form.username"
                   readonly
                 />
+                <small>This will serve as password on first login after account activation</small>
               </b-form-group>
             </b-col>
-            <!-- <b-col md="6">
+            <!-- <b-col md="12">
               <b-form-group>
                 <validation-provider
                   #default="{ errors }"
@@ -445,7 +446,7 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="12">
               <b-form-group>
                 <validation-provider
                   #default="{ errors }"

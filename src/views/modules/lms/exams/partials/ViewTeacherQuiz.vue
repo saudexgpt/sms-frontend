@@ -235,9 +235,9 @@
 </template>
 <script>
 import { BCard } from 'bootstrap-vue'
+import Resource from '@/api/resource'
 import ObjStudentsResponses from './objective/StudentsResponses.vue'
 import TheoryStudentsResponses from './theory/StudentsResponses.vue'
-import Resource from '@/api/resource'
 
 export default {
   components: { BCard, ObjStudentsResponses, TheoryStudentsResponses },

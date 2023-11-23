@@ -9,14 +9,15 @@ export const $themeBreakpoints = {}
 // APP CONFIG
 export const $themeConfig = {
   app: {
-    appName: 'School-Point', // Will update name in navigation menu (Branding)
+    appName: 'EDU-DRIVE', // Will update name in navigation menu (Branding)
     // eslint-disable-next-line global-require
     appLogoImage: require('@/assets/images/logo/logo2.png'), // Will update logo in navigation menu (Branding)
+    companyUrl: 'https://edu-drive.com',
   },
   layout: {
     isRTL: false,
-    skin: 'semi-dark', // light, dark, bordered, semi-dark
-    routerTransition: 'slide-fade', // zoom-fade, slide-fade, fade-bottom, fade, zoom-out, none
+    skin: 'light', // light, dark, bordered, semi-dark
+    routerTransition: 'zoom-out', // zoom-fade, slide-fade, fade-bottom, fade, zoom-out, none
     type: 'vertical', // vertical, horizontal
     contentWidth: 'full', // full, boxed
     menu: {

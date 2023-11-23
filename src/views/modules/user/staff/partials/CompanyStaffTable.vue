@@ -93,11 +93,11 @@ import {
   BButton, BRow, BCol, VBTooltip,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import Resource from '@/api/resource'
 import EditStaff from './EditCompanyStaff.vue'
 import StaffDetails from './CompanyStaffDetails.vue'
 // import vSelect from 'vue-select'
 // import { VueGoodTable } from 'vue-good-table'
-import Resource from '@/api/resource'
 
 export default {
   components: {

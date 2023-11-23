@@ -8,7 +8,7 @@ export default [
     },
     children: [
       {
-        title: 'Course Materials',
+        title: 'Course',
         route: 'CourseMaterials',
         acl: {
           modules: ['materials'],
@@ -16,7 +16,7 @@ export default [
         },
       },
       {
-        title: 'Subject Curriculum',
+        title: 'Lesson Plan',
         route: 'SubjectCurriculum',
         acl: {
           modules: ['materials'],
@@ -24,7 +24,7 @@ export default [
         },
       },
       {
-        title: 'My Course Materials',
+        title: 'Course Materials',
         route: 'StudentCourseMaterials',
         acl: {
           modules: ['materials'],
@@ -32,7 +32,7 @@ export default [
         },
       },
       {
-        title: 'My Subject Curriculum',
+        title: 'Lesson Note',
         route: 'StudentSubjectCurriculum',
         acl: {
           modules: ['materials'],

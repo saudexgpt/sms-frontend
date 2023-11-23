@@ -1,90 +1,146 @@
 <template>
-
-  <div
-    v-if="student"
-    class="table-responsive"
-  >
-
-    <div>
-      <div align="center">
-        <img
-          :src="'storage/'+student.user.photo"
-          :height="'100px'"
-          :width="'100px'"
-          :hoverable="false"
-        ><br>
-        <strong>{{ student.user.last_name+', '+student.user.first_name }}</strong><br>
-        <strong>{{ student.registration_no }}</strong>
-
-        <h4>SUBJECT PERFORMANCE ANALYSIS</h4>
-      </div>
-      <div class="col-md-6 padded">
-        <legend>Junior School</legend>
-        <div
-          v-for="(junior_subject, index) in student.junior_subjects"
-          :key="index"
-          class="progress-group"
-        >
-          <div
-            v-if="junior_subject.avg > 0"
-            colspan="3"
+  <div>
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <td
+            align="center"
           >
-            <small class="progress-text">{{ junior_subject.name }}</small>
-            <span class="progress-number"><b>{{ junior_subject.avg }}</b>%</span>
+            <img
+              :src="baseServerUrl + 'storage/'+student.school.logo"
+              width="200"
+            >
+            <h4>{{ student.school.name.toUpperCase() }}</h4>
+            <p>{{ student.school.address }}</p>
 
-            <div class="progress sm">
-              <div
-                class="progress-bar"
-                :style="'width: '+junior_subject.avg+'%; background: '+junior_subject.color"
-              />
-            </div>
-          </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <b-row>
+      <b-col
+        :xs="12"
+        :sm="12"
+        :md="8"
+        :lg="8"
+        :xl="8"
+      >
+        <div align="center">
+          <h3>&nbsp;</h3>
         </div>
-      </div>
-      <div class="col-md-6 padded">
-        <legend>Senior School</legend>
-        <div
-          v-for="(senior_subject, index) in student.senior_subjects"
-          :key="index"
-          class="progress-group"
-        >
-          <div
-            v-if="senior_subject.avg > 0"
-            colspan="3"
+        <b-row>
+          <b-col
+            :xs="12"
+            :sm="12"
+            :md="6"
+            :lg="6"
+            :xl="6"
           >
-            <small class="progress-text">{{ senior_subject.name }}</small>
-            <span class="progress-number"><b>{{ senior_subject.avg }}</b>%</span>
-
-            <div class="progress sm">
+            <div
+              class="box"
+              style="border: medium solid rgb(240, 240, 240); border-radius: 10px; padding: 20px"
+            >
               <div
-                class="progress-bar"
-                :style="'width: '+senior_subject.avg+'%; background: '+senior_subject.color"
-              />
+                class="box-body text-center"
+              >
+
+                <h4
+                  class="profile-username text-center"
+                >
+                  <strong>Current Level</strong><br>
+                  {{ (student.current_student_level !== null) ? student.current_student_level.level : 'Not Set' }}
+                </h4>
+              </div>
             </div>
-          </div>
+          </b-col>
+          <b-col
+            :xs="12"
+            :sm="12"
+            :md="6"
+            :lg="6"
+            :xl="6"
+          >
+            <div
+              class="box"
+              style="border: medium solid rgb(240, 240, 240); border-radius: 10px; padding: 20px"
+            >
+              <div
+                class="box-body text-center"
+              >
+                <h4
+                  class="profile-username text-center"
+                >
+                  <strong>Current Class</strong><br>
+                  {{ (student.class_teacher.c_class ) ? student.class_teacher.c_class.name : 'Not Set' }}
+                </h4>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col
+            :xs="12"
+            :sm="12"
+            :md="12"
+            :lg="12"
+            :xl="12"
+          >
+            <student-routine :student-id="student.id" />
+          </b-col>
+        </b-row>
+      </b-col>
+      <b-col
+        :xs="12"
+        :sm="12"
+        :md="4"
+        :lg="4"
+        :xl="4"
+      >
+        <div align="center">
+          <h3>Class Teacher</h3>
         </div>
-      </div>
-    </div>
+        <div v-if="student.class_teacher.staff">
+          <user-bio :user="student.class_teacher.staff.user" />
+        </div>
+        <div v-else>
+          <h4>Class is yet to be assigned a teacher</h4>
+        </div>
+      </b-col>
+    </b-row>
 
   </div>
 </template>
 
 <script>
 // import PanThumb from '@/components/PanThumb'
+import {
+  BRow, BCol,
+// BAvatar,
+} from 'bootstrap-vue'
+// import { avatarText } from '@core/utils/filter'
+import UserBio from '@/views/modules/user/UserBioData.vue'
+import StudentRoutine from '@/views/modules/time-table/StudentRoutine.vue'
 
 export default {
-  // components: { PanThumb },
+  components: {
+    BRow, BCol, UserBio, StudentRoutine,
+  },
   props: {
     student: {
       type: Object,
       default: () => ({}),
     },
-
   },
   data() {
     return {
-
+      // avatarText,
     }
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+
   },
   mounted() {
     // console.log(this.student)

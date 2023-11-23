@@ -14,9 +14,9 @@
     <span class="float-md-right d-none d-md-block">
       Powered By: <b-link
         class="ml-25"
-        href="https://www.school-point.com"
+        :href="companyUrl"
         target="_blank"
-      >{{ appName }}</b-link> | © 2016 - {{ new Date().getFullYear() }}
+      >{{ appName }}</b-link> | © 2018 - {{ new Date().getFullYear() }}
       <!-- <feather-icon
         icon="HeartIcon"
         size="21"
@@ -36,12 +36,13 @@ export default {
   },
   setup() {
     // App Name
-    const { appName, appLogoImage } = $themeConfig.app
+    const { appName, appLogoImage, companyUrl } = $themeConfig.app
 
     return {
       // App Name
       appName,
       appLogoImage,
+      companyUrl,
     }
   },
   computed: {

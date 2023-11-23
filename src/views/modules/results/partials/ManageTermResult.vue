@@ -9,10 +9,11 @@
     >
       <template
         #title
-        class="no-print"
       >
-        <feather-icon icon="CheckIcon" />
-        <span>Approve Result</span>
+        <div class="no-print">
+          <feather-icon icon="CheckIcon" />
+          <span>Approve Result</span>
+        </div>
       </template>
       <approve-result
         v-if="recordedResultData"
@@ -29,10 +30,11 @@
     >
       <template
         #title
-        class="no-print"
       >
-        <feather-icon icon="BookOpenIcon" />
-        <span>Class Broad Sheet</span>
+        <div class="no-print">
+          <feather-icon icon="BookOpenIcon" />
+          <span>Class Broad Sheet</span>
+        </div>
       </template>
       <broad-sheet
         v-if="broadSheetData"
@@ -47,10 +49,11 @@
     >
       <template
         #title
-        class="no-print"
       >
-        <feather-icon icon="MessageCircleIcon" />
-        <span>Class Teacher Remark</span>
+        <div class="no-print">
+          <feather-icon icon="MessageCircleIcon" />
+          <span>Class Teacher Remark</span>
+        </div>
       </template>
       <class-teacher-remark
         v-if="broadSheetData"
@@ -64,10 +67,11 @@
     >
       <template
         #title
-        class="no-print"
       >
-        <feather-icon icon="MessageCircleIcon" />
-        <span>Principal/Head Teacher Remark</span>
+        <div class="no-print">
+          <feather-icon icon="MessageCircleIcon" />
+          <span>Principal/Head Teacher Remark</span>
+        </div>
       </template>
       <principal-remark
         v-if="broadSheetData"
@@ -81,10 +85,11 @@
     >
       <template
         #title
-        class="no-print"
       >
-        <feather-icon icon="PrinterIcon" />
-        <span>Print Bulk</span>
+        <div class="no-print">
+          <feather-icon icon="PrinterIcon" />
+          <span>Print Bulk</span>
+        </div>
       </template>
       <print-bulk-result
         :broad-sheet-data="broadSheetData"
@@ -98,13 +103,13 @@ import {
   BTab, BTabs,
 } from 'bootstrap-vue'
 import Resource from '@/api/resource'
+import checkRole from '@/utils/role'
+import checkPermission from '@/utils/permission'
 import ApproveResult from './approval/ViewRecordedResult.vue'
 import BroadSheet from './BroadSheetTable.vue'
 import ClassTeacherRemark from './ClassTeacherRemark.vue'
 import PrincipalRemark from './PrincipalRemark.vue'
 import PrintBulkResult from './PrintBulkResult.vue'
-import checkRole from '@/utils/role'
-import checkPermission from '@/utils/permission'
 
 const getResultBroadSheet = new Resource('result/class-broadsheet')
 
